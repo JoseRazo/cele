@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+    web:
+        build: .
+        image: cele:v1.0.0
+        container_name: cele
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/code
+        ports:
+            - 8000:8000
+volumes:
+    .:
