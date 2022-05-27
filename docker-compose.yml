@@ -3,8 +3,11 @@ version: "3"
 services:
     web:
         build: .
-        image: cele:v1.0.0
-        container_name: cele
+        image: edcon:v1.0
+        container_name: edcon
+        restart: always
+        env_file:
+            - .env
         command: python manage.py runserver 0.0.0.0:8000
         volumes:
             - .:/code

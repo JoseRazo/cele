@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.8
+FROM python:3.9.10
 ENV PYTHONUNBUFFERED=1
 WORKDIR /code
 COPY requirements.txt /code/
