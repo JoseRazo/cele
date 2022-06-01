@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario
+from sistema.models import Estado, Ciudad, Colonia
 
 
 class Alumno(Usuario):
@@ -15,9 +16,9 @@ class Alumno(Usuario):
         (EXTERNO, 'Persona Externa'),
     )
     telefono = models.CharField(max_length=15, null=True, blank=True)
-    estado = models.CharField(max_length=60, null=True, blank=True)
-    ciudad = models.CharField(max_length=60, null=True, blank=True)
-    colonia = models.CharField(max_length=60, null=True, blank=True)
+    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, null=True, blank=True)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, null=True, blank=True)
+    colonia = models.ForeignKey(Colonia, on_delete=models.CASCADE, null=True, blank=True)
     calle = models.CharField(max_length=60, null=True, blank=True)
     num_exterior = models.CharField(max_length=15, null=True, blank=True)
     num_interior = models.CharField(max_length=15, null=True, blank=True)
