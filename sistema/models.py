@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Pais(models.Model):
-    nombre = models.CharField(max_length=60)
+    nombre = models.CharField(max_length=60, unique=True)
     nacionalidad = models.CharField(max_length=60)
     abreviatura = models.CharField(max_length=3)
 
@@ -15,7 +15,7 @@ class Pais(models.Model):
         return self.nombre
 
 class Estado(models.Model):
-    nombre = models.CharField(max_length=60)
+    nombre = models.CharField(max_length=60, unique=True)
     abreviatura = models.CharField(max_length=5)
     pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
 

@@ -4,25 +4,25 @@ from .models import Pais, Estado, Ciudad, Colonia
 
 class PaisAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'nacionalidad', 'abreviatura')
-    search_fields = ('nombre', 'nacionalidad', 'abreviatura')
+    search_fields = ('nombre',)
     ordering = ('nombre', 'nacionalidad', 'abreviatura')
 
 class EstadoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'abreviatura', 'pais')
     list_filter = ('pais',)
-    search_fields = ('nombre', 'abreviatura', 'pais')
+    search_fields = ('nombre',)
     ordering = ('nombre', 'abreviatura', 'pais')
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'lada', 'estado')
     list_filter = ('estado',)
-    search_fields = ('nombre', 'lada', 'estado')
+    search_fields = ('nombre',)
     ordering = ('nombre', 'lada', 'estado')
 
 class ColoniaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'codigo_postal', 'ciudad')
     list_filter = ('ciudad',)
-    search_fields = ('nombre', 'codigo_postal', 'ciudad')
+    search_fields = ('nombre',)
     ordering = ('nombre', 'codigo_postal', 'ciudad')
 
 admin.site.register(Pais, PaisAdmin,)
