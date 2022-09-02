@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+import site
 import environ
 
 
@@ -36,17 +37,21 @@ ALLOWED_HOSTS = tuple(env.list('ALLOWED_HOSTS', default=[]))
 # Application definition
 
 INSTALLED_APPS = [
-    "admin_interface",
-    "colorfield",
+    'jazzmin',
+    # "admin_interface",
+    # "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'usuarios',
     'gestion_escolar',
     'sistema',
+    'smart_selects',
+    'import_export',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -121,6 +126,12 @@ DATABASES = {
     # },
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -160,9 +171,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static_prod/'
+# STATIC_ROOT = BASE_DIR / 'static_prod/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static_dev'
+    BASE_DIR / 'static'
 ]
 
 MEDIA_URL = 'media/'
@@ -174,3 +185,29 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+USE_DJANGO_JQUERY = True
+
+JAZZMIN_SETTINGS = {
+    "site_title": 'Educación Continua',
+    "site_header": 'Educación Continua',
+    "site_brand": "Educación Continua",
+    "site_logo": "images/logo-uts-10-aniversario.png",
+    "welcome_sign": "Bienvenido a Educación Continua",
+    "copyright": "Universidad Tecnológica de Salamanca",
+    "order_with_respect_to": ["gestion_escolar", "usuarios", "sistema", "auth"],
+    "show_ui_builder": True,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "body_small_text": True,
+    # "sidebar_nav_small_text": True,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

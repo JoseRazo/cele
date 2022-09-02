@@ -27,6 +27,9 @@ urlpatterns = [
     # path('admin/login/', auth_views.LoginView.as_view(template_name='admin/login-admin.html'), name='login-admin'), #new
     path('admin/', admin.site.urls),
     path('', include('gestion_escolar.urls')),
+    path('usuarios/', include('usuarios.urls')),
+    path('alumnos/', include('gestion_escolar.urls')),
+    path('chaining/', include('smart_selects.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

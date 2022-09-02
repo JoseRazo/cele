@@ -12,18 +12,21 @@ class EstadoAdmin(admin.ModelAdmin):
     list_filter = ('pais',)
     search_fields = ('nombre',)
     ordering = ('nombre', 'abreviatura', 'pais')
+    # autocomplete_fields = ('pais',)
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'lada', 'estado')
     list_filter = ('estado',)
     search_fields = ('nombre',)
     ordering = ('nombre', 'lada', 'estado')
+    # autocomplete_fields = ['estado']
 
 class ColoniaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'codigo_postal', 'ciudad')
     list_filter = ('ciudad',)
     search_fields = ('nombre',)
     ordering = ('nombre', 'codigo_postal', 'ciudad')
+    # autocomplete_fields = ['ciudad']
 
 admin.site.register(Pais, PaisAdmin,)
 admin.site.register(Estado, EstadoAdmin,)
