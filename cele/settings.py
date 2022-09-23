@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'usuarios',
     'gestion_escolar',
+    'edcon',
     'sistema',
     'smart_selects',
     'import_export',
@@ -93,45 +94,45 @@ WSGI_APPLICATION = 'cele.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
-        'HOST': os.environ.get('DB_HOST_EDCON'),
-        'NAME': os.environ.get('DB_NAME_EDCON'),
-        'USER': os.environ.get('DB_USER_EDCON'),
-        'PASSWORD': os.environ.get('DB_PASS_EDCON'),
-        'PORT': os.environ.get('DB_PORT_EDCON'),
-        'OPTIONS': {
-            'driver': 'FreeTDS',
-            'unicode_results': True,
-            'host_is_server': True,
-            'driver_supports_utf8': True,
-            'extra_params': 'tds_version=7.4',
-        }
-    },
-    # 'sito': {
-    #     'ENGINE': 'mssql',
-    #     'HOST': os.environ.get('DB_HOST_SITO'),
-    #     'NAME': os.environ.get('DB_NAME_SITO'),
-    #     'USER': os.environ.get('DB_USER_SITO'),
-    #     'PASSWORD': os.environ.get('DB_PASS_SITO'),
-    #     'PORT': os.environ.get('DB_PORT_SITO'),
-    #     'OPTIONS': {
-    #         'driver': 'FreeTDS',
-    #         'unicode_results': True,
-    #         'host_is_server': True,
-    #         'driver_supports_utf8': True,
-    #         'extra_params': 'tds_version=7.4',
-    #     }
-    # },
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
+#         'ENGINE': 'mssql',
+#         'HOST': os.environ.get('DB_HOST_EDCON'),
+#         'NAME': os.environ.get('DB_NAME_EDCON'),
+#         'USER': os.environ.get('DB_USER_EDCON'),
+#         'PASSWORD': os.environ.get('DB_PASS_EDCON'),
+#         'PORT': os.environ.get('DB_PORT_EDCON'),
+#         'OPTIONS': {
+#             'driver': 'FreeTDS',
+#             'unicode_results': True,
+#             'host_is_server': True,
+#             'driver_supports_utf8': True,
+#             'extra_params': 'tds_version=7.4',
+#         }
+#     },
+#     # 'sito': {
+#     #     'ENGINE': 'mssql',
+#     #     'HOST': os.environ.get('DB_HOST_SITO'),
+#     #     'NAME': os.environ.get('DB_NAME_SITO'),
+#     #     'USER': os.environ.get('DB_USER_SITO'),
+#     #     'PASSWORD': os.environ.get('DB_PASS_SITO'),
+#     #     'PORT': os.environ.get('DB_PORT_SITO'),
+#     #     'OPTIONS': {
+#     #         'driver': 'FreeTDS',
+#     #         'unicode_results': True,
+#     #         'host_is_server': True,
+#     #         'driver_supports_utf8': True,
+#     #         'extra_params': 'tds_version=7.4',
+#     #     }
+#     # },
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -195,7 +196,7 @@ JAZZMIN_SETTINGS = {
     "site_logo": "images/logo-uts-10-aniversario.png",
     "welcome_sign": "Bienvenido a Educación Continua",
     "copyright": "Universidad Tecnológica de Salamanca",
-    "order_with_respect_to": ["gestion_escolar", "usuarios", "sistema", "auth"],
+    "order_with_respect_to": ["gestion_escolar", 'edcon', "usuarios", "sistema", "auth"],
     "show_ui_builder": True,
 }
 

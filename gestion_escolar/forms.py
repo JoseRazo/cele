@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 from usuarios.models import Usuario
-from .models import Grupo, Alumno, Profesor
+from .models import Alumno, Profesor
 import uuid
 
 class AlumnoCreationForm(forms.ModelForm):
@@ -126,15 +126,18 @@ class ProfesorChangeForm(forms.ModelForm):
             user.save()
         return user
 
-class GrupoCreationForm(forms.ModelForm):
-    def generar_codigo():
-        codigo = uuid.uuid4().hex[:6].upper()
-        return codigo
+class CalificacionCursoForm(forms.ModelForm):
+    calificacion_final = forms.CharField(initial=0, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
-    codigo = forms.CharField(initial=generar_codigo, label=_('Número de identificación del grupo'),
-                             widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+# class GrupoCreationForm(forms.ModelForm):
+#     def generar_codigo():
+#         codigo = uuid.uuid4().hex[:6].upper()
+#         return codigo
 
-    class Meta:
-        model = Grupo
-        fields = '__all__'
-        extra_fields = ['codigo']
+#     codigo = forms.CharField(initial=generar_codigo, label=_('Número de identificación del grupo'),
+#                              widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+#     class Meta:
+#         model = Grupo
+#         fields = '__all__'
+#         extra_fields = ['codigo']
