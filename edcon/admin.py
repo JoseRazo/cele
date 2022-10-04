@@ -11,7 +11,7 @@ from .forms import (
     EstudianteCreationForm,
 )
 from gestion_escolar.forms import (
-    ProfesorChangeForm,
+    # ProfesorChangeForm,
     ProfesorCreationForm,
 )
 class CursoAdmin(admin.ModelAdmin):
@@ -44,7 +44,7 @@ class CursoEstudianteAdmin(ExportMixin, admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser or request.user.groups.filter(name='Administradores'):
+        if request.user.is_superuser or request.user.groups.filter(name='Administradores EDCON'):
             return qs
         elif request.user.groups.filter(name='Estudiantes EDCON'):
             return qs.filter(Q(estudiante=request.user, inscrito=True))
@@ -124,7 +124,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
 
 @admin.register(Instructor)
 class InstructorAdmin(DjangoUserAdmin):
-    form = ProfesorChangeForm
+    # form = ProfesorChangeForm
     add_form = ProfesorCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password')}),

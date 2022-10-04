@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import Usuario
 from .forms import (
-    UserChangeForm, 
+    # UserChangeForm, 
     UserCreationForm, 
     CustomAdminAuthenticationForm,
 )
@@ -13,7 +13,7 @@ from .forms import (
 
 @admin.register(Usuario)
 class UserAdmin(DjangoUserAdmin):
-    form = UserChangeForm
+    # form = UserChangeForm
     add_form = UserCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password')}),

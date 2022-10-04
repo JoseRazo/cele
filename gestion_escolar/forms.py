@@ -83,6 +83,8 @@ class AlumnoChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 class ProfesorCreationForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Profesores'), required=False, widget=FilteredSelectMultiple('Roles', False))
+    
     def generate_password():
         password = Usuario.objects.make_random_password()
         return password
@@ -115,32 +117,32 @@ class ProfesorCreationForm(forms.ModelForm):
         return user
 
 
-class ProfesorChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
-    """
+# class ProfesorChangeForm(forms.ModelForm):
+#     """A form for updating users. Includes all the fields on
+#     the user, but replaces the password field with admin's
+#     password hash display field.
+#     """
     
-    username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    password = forms.CharField(label='Cambiar Contraseña',)
-    # password = ReadOnlyPasswordHashField()
+#     username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+#     password = forms.CharField(label='Cambiar Contraseña',)
+#     # password = ReadOnlyPasswordHashField()
 
-    class Meta:
-        model = Profesor
-        fields = ('username', 'password')
+#     class Meta:
+#         model = Profesor
+#         fields = ('username', 'password')
 
-    def clean_password(self):
-        # Check that the two password entries match
-        password = self.cleaned_data.get("password")
-        return password
+#     def clean_password(self):
+#         # Check that the two password entries match
+#         password = self.cleaned_data.get("password")
+#         return password
 
-    def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super(ProfesorChangeForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password"])
-        if commit:
-            user.save()
-        return user
+#     def save(self, commit=True):
+#         # Save the provided password in hashed format
+#         user = super(ProfesorChangeForm, self).save(commit=False)
+#         user.set_password(self.cleaned_data["password"])
+#         if commit:
+#             user.save()
+#         return user
 
 class CalificacionCursoForm(forms.ModelForm):
     calificacion_final = forms.CharField(initial=0, widget=forms.TextInput(attrs={'readonly': 'readonly'}))

@@ -32,31 +32,25 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class UserChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
-    """
+# class UserChangeForm(forms.ModelForm):
+#     """A form for updating users. Includes all the fields on
+#     the user, but replaces the password field with admin's
+#     password hash display field.
+#     """
     
-    username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    password = forms.CharField(label='Cambiar Contraseña',)
+#     # username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+#     # password = forms.CharField(label='Cambiar Contraseña',)
+#     password = ReadOnlyPasswordHashField()
 
-    class Meta:
-        model = Usuario
-        fields = ('username', 'password')
+#     class Meta:
+#         model = Usuario
+#         fields = ('username', 'password')
 
-    def clean_password(self):
-        # Check that the two password entries match
-        password = self.cleaned_data.get("password")
-        return password
-
-    def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super(UserChangeForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password"])
-        if commit:
-            user.save()
-        return user
+#     def clean_password(self):
+#         # Regardless of what the user provides, return the initial value.
+#         # This is done here, rather than on the field, because the
+#         # field does not have access to the initial value
+#         return self.initial["password"]
 
 class CustomAdminAuthenticationForm(AdminAuthenticationForm):
     """
