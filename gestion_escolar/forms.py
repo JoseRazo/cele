@@ -2,22 +2,26 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.contrib.auth.models import Group
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from usuarios.models import Usuario
 from .models import Alumno, Profesor
 import uuid
 
 class AlumnoCreationForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Alumnos CELE'), required=False, widget=FilteredSelectMultiple('Roles', False))
+
     def generate_matricula():
         cve_uni = 61
         año = timezone.now().strftime('%y')
         last_user = Alumno.objects.last()
         if not last_user:
-            return str(cve_uni) + str(año) + '00001'
+            return str(cve_uni) + str(año) + '2' + '0001'
         else:
             matricula = last_user.username
-            consecutivo = int(matricula[-5:]) + 1
-            matricula = str(cve_uni) + str(año) + str(consecutivo).zfill(5)
+            consecutivo = int(matricula[-4:]) + 1
+            matricula = str(cve_uni) + str(año) + '2' + str(consecutivo).zfill(4)
             return matricula
 
     """A form for creating new users. Includes all the required
@@ -25,10 +29,15 @@ class AlumnoCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     password2 = forms.CharField(label='Confirmar Contraseña', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     username = forms.CharField(max_length=9, initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    contraseña = forms.CharField(label='Contraseña para pagos', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Alumno
         fields = ('username', 'password')
+
+    def __init__(self, *args, **kwargs):
+        super(AlumnoCreationForm, self).__init__(*args, **kwargs)
+        self.fields['contraseña'].widget = forms.HiddenInput()
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -52,13 +61,20 @@ class AlumnoChangeForm(forms.ModelForm):
     the user, but replaces the password field with admin's
     password hash display field.
     """
+
+    groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Alumnos CELE'), required=False, widget=FilteredSelectMultiple('Roles', False))
     
     username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     password = ReadOnlyPasswordHashField()
+    contraseña = forms.CharField(label='Contraseña para pagos', widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Alumno
         fields = ('username', 'password')
+    
+    def __init__(self, *args, **kwargs):
+        super(AlumnoChangeForm, self).__init__(*args, **kwargs)
+        self.fields['contraseña'].widget = forms.HiddenInput()
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.

@@ -8,58 +8,58 @@ from sistema.models import Estado, Ciudad, Colonia
 
 # Create your models here.
 
-# class Alumno(Usuario):
-#     ESTUDIANTE = 1
-#     EGRESADO = 2
-#     EXTERNO = 3
-#     ROLE_CHOICES = (
-#         (ESTUDIANTE, 'Estudiante UTS'),
-#         (EGRESADO, 'Egresado UTS'),
-#         (EXTERNO, 'Persona Externa'),
-#     )
-#     telefono = models.CharField(max_length=15, null=True, blank=True)
-#     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, null=True, blank=True, related_name='estado_alumno')
-#     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, null=True, blank=True, related_name='ciudad_alumno')
-#     colonia = models.ForeignKey(Colonia, on_delete=models.CASCADE, null=True, blank=True, related_name='colonia_alumno')
-#     calle = models.CharField(max_length=60, null=True, blank=True)
-#     num_exterior = models.CharField(max_length=15, null=True, blank=True)
-#     num_interior = models.CharField(max_length=15, null=True, blank=True)
-#     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
-#     avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
+class Estudiante(Usuario):
+    ESTUDIANTE = 1
+    EGRESADO = 2
+    EXTERNO = 3
+    ROLE_CHOICES = (
+        (ESTUDIANTE, 'Estudiante UTS'),
+        (EGRESADO, 'Egresado UTS'),
+        (EXTERNO, 'Persona Externa'),
+    )
+    telefono = models.CharField(max_length=15, null=True, blank=True)
+    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, null=True, blank=True, related_name='estado_estudiante')
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE, null=True, blank=True, related_name='ciudad_estudiante')
+    colonia = models.ForeignKey(Colonia, on_delete=models.CASCADE, null=True, blank=True, related_name='colonia_estudiante')
+    calle = models.CharField(max_length=60, null=True, blank=True)
+    num_exterior = models.CharField(max_length=15, null=True, blank=True)
+    num_interior = models.CharField(max_length=15, null=True, blank=True)
+    tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
+    avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
 
-#     class Meta:
-#         verbose_name = "Alumno"
-#         verbose_name_plural = "Alumnos"
-
-
-#     def __str__(self):
-#         if self.apellido_paterno is None and self.apellido_materno is None:
-#             return f'{self.nombre}'
-#         elif self.apellido_paterno is None:
-#             return f'{self.nombre} {self.apellido_materno}'
-#         elif self.apellido_materno is None:
-#             return f'{self.nombre} {self.apellido_paterno}'
-#         else:
-#             return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
-
-# class Profesor(Usuario):
-#     telefono = models.CharField(max_length=15, null=True, blank=True)
-#     avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
-
-#     class Meta:
-#         verbose_name = "Profesor"
-#         verbose_name_plural = "Profesores"
+    class Meta:
+        verbose_name = "Estudiante"
+        verbose_name_plural = "Estudiantes"
 
 
-#     def __str__(self):
-#         if self.apellido_paterno is None and self.apellido_materno is None:
-#             return f'{self.nombre}'
-#         elif self.apellido_paterno is None:
-#             return f'{self.nombre} {self.apellido_materno}'
-#         elif self.apellido_materno is None:
-#             return f'{self.nombre} {self.apellido_paterno}'
-#         else:
-#             return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
+    def __str__(self):
+        if self.apellido_paterno is None and self.apellido_materno is None:
+            return f'{self.nombre}'
+        elif self.apellido_paterno is None:
+            return f'{self.nombre} {self.apellido_materno}'
+        elif self.apellido_materno is None:
+            return f'{self.nombre} {self.apellido_paterno}'
+        else:
+            return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
+
+class Instructor(Usuario):
+    telefono = models.CharField(max_length=15, null=True, blank=True)
+    avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Instructor"
+        verbose_name_plural = "Instructores"
+
+
+    def __str__(self):
+        if self.apellido_paterno is None and self.apellido_materno is None:
+            return f'{self.nombre}'
+        elif self.apellido_paterno is None:
+            return f'{self.nombre} {self.apellido_materno}'
+        elif self.apellido_materno is None:
+            return f'{self.nombre} {self.apellido_paterno}'
+        else:
+            return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
 
 
 class Curso(models.Model):
@@ -79,34 +79,45 @@ class Curso(models.Model):
     def __str__(self):
         return self.nombre
 
-# class Periodo(models.Model):
-#     nombre = models.CharField(max_length=100, unique=True)
-#     fecha_inicio = models.DateField()
-#     fecha_fin = models.DateField()
-#     activo = models.BooleanField(default=True)
-#     fecha_creacion = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
-#     fecha_actualizacion = models.DateTimeField(_('Fecha de actualización'), auto_now=True)
+class Periodo(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    activo = models.BooleanField(default=True)
+    fecha_creacion = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(_('Fecha de actualización'), auto_now=True)
 
-#     def __str__(self):
-#         return self.nombre
+    def __str__(self):
+        return self.nombre
 
-# class CursoAlumno(models.Model):
-#     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
-#     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-#     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
-#     inscrito = models.BooleanField(default=False)
-#     fecha_creacion = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
-#     fecha_actualizacion = models.DateTimeField(_('Fecha de actualización'), auto_now=True)
+class CursoEstudiante(models.Model):
+    EN_PROGRESO = 1
+    COMPLETADO = 2
+    NO_COMPLETADO = 3
+    ESTATUS_CHOICES = (
+        (EN_PROGRESO, 'En progreso'),
+        (COMPLETADO, 'Completado'),
+        (NO_COMPLETADO, 'No completado'),
+    )
 
-#     class Meta:
-#         verbose_name = 'Curso Alumno'
-#         verbose_name_plural = 'Cursos Alumnos'
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    inscrito = models.BooleanField(default=False)
+    estatus = models.PositiveSmallIntegerField(choices=ESTATUS_CHOICES, default='En progreso')
+    fecha_creacion = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(_('Fecha de actualización'), auto_now=True)
 
-#     def __str__(self):
-#         return self.alumno.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
+    class Meta:
+        verbose_name = 'Curso Estudiante'
+        verbose_name_plural = 'Cursos Estudiantes'
+
+    def __str__(self):
+        return self.estudiante.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
 
 # class CalificacionCurso(models.Model):
-#     curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE)
+#     curso_estudiante = models.OneToOneField(CursoEstudiante, on_delete=models.CASCADE)
 #     primer_examen = models.DecimalField(_('Primer Examen'), max_digits=6, decimal_places=2, default=0)
 #     segundo_examen = models.DecimalField(_('Segundo Examen'), max_digits=6, decimal_places=2, default=0)
 #     calificacion_final = models.DecimalField(_('Calificación Final'), max_digits=6, decimal_places=2, default=0)
@@ -130,10 +141,10 @@ class Curso(models.Model):
 #     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
 #     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
 #     aula = models.ForeignKey('Aula', on_delete=models.CASCADE)
-#     alumnos = models.ManyToManyField(Alumno,)
-#     # alumnos = ChainedManyToManyField(
-#     #     CursoAlumno,
-#     #     related_name='grupo_alumnos',
+#     estudiantes = models.ManyToManyField(Estudiante,)
+#     # estudiantes = ChainedManyToManyField(
+#     #     CursoEstudiante,
+#     #     related_name='grupo_estudiantes',
 #     #     horizontal=True,
 #     #     chained_field='curso',
 #     #     chained_model_field='curso',

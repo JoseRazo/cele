@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 class Usuario(AbstractUser):
     username = models.CharField(max_length=60, unique=True)
+    contraseña = models.CharField(_('Contraseña'), max_length=9)
     first_name = ''
     last_name = ''
     nombre = models.CharField(_('Nombres'), max_length=150)

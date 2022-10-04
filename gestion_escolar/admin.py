@@ -51,8 +51,8 @@ class PeriodoAdmin(admin.ModelAdmin):
 class CursoAlumnoResource(resources.ModelResource):
     class Meta:
         model = CursoAlumno
-        fields = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor', 'periodo',)
-        export_order = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor', 'periodo',)
+        fields = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor__nombre', 'periodo__nombre',)
+        export_order = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor__nombre', 'periodo__nombre',)
 
 class CalificacionCursoInline(admin.TabularInline):
     form = CalificacionCursoForm
@@ -73,6 +73,8 @@ class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser or request.user.groups.filter(name='Administradores'):
             return qs
+        elif request.user.groups.filter(name='Alumnos CELE'):
+            return qs.filter(Q(alumno=request.user, inscrito=True))
         return qs.filter(Q(profesor=request.user, inscrito=True))
 
     def get_form(self, request, obj=None, **kwargs):
@@ -102,12 +104,9 @@ class AlumnoResource(resources.ModelResource):
         model = Alumno
         skip_unchanged = True
         report_skipped = True
-        exclude = ('id', 'usuario_ptr', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
-                   'is_active', 'date_joined', 'avatar', 'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior',)
-        export_order = ('username', 'password', 'tipo_usuario', 'nombre',
-                        'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
-        import_id_fields = ('username', 'password', 'tipo_usuario', 'nombre',
-                            'apellido_paterno', 'apellido_materno', 'email', 'telefono', )
+        exclude = ('id', 'usuario_ptr', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_active', 'date_joined', 'avatar', 'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior',)
+        export_order = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
+        import_id_fields = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
 
 
 @admin.register(Alumno)
@@ -117,9 +116,8 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     form = AlumnoChangeForm
     add_form = AlumnoCreationForm
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno',
-         'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (None, {'fields': ('username', 'password', 'contraseña',)}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -135,10 +133,9 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2'),
+            'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno',
-         'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -152,15 +149,13 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     # class Media:
     #     js = ("usuarios/newajax.js",)
 
-
 @admin.register(Profesor)
 class ProfesorAdmin(DjangoUserAdmin):
     form = ProfesorChangeForm
     add_form = ProfesorCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Datos Generales'), {'fields': ('nombre', 'apellido_paterno',
-         'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'groups'),
         }),
@@ -176,8 +171,7 @@ class ProfesorAdmin(DjangoUserAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2'),
         }),
-        (_('Datos Generales'), {'fields': ('nombre', 'apellido_paterno',
-         'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'groups'),
         }),
