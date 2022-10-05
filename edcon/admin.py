@@ -53,7 +53,7 @@ class CursoEstudianteAdmin(ExportMixin, admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=None, **kwargs)
         if obj:
-            if request.user.groups.filter(name='Profesores'):
+            if request.user.groups.filter(name='Instructores EDCON'):
                 form.base_fields["estudiante"].disabled = True
                 form.base_fields["curso"].disabled = True
                 form.base_fields["instructor"].disabled = True
