@@ -9,6 +9,7 @@ from .models import Curso, Periodo, Instructor, Estudiante, CursoEstudiante
 from .forms import (
     EstudianteChangeForm,
     EstudianteCreationForm,
+    InstructorCreationForm,
 )
 from gestion_escolar.forms import (
     # ProfesorChangeForm,
@@ -125,7 +126,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
 @admin.register(Instructor)
 class InstructorAdmin(DjangoUserAdmin):
     # form = ProfesorChangeForm
-    add_form = ProfesorCreationForm
+    add_form = InstructorCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Datos Generales'), {'fields': ('nombre', 'apellido_paterno',

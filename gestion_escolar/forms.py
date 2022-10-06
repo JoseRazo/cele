@@ -83,7 +83,7 @@ class AlumnoChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 class ProfesorCreationForm(forms.ModelForm):
-    groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Profesores'), required=False, widget=FilteredSelectMultiple('Roles', False))
+    groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Profesores CELE'), required=False, widget=FilteredSelectMultiple('Roles', False))
     
     def generate_password():
         password = Usuario.objects.make_random_password()
