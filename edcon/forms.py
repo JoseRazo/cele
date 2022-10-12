@@ -17,11 +17,11 @@ class EstudianteCreationForm(forms.ModelForm):
         año = timezone.now().strftime('%y')
         last_user = Estudiante.objects.last()
         if not last_user:
-            return str(cve_uni) + str(año) + '1' + '0001'
+            return str(año) + str(cve_uni) + '1' + '0001'
         else:
             matricula = last_user.username
             consecutivo = int(matricula[-4:]) + 1
-            matricula = str(cve_uni) + str(año) + '1' + str(consecutivo).zfill(4)
+            matricula = str(año) + str(cve_uni) + '1' + str(consecutivo).zfill(4)
             return matricula
 
     """A form for creating new users. Includes all the required
