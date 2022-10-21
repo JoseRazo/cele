@@ -40,7 +40,7 @@ class CursoEstudianteAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('estudiante', 'curso', 'instructor',
                     'periodo', 'inscrito', 'estatus', 'fecha_creacion',)
     list_filter = ('curso',)
-    search_fields = ('estudiante__nombre', 'curso__nombre',)
+    search_fields = ('estudiante__nombre', 'estudiante__username', 'estudiante__email', 'curso__nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion',)
 
     def get_queryset(self, request):

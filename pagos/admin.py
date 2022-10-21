@@ -24,9 +24,9 @@ class ReferenciasBancoAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.groups.filter(name='Administradores CELE'):
-            return qs.filter(Q(servicio_bb='2354 - UTS CELE'))
+            return qs.filter(Q(servicio_bb='2354'))
         elif request.user.groups.filter(name='Administradores EDCON'):
-            return qs.filter(Q(servicio_bb='2355 - UTS SERVICIOS'))
+            return qs.filter(Q(servicio_bb='2355'))
         return qs
     
 
