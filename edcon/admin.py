@@ -89,7 +89,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     form = EstudianteChangeForm
     add_form = EstudianteCreationForm
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
+        (None, {'fields': ('username', 'password', 'contraseña',)}),
         (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
@@ -106,7 +106,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2'),
+            'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
         (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (

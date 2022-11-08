@@ -29,10 +29,15 @@ class EstudianteCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     password2 = forms.CharField(label='Confirmar Contraseña', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     username = forms.CharField(max_length=9, initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    contraseña = forms.CharField(label='Contraseña para pagos', initial=generate_matricula, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Estudiante
         fields = ('username', 'password')
+
+    def __init__(self, *args, **kwargs):
+        super(EstudianteCreationForm, self).__init__(*args, **kwargs)
+        self.fields['contraseña'].widget = forms.HiddenInput()
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -61,10 +66,15 @@ class EstudianteChangeForm(forms.ModelForm):
     
     username = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     password = ReadOnlyPasswordHashField()
+    contraseña = forms.CharField(label='Contraseña para pagos', widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = Estudiante
         fields = ('username', 'password')
+    
+    def __init__(self, *args, **kwargs):
+        super(EstudianteChangeForm, self).__init__(*args, **kwargs)
+        self.fields['contraseña'].widget = forms.HiddenInput()
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
