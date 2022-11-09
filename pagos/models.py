@@ -6611,24 +6611,28 @@ class ReferenciasBanco(models.Model):
 #         db_table = 'referencias_banco1'
 
 
-# class ReferenciasConceptosBanco(models.Model):
-#     cve_concepto = models.BigAutoField(primary_key=True)
-#     num_concepto = models.CharField(max_length=255)
-#     concepto = models.CharField(max_length=255)
-#     monto = models.DecimalField(max_digits=8, decimal_places=2)
-#     monto_externo = models.DecimalField(max_digits=8, decimal_places=2)
-#     recargo = models.DecimalField(max_digits=8, decimal_places=2)
-#     descuento = models.DecimalField(max_digits=8, decimal_places=2)
-#     fecha_limite = models.BooleanField()
-#     fecha_limite_pago = models.CharField(max_length=10, blank=True, null=True)
-#     activo = models.BooleanField()
-#     cve_servicio = models.ForeignKey('ReferenciasServiciosBanco', models.DO_NOTHING, db_column='cve_servicio', blank=True, null=True)
-#     fecha_creacion = models.DateTimeField()
-#     fecha_actualizacion = models.DateTimeField()
+class ReferenciasConceptosBanco(models.Model):
+    cve_concepto = models.BigAutoField(primary_key=True)
+    num_concepto = models.CharField(max_length=255)
+    concepto = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=8, decimal_places=2)
+    monto_externo = models.DecimalField(max_digits=8, decimal_places=2)
+    recargo = models.DecimalField(max_digits=8, decimal_places=2)
+    descuento = models.DecimalField(max_digits=8, decimal_places=2)
+    fecha_limite = models.BooleanField(help_text="Activar solo si se ingresa una fecha limite de pago.")
+    fecha_limite_pago = models.DateField(max_length=10, blank=True, null=True)
+    activo = models.BooleanField()
+    cve_servicio = models.ForeignKey('ReferenciasServiciosBanco', models.DO_NOTHING, db_column='cve_servicio', blank=True, null=True)
+    fecha_creacion = models.DateTimeField()
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         managed = False
-#         db_table = 'referencias_conceptos_banco'
+    class Meta:
+        managed = False
+        db_table = 'referencias_conceptos_banco'
+        verbose_name = 'Concepto'
+    
+    def __str__(self):
+        return self.concepto
 
 
 # class ReferenciasMensajeConsultaBanco(models.Model):
@@ -6643,16 +6647,19 @@ class ReferenciasBanco(models.Model):
 #         db_table = 'referencias_mensaje_consulta_banco'
 
 
-# class ReferenciasServiciosBanco(models.Model):
-#     cve_servicio = models.BigAutoField(primary_key=True)
-#     num_servicio = models.CharField(max_length=255)
-#     descripcion = models.CharField(max_length=255)
-#     fecha_creacion = models.DateTimeField()
-#     fecha_actualizacion = models.DateTimeField()
+class ReferenciasServiciosBanco(models.Model):
+    cve_servicio = models.BigAutoField(primary_key=True)
+    num_servicio = models.CharField(max_length=255)
+    descripcion = models.CharField(max_length=255)
+    fecha_creacion = models.DateTimeField()
+    fecha_actualizacion = models.DateTimeField()
 
-#     class Meta:
-#         managed = False
-#         db_table = 'referencias_servicios_banco'
+    class Meta:
+        managed = False
+        db_table = 'referencias_servicios_banco'
+    
+    def __str__(self):
+        return self.num_servicio
 
 
 # class RegistroCambioCalificacion(models.Model):
