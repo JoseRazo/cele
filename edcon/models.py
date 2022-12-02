@@ -12,10 +12,13 @@ class Estudiante(Usuario):
     ESTUDIANTE = 1
     EGRESADO = 2
     EXTERNO = 3
+    ADMINISTRATIVO = 4
     ROLE_CHOICES = (
         (ESTUDIANTE, 'Estudiante UTS'),
         (EGRESADO, 'Egresado UTS'),
         (EXTERNO, 'Persona Externa'),
+        (ADMINISTRATIVO, 'Personal Administrativo'),
+
     )
     telefono = models.CharField(max_length=15, null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, null=True, blank=True, related_name='estado_estudiante')
@@ -68,7 +71,8 @@ class Curso(models.Model):
     precio_estudiante_uts = models.DecimalField(_('Precio Estudiante UTS'), max_digits=6, decimal_places=2)
     precio_persona_externa = models.DecimalField(_('Precio Persona Externa'), max_digits=6, decimal_places=2)
     activo = models.BooleanField(default=True)
-    imagen = models.ImageField(default='default-image-curso-620x600.jpg', upload_to='cursos', blank=True, null=True)
+    imagen = models.ImageField(default='default-image-curso-770x433.png', upload_to='cursos', help_text="El tamaño de la imagen debe ser de 770 x 436 pixeles", blank=True, null=True)
+    slug=models.SlugField(null=True, unique=True)
     fecha_creacion = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(_('Fecha de actualización'), auto_now=True)
 

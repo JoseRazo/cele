@@ -20,6 +20,7 @@ class CursoAdmin(admin.ModelAdmin):
     list_filter = ('activo',)
     search_fields = ('nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
+    prepopulated_fields = {'slug': ('nombre',)}
 
 
 class PeriodoAdmin(admin.ModelAdmin):

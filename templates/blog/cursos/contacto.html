@@ -1,0 +1,151 @@
+{% extends "blog/base.html" %}
+
+{% block title %} Contacto {% endblock %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/plugins/colorbox/colorbox.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/styles/contact.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/styles/contact_responsive.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="home">
+    <div class="breadcrumbs_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="breadcrumbs">
+                        <ul>
+                            <li><a href="{% url 'blog:home' %}">Home</a></li>
+                            <li>Contacto</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contact">
+    <!-- Contact Info -->
+
+    <div class="contact_info_container">
+        <div class="container">
+            <div class="row">
+
+                <!-- Contact Form -->
+                <div class="col-lg-6">
+                    <div class="contact_form">
+                        <div class="contact_info_title">Formulario de Contacto</div>
+                        <form method="post" class="comment_form" id="form-contacto">
+                            {% csrf_token %}
+                            <div>
+                                <div class="form_title">Nombre <span class="text-danger">*</span></div>
+                                <input type="text" name="nombre" id="nombre" class="comment_input" minlength="4" required>
+                            </div>
+                            <div>
+                                <div class="form_title">Email <span class="text-danger">*</span></div>
+                                <input type="email" name="email" id="email" class="comment_input" required>
+                            </div>
+                            <div>
+                                <div class="form_title">Mensaje <span class="text-danger">*</span></div>
+                                <textarea name="mensaje" id="mensaje" class="comment_input comment_textarea" minlength="4" required></textarea>
+                            </div>
+                            <div id="success"></div>
+                            <div id="error"></div>
+                            <div>
+                                <button type="submit" class="comment_button trans_200">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-6">
+                    <div class="contact_info">
+                        <div class="contact_info_title">Información de Contacto</div>
+                        <div class="contact_info_location">
+                            <div class="contact_info_location_title">Karla Zavala Pelayo</div>
+                            <ul class="location_list">
+                                <li>Jefa de Departamento del CELE</li>
+                                <li>celeuts@utsalamanca.edu.mx</li>
+                                <li>647 38 61 · Ext:173</li>
+                                <li>Horario: Martes a Sábado de 8h00 a 16h00</li>
+                            </ul>
+                        </div>
+                        <div class="contact_info_location">
+                            <div class="contact_info_location_title">Maricruz Gutiérrez Ruelas</div>
+                            <ul class="location_list">
+                                <li>Coordinadora de Educación Continua y Servicios Tecnológicos</li>
+                                <li>mgutierrez@utsalamanca.edu.mx</li>
+                                <li>647 38 61 · Ext:171</li>
+                                <li>Horario: Martes a Sábado de 8h00 a 16h00</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts%}
+<script src="{% static 'unicat/plugins/colorbox/jquery.colorbox-min.js' %}"></script>
+<script src="{% static 'unicat/js/contact.js' %}"></script>
+
+<script type="text/javascript">
+    $(document).on('submit', '#form-contacto', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "blog:form_contacto" %}',
+            data:
+            {
+                nombre: $("#nombre").val(),
+                email: $("#email").val(),
+                mensaje: $("#mensaje").val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (data) {
+                if (data == 'success') {
+                    console.log(data);
+                    $("#form-contacto").trigger("reset");
+                    $('#success').html(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-check"></i>
+                                            <strong>Mensaje enviado correctamente.</strong>
+                                            <p>¡Gracias por contactarnos! espera nuestra respuesta.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                } 
+                if (data == 'error') {
+                    console.log(data);
+                    $('#error').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-times"></i>
+                                            <strong>Error al enviar el mensaje.</strong>
+                                            <p>Por favor inténtalo de nuevo más tarde.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                }
+                if (data == 'errors') {
+                    console.log(data);
+                    $('#error').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-times"></i>
+                                            <strong>Error al enviar el mensaje.</strong>
+                                            <p>Verifica que los campos estén llenados correctamente.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                }
+            },
+        })
+    });
+</script>
+{% endblock scripts%}

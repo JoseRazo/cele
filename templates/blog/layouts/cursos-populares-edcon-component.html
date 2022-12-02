@@ -1,0 +1,55 @@
+<!-- Cursos Populares -->
+<div class="courses">
+    <div class="section_background parallax-window" data-parallax="scroll"
+        data-image-src="/static/unicat/images/courses_background.jpg" data-speed="0.8"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="section_title_container text-center">
+                    <h2 class="section_title">Cursos Populares Educación Continua</h2>
+                    <div class="section_subtitle">
+                        <p>Programas de capacitación enfocados a la ampliación y actualización de los conocimientos de los egresados y estudiantes </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row courses_row">
+
+            {% for curso in cursos_edcon_populares %}
+            <!-- Course -->
+            <div class="col-lg-4 course_col">
+                <div class="course">
+                    <div class="course_image"><a href="{% url 'blog:curso_edcon_detalle' curso.slug %}"><img src="{{ curso.imagen.url }}" alt="{{ curso.nombre }}"></a></div>
+                    <div class="course_body">
+                        <h3 class="course_title"><a href="{% url 'blog:curso_edcon_detalle' curso.slug %}">{{ curso.nombre }}</a></h3>
+                        <div class="course_text">
+                            <p>{{ curso.descripcion | slice:":65" }}</p>
+                        </div>
+                    </div>
+                    <div class="course_footer">
+                        <div class="course_footer_content d-flex flex-row align-items-center justify-content-start">
+                            <div class="course_info">
+                                <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                                <span>{{ curso.numero_de_alumnos_edcon}} Alumnos</span>
+                            </div>
+                        </div>
+                        <div class="course_info mb-3">
+                            <span class="font-weight-bold">Precio Alumno UTS</span>
+                            <span class="course_price"> ${{ curso.precio_estudiante_uts }}</span>
+                            <br>
+                            <span class="font-weight-bold">Precio Persona Externa</span>
+                            <span class="course_price"> ${{ curso.precio_persona_externa }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="courses_button trans_200"><a href="{% url 'blog:cursos_edcon' %}">ver todos los cursos</a></div>
+            </div>
+        </div>
+    </div>
+</div>
