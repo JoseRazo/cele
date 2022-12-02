@@ -1,0 +1,27 @@
+<div class="contact_form">
+    <form method="post" class="comment_form" id="form-aspirante-edcon">
+        {% csrf_token %}
+
+        <div>
+            <div class="form_title">Nombre</div>
+            <input type="text" name="nombre" id="nombre" class="comment_input" minlength="4" required>
+        </div>
+        <div>
+            <div class="form_title">Email</div>
+            <input type="email" name="email" id="email" class="comment_input" required>
+        </div>
+        <div class="d-none">
+            <div class="form_title">Asunto</div>
+            <input type="text" name="asunto" id="asunto" class="comment_input" value="{{ curso_edcon_detalle.nombre }}">
+        </div>
+        <div>
+            <div class="form_title">Mensaje</div>
+            <textarea name="mensaje" id="mensaje" class="comment_input comment_textarea" minlength="4" required></textarea>
+        </div>
+        <div id="success"></div>
+        <div id="error"></div>
+        <div>
+            <button type="submit" class="comment_button">Enviar</button>
+        </div>
+    </form>
+</div>

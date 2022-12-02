@@ -6,9 +6,9 @@ from gestion_escolar.models import Curso
 
 # Create your views here.
 
-def home(request):
-    response = redirect('/admin/')
-    return response
+# def home(request):
+#     response = redirect('/admin/')
+#     return response
 
 class AlumnosCursoList(APIView):
     permission_classes=[IsAuthenticated,]

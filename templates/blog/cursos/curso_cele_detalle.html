@@ -1,0 +1,218 @@
+{% extends "blog/base.html" %}
+
+{% block title %} {{ curso_cele_detalle.nombre }} {% endblock %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/plugins/colorbox/colorbox.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/styles/course.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'unicat/styles/course_responsive.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="home">
+    <div class="breadcrumbs_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="breadcrumbs">
+                        <ul>
+                            <li><a href="{% url 'blog:home' %}">Home</a></li>
+                            <li><a href="{% url 'blog:cursos_cele' %}">Cursos Centro de Lenguas</a></li>
+                            <li>{{ curso_cele_detalle.nombre }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="course">
+    <div class="container">
+        <div class="row">
+
+            <!-- Course -->
+            <div class="col-lg-8">
+
+                <div class="course_container">
+                    <div class="course_title">{{ curso_cele_detalle.nombre }}</div>
+                    <div
+                        class="course_info d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
+
+                        <!-- Course Info Item -->
+                        <div class="course_info_item">
+                            <div class="course_info_title">Contacto:</div>
+                            <div class="course_info_text">Karla Zavala Pelayo</div>
+                        </div>
+
+                        <!-- Course Info Item -->
+                        <div class="course_info_item">
+                            <div class="course_info_title">Email:</div>
+                            <div class="course_info_text">celeuts@utsalamanca.edu.mx</div>
+                        </div>
+
+                        <!-- Course Info Item -->
+                        <div class="course_info_item">
+                            <div class="course_info_title">Teléfono:</div>
+                            <div class="course_info_text">647 38 61 · Ext:173</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Course Image -->
+                    <div class="course_image"><img src="{{ curso_cele_detalle.imagen.url }}"
+                            alt="{{ curso_cele_detalle.nombre }}"></div>
+
+                    <!-- Course Tabs -->
+                    <div class="course_tabs_container">
+                        <div class="tabs d-flex flex-row align-items-center justify-content-start">
+                            <div class="tab active">descripción</div>
+                        </div>
+                        <div class="tab_panels">
+
+                            <!-- Description -->
+                            <div class="tab_panel active">
+                                <div class="tab_panel_title">{{ curso_cele_detalle.nombre }}</div>
+                                <div class="tab_panel_content">
+                                    <div class="tab_panel_text">
+                                        <p>{{ curso_cele_detalle.descripcion }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar">
+
+                    <!-- Feature -->
+                    <div class="sidebar_section">
+                        <div class="sidebar_section_title">Características del Curso</div>
+                        <div class="sidebar_feature">
+
+                            <!-- Features -->
+                            <div class="feature_list">
+
+                                <!-- Feature -->
+                                <div class="feature d-flex flex-row align-items-center justify-content-start">
+                                    <div class="feature_title"><i class="fa fa-usd" aria-hidden="true"></i><span>Precio
+                                            Alumno UTS:</span></div>
+                                    <div class="feature_text ml-auto">
+                                        <span class="course_price">
+                                            ${{ curso_cele_detalle.precio_estudiante_uts }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Feature -->
+                                <div class="feature d-flex flex-row align-items-center justify-content-start">
+                                    <div class="feature_title"><i class="fa fa-usd" aria-hidden="true"></i><span>Precio
+                                            Persona Externa:</span></div>
+                                    <div class="feature_text ml-auto">
+                                        <span class="course_price">
+                                            ${{ curso_cele_detalle.precio_persona_externa }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Feature -->
+                                <div class="feature d-flex flex-row align-items-center justify-content-start">
+                                    <div class="feature_title"><i class="fa fa-clock-o"
+                                            aria-hidden="true"></i><span>Duración:</span></div>
+                                    <div class="feature_text ml-auto">
+                                        {{ curso_cele_detalle.duracion }}
+                                    </div>
+                                </div>
+
+                                <!-- Feature -->
+                                <div class="feature d-flex flex-row align-items-center justify-content-start">
+                                    <div class="feature_title"><i class="fa fa-users"
+                                            aria-hidden="true"></i><span>Alumnos:</span></div>
+                                    <div class="feature_text ml-auto">
+                                        {{ curso_cele_detalle.numero_de_alumnos }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Latest Course -->
+                    <div class="sidebar_section">
+                        <div class="sidebar_section_title">Informes</div>
+                        {% include "blog/layouts/contacto-cele-component.html" %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts%}
+<script src="{% static 'unicat/plugins/colorbox/jquery.colorbox-min.js' %}"></script>
+<script src="{% static 'unicat/js/course.js' %}"></script>
+
+<script type="text/javascript">
+    $(document).on('submit', '#form-aspirante-cele', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "blog:form_aspirante_cele" %}',
+            data:
+            {
+                nombre: $("#nombre").val(),
+                email: $("#email").val(),
+                asunto: $("#asunto").val(),
+                mensaje: $("#mensaje").val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (data) {
+                if (data == 'success') {
+                    console.log(data);
+                    $("#form-aspirante-cele").trigger("reset");
+                    $('#success').html(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-check"></i>
+                                            <strong>Mensaje enviado correctamente.</strong>
+                                            <p>¡Gracias por contactarnos! espera nuestra respuesta.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                } 
+                if (data == 'error') {
+                    console.log(data);
+                    $('#error').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-times"></i>
+                                            <strong>Error al enviar el mensaje.</strong>
+                                            <p>Por favor inténtalo de nuevo más tarde.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                }
+                if (data == 'errors') {
+                    console.log(data);
+                    $('#error').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fa fa-times"></i>
+                                            <strong>Error al enviar el mensaje.</strong>
+                                            <p>Verifica que los campos estén llenados correctamente.</p>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>`);
+                }
+            },
+        })
+    });
+</script>
+{% endblock scripts%}

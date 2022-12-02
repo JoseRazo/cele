@@ -23,7 +23,7 @@ class CursoAdmin(admin.ModelAdmin):
     list_filter = ('activo',)
     search_fields = ('nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
-
+    prepopulated_fields = {'slug': ('nombre',)}
 
 class PeriodoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'fecha_inicio', 'fecha_fin', 'activo')
@@ -179,7 +179,6 @@ class ProfesorAdmin(DjangoUserAdmin):
 
     search_fields = ('username', 'email', 'nombre')
     list_filter = ('is_active', 'is_staff')
-
 
 admin.site.register(Curso, CursoAdmin)
 # admin.site.register(Grupo, GrupoAdmin)
