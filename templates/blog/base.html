@@ -7,14 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Educación Continua | {% block title %} {% endblock %}</title>
     {% load static %}
-    <link rel="icon" type="image/x-icon" href="{% static 'unicat/images/favicon.ico' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'unicat/styles/bootstrap4/bootstrap.min.css' %}" />
-    <link href="{% static 'unicat/plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet"
+    <link rel="icon" type="image/x-icon" href="{% static 'blog/unicat/images/favicon.ico' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/unicat/styles/bootstrap4/bootstrap.min.css' %}" />
+    <link href="{% static 'blog/unicat/plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet"
         type="text/css" />
-    <link rel="stylesheet" type="text/css" href="{% static 'unicat/plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/unicat/plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}" />
     <link rel="stylesheet" type="text/css"
-        href="{% static 'unicat/plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'unicat/plugins/OwlCarousel2-2.2.1/animate.css' %}" />
+        href="{% static 'blog/unicat/plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/unicat/plugins/OwlCarousel2-2.2.1/animate.css' %}" />
     {% block styles %} {% endblock %}
 </head>
 
@@ -30,12 +30,12 @@
         {% include "blog/layouts/footer-component.html" %}
     </div>
 
-    <script src="{% static 'unicat/js/jquery-3.2.1.min.js' %}"></script>
-    <script src="{% static 'unicat/styles/bootstrap4/popper.js' %}"></script>
-    <script src="{% static 'unicat/styles/bootstrap4/bootstrap.min.js' %}"></script>
-    <script src="{% static 'unicat/plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
-    <script src="{% static 'unicat/plugins/easing/easing.js' %}"></script>
-    <script src="{% static 'unicat/plugins/parallax-js-master/parallax.min.js' %}"></script>
+    <script src="{% static 'blog/unicat/js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'blog/unicat/styles/bootstrap4/popper.js' %}"></script>
+    <script src="{% static 'blog/unicat/styles/bootstrap4/bootstrap.min.js' %}"></script>
+    <script src="{% static 'blog/unicat/plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
+    <script src="{% static 'blog/unicat/plugins/easing/easing.js' %}"></script>
+    <script src="{% static 'blog/unicat/plugins/parallax-js-master/parallax.min.js' %}"></script>
     {% block scripts%} {% endblock scripts%}
     <script>
         $(document).ready(function () {
