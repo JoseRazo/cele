@@ -75,7 +75,7 @@
             <div class="row">
                 <div class="col">
                     <div class="header_search_content d-flex flex-row align-items-center justify-content-end">
-                        <form action="{% url 'blog:cursos_cele' %}" method="get" class="header_search_form">
+                        <form action="{% url 'blog:cursos_cele_search' %}" method="get" class="header_search_form">
                             <input name="q" class="search_input input_buscar" placeholder="Buscar" />
                             <button
                                 class="header_search_button d-flex flex-column align-items-center justify-content-center btn_buscar">
@@ -99,7 +99,7 @@
         </div>
     </div>
     <div class="search">
-        <form action="{% url 'blog:cursos_cele' %}" method="get" class="header_search_form menu_mm">
+        <form action="{% url 'blog:cursos_cele_search' %}" method="get" class="header_search_form menu_mm">
             <input name="q" class="search_input menu_mm input_buscar" placeholder="Buscar"/>
             <button class="header_search_button d-flex flex-column align-items-center justify-content-center menu_mm btn_buscar">
                 <i class="fa fa-search menu_mm" aria-hidden="true"></i>
