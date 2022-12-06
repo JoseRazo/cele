@@ -17,6 +17,11 @@ Sistema de Gestón de Cursos de Educación Continua de Universidad TEcnológica 
 - Ejecutar migraciones `docker compose run web python manage.py migrate`
 - Crear superusuario **`docker compose run web python manage.py createsuperuser`**
 
+## Cambios en produccion
+- Editar .env DEBUG = FALSE
+- Editar settings.py y agregar STATIC_ROOT = BASE_DIR / 'static_prod/'
+- Ejecutar `docker compose run web python manage.py collectstatic`
+
 ## Abrir proyecto
 
 Abrir navegador y entrar a URL [127.0.0.1:8888](http://127.0.0.1:8080)
