@@ -19,8 +19,9 @@ Sistema de Gestón de Cursos de Educación Continua de Universidad TEcnológica 
 
 ## Cambios en produccion
 - Editar .env DEBUG = FALSE
-- Editar settings.py y agregar STATIC_ROOT = BASE_DIR / 'static_prod/'
+- Editar settings.py y descomentar la linea STATIC_ROOT = BASE_DIR / 'static_prod/'
 - Ejecutar `docker compose run web python manage.py collectstatic`
+- Editar cele/urls.py comentar la linea += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) y descomentar re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
 ## Abrir proyecto
 
