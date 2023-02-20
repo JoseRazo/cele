@@ -180,6 +180,29 @@ class ProfesorAdmin(DjangoUserAdmin):
     search_fields = ('username', 'email', 'nombre')
     list_filter = ('is_active', 'is_staff')
 
+@admin.register(CalificacionCurso)
+class CalificacionCursoAdmin(admin.ModelAdmin):
+    list_display = ('curso_alumno', 'primer_examen', 'segundo_examen', 'calificacion_final')
+    def has_view_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Alumnos CELE'):
+            return True
+        else:
+            return False
+    def has_add_permission(self, request, obj=None):
+        return False
+        
+    def has_change_permission(self, request, obj=None):
+        return False
+        
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name='Alumnos CELE'):
+            return qs.filter(Q(curso_alumno__alumno=request.user))
+        
+
 admin.site.register(Curso, CursoAdmin)
 # admin.site.register(Grupo, GrupoAdmin)
 # admin.site.register(Aula, AulaAdmin)

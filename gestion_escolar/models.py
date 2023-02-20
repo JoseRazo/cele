@@ -125,7 +125,8 @@ class CursoAlumno(models.Model):
         verbose_name_plural = 'Cursos Alumnos'
 
     def __str__(self):
-        return self.alumno.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
+        return self.curso.nombre
+        # return self.alumno.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
 
 
 class CalificacionCurso(models.Model):
@@ -140,6 +141,9 @@ class CalificacionCurso(models.Model):
         _('Fecha de creación'), auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(
         _('Fecha de actualización'), auto_now=True)
+    
+    def __str__(self):
+        return self.curso_alumno.curso.nombre
 
     def save(self):
         self.calificacion_final = (
