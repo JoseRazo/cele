@@ -18,11 +18,28 @@ Sistema de Gestón de Cursos de Educación Continua de Universidad TEcnológica 
 - Crear superusuario **`docker compose run web python manage.py createsuperuser`**
 
 ## Cambios en produccion
-- Editar .env DEBUG = FALSE
-- Editar settings.py y descomentar la linea STATIC_ROOT = BASE_DIR / 'static_prod/'
+- Editar .env
+```sh
+DEBUG = FALSE
+```
+- Editar settings.py
+> **Descomentar las siguientes lineas:**
+```sh
+#STATIC_ROOT = BASE_DIR / 'static_prod/'
+```
+- Editar cele/urls.py
+> **Descomentar las siguientes lineas:**
+```sh
+# from django.urls import re_path
+# from django.views.static import serve
+#re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+```
+> **Comentar las siguientes lineas:**
+```sh
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
 - Ejecutar `docker compose run web python manage.py collectstatic`
-- Editar cele/urls.py comentar la linea += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) y descomentar re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
 ## Abrir proyecto
 
-Abrir navegador y entrar a URL [127.0.0.1:8888](http://127.0.0.1:8080)
+Abrir navegador y entrar a URL [127.0.0.1:8000](http://127.0.0.1:8000)

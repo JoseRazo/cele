@@ -114,6 +114,7 @@ class CursoAlumno(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
+    # grupo = models.ForeignKey('Grupo', on_delete=models.CASCADE, blank=True, null=True)
     inscrito = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(
         _('Fecha de creación'), auto_now_add=True)
@@ -161,7 +162,7 @@ class CalificacionCurso(models.Model):
 #     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
 #     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
 #     aula = models.ForeignKey('Aula', on_delete=models.CASCADE)
-#     alumnos = models.ManyToManyField(Alumno,)
+#     alumnos = models.ManyToManyField(Alumno, related_name='grupo_alumnos', blank=True, through='CursoAlumno')
 #     # alumnos = ChainedManyToManyField(
 #     #     CursoAlumno,
 #     #     related_name='grupo_alumnos',

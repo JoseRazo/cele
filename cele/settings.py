@@ -215,7 +215,7 @@ JAZZMIN_UI_TWEAKS = {
     }
 }
 
-DATABASE_ROUTERS = ['routers.db_routers.AuthRouter',]
+# DATABASE_ROUTERS = ['routers.db_routers.AuthRouter',]
 
 #SMTP OFFICE 365
 EMAIL_HOST = env('EMAIL_HOST')

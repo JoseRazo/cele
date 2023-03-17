@@ -5,13 +5,23 @@ from django.utils.translation import gettext_lazy as _
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin, ExportMixin
 from django.contrib.auth.hashers import make_password
-from .models import Alumno, CalificacionCurso, Profesor, Curso, Periodo, CursoAlumno
+from .models import (
+    Alumno, 
+    CalificacionCurso, 
+    Profesor, 
+    Curso, 
+    Periodo, 
+    CursoAlumno, 
+    # Grupo, 
+    # Aula
+)
 from .forms import (
     AlumnoChangeForm,
     AlumnoCreationForm,
     # ProfesorChangeForm,
     ProfesorCreationForm,
     CalificacionCursoForm,
+    # GrupoCreationForm
 )
 
 # Register your models here.
@@ -31,16 +41,22 @@ class PeriodoAdmin(admin.ModelAdmin):
     search_fields = ('nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
+# class CursoAlumnoInline(admin.StackedInline):
+#     model = CursoAlumno
+#     can_delete = False
+#     # fields = ('alumno',)
+#     # readonly_fields = ('alumno',)
+#     extra = 0
+
 # class GrupoAdmin(admin.ModelAdmin):
+#     inlines = [CursoAlumnoInline,]
 #     form = GrupoCreationForm
 #     filter_horizontal = ('alumnos',)
 #     list_display = ('nombre', 'periodo', 'codigo', 'profesor', 'aula', 'fecha_creacion',)
 #     search_fields = ('nombre', 'codigo', 'profesor__nombre',)
 #     readonly_fields = ('fecha_creacion', 'fecha_actualizacion',)
 #     list_filter = ('curso', 'aula', 'profesor',)
-    # autocomplete_fields = ['profesor', 'aula']
-    # class Media:
-    #     js = ("gestion_escolar/newajax.js",)
+#     autocomplete_fields = ['profesor', 'aula']
 
 # class AulaAdmin(admin.ModelAdmin):
 #     list_display = ('edificio', 'num_aula', 'fecha_creacion',)
@@ -54,10 +70,11 @@ class CursoAlumnoResource(resources.ModelResource):
         fields = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor__nombre', 'periodo__nombre',)
         export_order = ('alumno__nombre', 'alumno__apellido_paterno', 'curso__nombre', 'profesor__nombre', 'periodo__nombre',)
 
-class CalificacionCursoInline(admin.TabularInline):
+class CalificacionCursoInline(admin.StackedInline):
     form = CalificacionCursoForm
     model = CalificacionCurso
-    extra = 1
+    can_delete = False
+    extra = 0
 
 
 class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
