@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'import_export',
     'pagos',
     'blog',
+    'certificados',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
