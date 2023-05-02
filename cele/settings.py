@@ -18,6 +18,7 @@ import environ
 
 # environ settings
 env = environ.Env()
+# environ.Env.read_env()
 
 # modificar el path para que se puedan crear apps en subdirectorios
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -27,10 +28,10 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = env.str('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DJANGO_DEBUG = env.bool('DJANGO_DEBUG', default=False)
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
 ALLOWED_HOSTS = tuple(env.list('ALLOWED_HOSTS', default=[]))
 
@@ -215,7 +216,7 @@ JAZZMIN_UI_TWEAKS = {
     }
 }
 
-DATABASE_ROUTERS = ['routers.db_routers.AuthRouter',]
+# DATABASE_ROUTERS = ['routers.db_routers.AuthRouter',]
 
 #SMTP OFFICE 365
 # EMAIL_HOST = env('EMAIL_HOST')
