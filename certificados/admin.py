@@ -9,19 +9,19 @@ from .models import (
 # Register your models here.
 
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ('nombre',)
+    list_display = ('nombre', 'logo', 'fecha_creacion', 'fecha_actualizacion',)
     search_fields = ('nombre',)
 
 class DocumentoAdmin(admin.ModelAdmin):
-    list_display = ('nombre',)
-    search_fields = ('nombre',)
+    list_display = ('tipo', 'fecha_creacion', 'fecha_actualizacion',)
+    search_fields = ('tipo',)
 
 class CertificadoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'titulo', 'firma', 'sello',)
+    list_display = ('nombre', 'empresa', 'titulo', 'tipo', 'firma', 'sello', 'fecha_creacion', 'fecha_actualizacion',)
     search_fields = ('nombre',)
 
 class LogoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'imagen',)
+    list_display = ('nombre', 'imagen', 'fecha_creacion', 'fecha_actualizacion',)
     search_fields = ('nombre',)
 
 admin.site.register(Empresa, EmpresaAdmin)
