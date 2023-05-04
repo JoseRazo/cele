@@ -24,6 +24,10 @@
         </section>
 
         <section class="mt-10">
+            {% if form.errors %}
+            <div class="alert alert-danger"><p>Tu usuario y contraseña no coinciden. Porfavor intenta otra vez</p>
+            </div>
+            {% endif %}
             <form class="flex flex-col" method="post" >
                 {% csrf_token %}
                 <div class="mb-6 pt-3 rounded ">

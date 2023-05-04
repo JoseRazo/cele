@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib import messages
@@ -23,15 +24,14 @@ def login_view(request):
             return redirect("certificados:dashboard")
         else:
             messages.error(request, """Por favor introduzca un nombre de usuario y
-                        contraseña correctos.
-                        Si aún no estás registrado haz clic en el enlace de abajo Regístrate Aquí.""")
+                        contraseña correctos.""")
             return redirect('certificados:login')
     context = {
         'form': form,
     }
     return render(request, 'registration/login.html', context)
 
-    
+ 
 
 def logout_view(request):
     auth_logout(request)
@@ -42,6 +42,11 @@ def logout_view(request):
 @login_required
 def dash_view(request):
     return render(request,"certificados/dashboard.html")
+
+
+
+
+
 
 
 
