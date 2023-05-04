@@ -17,5 +17,9 @@ class Migration(migrations.Migration):
                 ('nombre', models.CharField(max_length=30)),
                 ('logo', models.ImageField(blank=True, default='default-image-certi-770x433.png', help_text='El tamaño de la imagen debe ser de 770 x 436 pixeles', null=True, upload_to='certificados')),
             ],
+            options={
+                'verbose_name': 'Certificado',
+                'verbose_name_plural': 'Certificados',
+            },
         ),
     ]
