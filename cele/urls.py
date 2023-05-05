@@ -36,9 +36,6 @@ urlpatterns = [
     path('chaining/', include('smart_selects.urls')),
     path('', include('certificados.urls')),
     
-    
-    
-    
     #re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
