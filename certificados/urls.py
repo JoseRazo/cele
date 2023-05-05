@@ -10,5 +10,6 @@ app_name='certificados'
 urlpatterns = [
     path('login/', login_view, name="login"),
     path('dashboard/', dash_view, name="dashboard"),
+    path('logout/', logout_view, name="logout"),
     
 ]
