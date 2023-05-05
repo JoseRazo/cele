@@ -17,4 +17,6 @@ COPY . /code/
 COPY ./requirements.txt /code/
 WORKDIR /code
 RUN pip install --no-cache-dir -r requirements.txt
+RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN pip install reportlab==3.5.67
 EXPOSE 8000
