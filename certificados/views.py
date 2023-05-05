@@ -5,11 +5,14 @@ from django.contrib import messages
 from .forms import LoginForm
 
 
-from django.http import FileResponse
+from django.http import HttpResponse, FileResponse
+import os
 import io
+from pathlib import Path
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
 
 # Generar PDF
 def pdfgenerator(request):
@@ -17,6 +20,15 @@ def pdfgenerator(request):
     buf = io.BytesIO()
     # Create a canvas
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+
+    # Create a Image object
+
+    BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+    STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+    bg = STATIC_ROOT + "img/template_certi.png"
+
+
     # Create a text object
     textob = c.beginText()
     textob.setTextOrigin(inch, inch)
@@ -34,6 +46,7 @@ def pdfgenerator(request):
         textob.textLine(line)
 
     # Finish up
+    c.drawInlineImage(bg, 0, 0, width=250, height=500)
     c.drawText(textob)
     c.showPage()
     c.save()
