@@ -34,7 +34,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" >
                 <img src="/static/img/logo_uts.png" class="logo_uts" >
-                <div class="sidebar-brand-text mx-3">Cele </div>
+                <div class="sidebar-brand-text mx-3">EdCon </div>
                 
             </a>
             
@@ -94,7 +94,7 @@
             <hr class="sidebar-divider d-none d-md-block">
 
             <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
+            <div class=" d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
@@ -279,7 +279,7 @@
                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Perfile
+                                    Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -299,15 +299,15 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Certificados</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
+                        <h1 class="h3 mb-0 text-gray-800">Mis Cursos</h1>
+                        <a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>                <!--BOTON PARA IMPRIMIR PDF-->   
                     </div>
 
                     <!-- Content Row -->
                    <!-- <div class="row">
 
-            <!--  Earnings (Monthly) Card Example 
+             Earnings (Monthly) Card Example 
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
@@ -588,17 +588,7 @@
                         <div class="col-lg-6 mb-4">
 
                             <!-- Illustrations -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Obtenidos</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        
-                                    </div>
-                                  
-                                </div>
-                            </div>
+                           
 
                             <!-- Approach -->
                         <!--    <div class="card shadow mb-4">
@@ -619,6 +609,21 @@
                     </div>
 
                 </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Obtenidos</h6>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="text-center">
+                            <h5 class="datosalumno">Nombre del alumno: </h5>
+
+     
+                                                   
+                        </div>
+                      
+                    </div>
+                </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -627,8 +632,8 @@
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                    <div class="copyright  my-auto">
+                        <span></span>
                     </div>
                 </div>
             </footer>
@@ -656,9 +661,9 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Si realmente desea salir presione "Salir" si no da click en "Cancelar"</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
 
                     <a class="btn btn-primary" href="{%url 'certificados:logout'%}">Salir</a>
                     

@@ -21,3 +21,5 @@ class AlumnosCursoList(APIView):
         else:
             alumno_grupo={}
         return JsonResponse(data=alumno_grupo, safe=False)
+
+

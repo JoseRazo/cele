@@ -5,11 +5,15 @@ from django.contrib import messages
 from .forms import LoginForm
 
 
+
+
 from django.http import FileResponse
 import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+
+
 
 # Generar PDF
 def pdfgenerator(request):
@@ -79,6 +83,16 @@ def logout_view(request):
 @login_required
 def dash_view(request):
     return render(request,"certificados/dashboard.html")
+
+ 
+
+
+
+  
+
+
+
+
 
 
 
