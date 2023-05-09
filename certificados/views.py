@@ -79,10 +79,18 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+def profile_user(request):
+    return render(request,"certificados/profile.html")  
 
 @login_required
 def dash_view(request):
     return render(request,"certificados/dashboard.html")
+
+
+
+
+
+  
 
  
 

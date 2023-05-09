@@ -1,0 +1,29 @@
+.portfolio-card {
+    margin-bottom: 30px;
+  }
+  
+  .mdl-card__title {
+    padding: 24px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 24px;
+  }
+  
+  .mdl-card__supporting-text {
+    padding: 16px;
+    font-size: 16px;
+  }
+  
+  .mdl-button {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .mdl-button:hover {
+    background-color: #3E8E41;
+  }
+  
