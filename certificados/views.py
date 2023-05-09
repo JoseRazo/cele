@@ -3,7 +3,7 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import LoginForm
-from gestion_escolar.models import CursoAlumno, Periodo
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo
 
 from django.http import HttpResponse
 from pathlib import Path
@@ -31,6 +31,8 @@ def pdfgenerator(request):
     add_background(c, bg_path)
 
     # Obtención de datos
+    curso_alumno = CursoAlumno.objects.all().filter(alumno=request.user)
+
     alumno = []
     for obj in CursoAlumno.objects.all():
         alumno.append(obj.alumno)
@@ -45,10 +47,10 @@ def pdfgenerator(request):
 
 
     # Agrega contenido al PDF.
-    text_nombre = str(alumno)
+    text_nombre = str(request.user)
     text_subtitulo = str(curso)
     text_fecha = "Salamanca, Gto., a " + str(fecha_termino) 
-    
+
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
@@ -97,6 +99,16 @@ def pdfgenerator(request):
     return response
 
 
+# 
+
+@login_required
+def mostrar_cursos(request):
+    curso_list = CursoAlumno.objects.all()
+
+    return render(request, 'certificados/mis_cursos.html',
+                  {'curso_list': curso_list}) 
+
+
  
 # Create your views here.
 
@@ -128,6 +140,8 @@ def logout_view(request):
     auth_logout(request)
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
+
+
 
 
 @login_required
