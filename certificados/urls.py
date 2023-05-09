@@ -15,8 +15,6 @@ urlpatterns = [
     path('dashboard/', dash_view, name="dashboard"),
     path('dashboard/profile/', profile_user, name="profile"),
     path('logout/', logout_view, name="logout"),
-
-    
     
 ]
 

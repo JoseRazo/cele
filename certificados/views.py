@@ -3,48 +3,110 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import LoginForm
-
-
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo
 
 
 from django.http import FileResponse
 import io
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import HexColor
 
-
+def add_background(canvas, image_path):
+    canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
 # Generar PDF
 def pdfgenerator(request):
-    # Create Bytestream buffer
-    buf = io.BytesIO()
-    # Create a canvas
-    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
-    # Create a text object
-    textob = c.beginText()
-    textob.setTextOrigin(inch, inch)
-    textob.setFont("Helvetica", 14)
+    # Crea un objeto BytesIO para almacenar el PDF generado.
+    buffer = BytesIO()
 
-    # Add some lines of text
+    # Crea un objeto canvas de ReportLab para generar el PDF.
+    c = canvas.Canvas(buffer, pagesize=letter)
+
+    # Agrega la imagen de fondo al PDF.
+    BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+    STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+    bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
+    add_background(c, bg_path)
+
+    # Obtención de datos
+    curso_alumno = CursoAlumno.objects.all().filter(alumno=request.user)
+
+    alumno = []
+    for obj in CursoAlumno.objects.all():
+        alumno.append(obj.alumno)
+
+    curso = []
+    for obj in CursoAlumno.objects.all():
+        curso.append(obj.curso)
+
+    fecha_termino = []
+    for obj in CursoAlumno.objects.all():
+        fecha_termino.append(obj.periodo.fecha_fin)
+
+
+    # Agrega contenido al PDF.
+    text_nombre = str(request.user)
+    text_subtitulo = str(curso)
+    text_fecha = "Salamanca, Gto., a " + str(fecha_termino) 
+
+    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
+    x = (letter[0] - text_width) / 2
+    y = letter[1] / 2.25
+
+    # Pasada 1: Nombre del Alumno
+    c.setFont("Helvetica-Bold", 16)
+    c.setFillColor(HexColor('#204089'))
+    c.drawString(x, y, text_nombre)
+
+    # Pasada 2: Motivo de la constancia
     lines = [
-        "Hola",
-        "Mundo",
-        "XD",
+        "Por haber concluido satisfactoriamente el curso " + text_subtitulo,
+        "impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
     ]
+    
+    textob = c.beginText()
 
-    # Loop
+    text_width = c.stringWidth(lines[0], "Helvetica", 14)
+    x = (letter[0] - text_width) / 2
+
+    textob.setTextOrigin(x, (letter[1] / 2.5))
+    textob.setFont("Helvetica", 14)
+    textob.setFillColor(HexColor('#8d8989'))
     for line in lines:
         textob.textLine(line)
+        c.drawText(textob)
+        text_width = c.stringWidth(lines[1], "Helvetica", 14)
+        x = (letter[0] - text_width) / 2
+        textob.setTextOrigin(x, (letter[1] / 2.65))
 
-    # Finish up
-    c.drawText(textob)
+    # Pasada 3: Fecha de Término 
+    text_width = c.stringWidth(text_fecha, "Helvetica", 10)
+    x = (letter[0] - text_width) / 2
+    c.setFont("Helvetica", 10)
+    c.setFillColor(HexColor('#9f9b9b'))
+    c.drawString(x, (letter[1] / 3.04), text_fecha)
+
+    # Finaliza el PDF.
     c.showPage()
     c.save()
-    buf.seek(0)
 
-    # Return
-    return FileResponse(buf, as_attachment=True, filename='prueba.pdf')
+    # Lee los contenidos del BytesIO y devuelve una respuesta HTTP con el PDF generado.
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
+    return response
+
+
+# 
+
+@login_required
+def mostrar_cursos(request):
+    curso_list = CursoAlumno.objects.all()
+
+    return render(request, 'certificados/mis_cursos.html',
+                  {'curso_list': curso_list}) 
 
 
  
@@ -81,6 +143,8 @@ def logout_view(request):
 
 def profile_user(request):
     return render(request,"certificados/profile.html")  
+
+
 
 @login_required
 def dash_view(request):
