@@ -1,11 +1,13 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
-
-from django.http import HttpResponse
+from django.http import FileResponse
+import io
 from pathlib import Path
 import os
 from io import BytesIO
@@ -13,10 +15,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
+from reportlab.lib.colors import blue
+
+# Create your views here.
 
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
+# Generar PDF
 def pdfgenerator(request):
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
@@ -98,20 +104,14 @@ def pdfgenerator(request):
     response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
     return response
 
-
-# 
-
 @login_required
 def mostrar_cursos(request):
-    print(request.user.id)
-    curso_list = CursoAlumno.objects.filter(alumno=str(request.user)).values()
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
 
     return render(request, 'certificados/mis_cursos.html',
                   {'curso_list': curso_list})
 
-
- 
-# Create your views here.
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -142,12 +142,30 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+def profile_user(request):
+    return render(request,"certificados/profile.html")  
 
 
 
 @login_required
 def dash_view(request):
     return render(request,"certificados/dashboard.html")
+
+
+
+
+
+  
+
+ 
+
+
+
+  
+
+
+
+
 
 
 

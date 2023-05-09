@@ -1,0 +1,27 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} Perfil {% endblock %}
+
+{% load static %}
+
+{% block content %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Mi Informacion</h1>
+    <a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
+    <!--BOTON PARA IMPRIMIR PDF-->
+</div>
+
+
+
+<div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+
+    <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text">{{text_nombre.alumno}}</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+
+    </div><br>
+</div>
+{% endblock %}
