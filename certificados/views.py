@@ -103,10 +103,11 @@ def pdfgenerator(request):
 
 @login_required
 def mostrar_cursos(request):
-    curso_list = CursoAlumno.objects.all()
+    print(request.user.id)
+    curso_list = CursoAlumno.objects.filter(alumno=str(request.user)).values()
 
     return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list}) 
+                  {'curso_list': curso_list})
 
 
  
