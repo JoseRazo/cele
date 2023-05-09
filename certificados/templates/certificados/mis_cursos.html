@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Cursos</title>
+</head>
+<body>
+
+    {% block content %}
+
+    <h1>Mis Cursos</h1>
+    <ul>
+    {% for curso in curso_list %}
+        <ul>
+            <li>{{ curso.alumno }}</li>
+            <li>{{ curso.curso }}</li>
+            <li>{{ curso.periodo }}</li>
+            <li>{{ curso.profesor }}</li>
+            <li>{{ curso.inscrito }}</li>
+            <a href="{% url 'certificados:pdfgenerator' %}">Generar PDF</a>
+        </ul>
+        <br>
+    {% endfor %}
+    </ul>
+
+{% endblock %}
+    
+</body>
+</html>
