@@ -7,6 +7,7 @@ from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from sistema.models import Estado, Ciudad, Colonia
 
 
+
 # Create your models here.
 
 class Alumno(Usuario):
