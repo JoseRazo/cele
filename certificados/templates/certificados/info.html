@@ -1,0 +1,16 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} Informacion {% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="info-card">
+    {% for curso in curso_list %}
+    <div class="card_titleInfo">
+        <p>{{curso.curso}}</p>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

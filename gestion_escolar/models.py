@@ -81,7 +81,7 @@ class Curso(models.Model):
         _('Precio Persona Externa'), max_digits=6, decimal_places=2)
     activo = models.BooleanField(default=True)
     imagen = models.ImageField(
-        default='default-image-curso-770x433.png', upload_to='cursos', help_text="El tamaño de la imagen debe ser de 770 x 436 pixeles", blank=True, null=True)
+        default='', upload_to='cursos', help_text="El tamaño de la imagen debe ser de 770 x 436 pixeles", blank=True, null=True)
     slug=models.SlugField(null=True, unique=True)
     fecha_creacion = models.DateTimeField(
         _('Fecha de creación'), auto_now_add=True)
@@ -115,6 +115,7 @@ class CursoAlumno(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
+   
     # grupo = models.ForeignKey('Grupo', on_delete=models.CASCADE, blank=True, null=True)
     inscrito = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(

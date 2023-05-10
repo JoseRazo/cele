@@ -108,9 +108,11 @@ def pdfgenerator(request):
 def mostrar_cursos(request):
     usuario = request.user
     curso_list = CursoAlumno.objects.filter(alumno=usuario)
+   
 
-    return render(request, 'certificados/mis_cursos.html',
+    return render(request, 'certificados/m.html',
                   {'curso_list': curso_list}) 
+
 
 
 def login_view(request):
@@ -143,13 +145,24 @@ def logout_view(request):
     return redirect('certificados:login')
 
 def profile_user(request):
-    return render(request,"certificados/profile.html")  
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+    return render(request,"certificados/profile.html" , {'curso_list': curso_list})  
+
+
+def curso_info(request):
+    
+    return render(request, "certificados/info.html")
+
 
 
 
 @login_required
 def dash_view(request):
-    return render(request,"certificados/dashboard.html")
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+   
+    return render(request,"certificados/dashboard.html", {'curso_list': curso_list})
 
 
 
