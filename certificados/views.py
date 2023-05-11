@@ -25,7 +25,7 @@ def add_background(canvas, image_path):
 
 # Generar PDF
 @login_required
-def pdfgenerator(request, curso_id):
+def pdfgen(request, curso_id, firma):
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 
@@ -33,11 +33,17 @@ def pdfgenerator(request, curso_id):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-    BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-    STATIC_ROOT = os.path.join(BASE_DIR, "media/")
-    bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
-    add_background(c, bg_path)
 
+    if firma == 'True':
+        BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+        STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+        bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
+        add_background(c, bg_path)
+    else:
+        BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+        STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+        bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
+        add_background(c, bg_path)
     # Obtención de datos
 
     ## Nombre del Curso
@@ -66,7 +72,7 @@ def pdfgenerator(request, curso_id):
     fecha += " de " + meses[curso.periodo.fecha_fin.strftime("%B")]
     fecha += " del " + curso.periodo.fecha_fin.strftime("%Y")
 
-    
+
     # Agrega contenido al PDF.
     text_nombre = str(request.user)
     text_subtitulo =  str(curso)
@@ -117,6 +123,7 @@ def pdfgenerator(request, curso_id):
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
     return response
+
 
 @login_required
 def listar_cursos(request):
