@@ -19,11 +19,13 @@ from reportlab.lib.colors import blue
 
 # Create your views here.
 
+
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
 # Generar PDF
-def pdfgenerator(request):
+@login_required
+def pdfgenerator(request, curso_id):
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 
@@ -37,26 +39,38 @@ def pdfgenerator(request):
     add_background(c, bg_path)
 
     # Obtención de datos
-    curso_alumno = CursoAlumno.objects.all().filter(alumno=request.user)
 
-    alumno = []
-    for obj in CursoAlumno.objects.all():
-        alumno.append(obj.alumno)
+    ## Nombre del Curso
+    curso = CursoAlumno.objects.get(pk=curso_id)
 
-    curso = []
-    for obj in CursoAlumno.objects.all():
-        curso.append(obj.curso)
+    ## Fecha de Inicio y de Término
+    meses = {
+        "January": "enero",
+        "February": "febrero",
+        "March": "marzo",
+        "April": "abril",
+        "May": "mayo",
+        "June": "junio",
+        "July": "julio",
+        "August": "agosto",
+        "September": "septiembre",
+        "October": "octubre",
+        "November": "noviembre",
+        "December": "diciembre",
+    }
 
-    fecha_termino = []
-    for obj in CursoAlumno.objects.all():
-        fecha_termino.append(obj.periodo.fecha_fin)
+    fecha = curso.periodo.fecha_inicio.strftime("%d")
+    fecha += " de " + meses[curso.periodo.fecha_inicio.strftime("%B")]
+    fecha += " del " + curso.periodo.fecha_inicio.strftime("%Y")
+    fecha += " al " + curso.periodo.fecha_fin.strftime("%d")
+    fecha += " de " + meses[curso.periodo.fecha_fin.strftime("%B")]
+    fecha += " del " + curso.periodo.fecha_fin.strftime("%Y")
 
-
+    
     # Agrega contenido al PDF.
     text_nombre = str(request.user)
-    text_subtitulo = str(curso)
-    text_fecha = "Salamanca, Gto., a " + str(fecha_termino) 
-
+    text_subtitulo =  str(curso)
+    text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
@@ -68,7 +82,7 @@ def pdfgenerator(request):
 
     # Pasada 2: Motivo de la constancia
     lines = [
-        "Por haber concluido satisfactoriamente el curso " + text_subtitulo,
+        "Por haber concluido satisfactoriamente el curso \"" + text_subtitulo +"\"",
         "impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
     ]
     
@@ -105,12 +119,19 @@ def pdfgenerator(request):
     return response
 
 @login_required
-def mostrar_cursos(request):
+def listar_cursos(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+    curso_list = CursoAlumno.objects.filter(alumno=usuario, inscrito=True)
 
     return render(request, 'certificados/mis_cursos.html',
                   {'curso_list': curso_list})
+
+@login_required
+def mostrar_curso(request, curso_id):
+    selcurso = CursoAlumno.objects.get(pk=curso_id)
+
+    return render(request, 'certificados/mis_cursos_detail.html',
+                  {'selcurso': selcurso})
 
 
 def login_view(request):
