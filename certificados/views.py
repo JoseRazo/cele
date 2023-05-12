@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from usuarios.models import Usuario
 from django.http import FileResponse
 import io
 from pathlib import Path
@@ -16,6 +17,12 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.colors import blue
+
+from .forms import ProfileForm
+
+
+
+
 
 # Create your views here.
 
@@ -128,10 +135,11 @@ def pdfgen(request, curso_id, firma):
 @login_required
 def listar_cursos(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario, inscrito=True)
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+   
 
-    return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list})
+    return render(request, 'certificados/m.html',
+                  {'curso_list': curso_list}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
@@ -139,6 +147,7 @@ def mostrar_curso(request, curso_id):
 
     return render(request, 'certificados/mis_cursos_detail.html',
                   {'selcurso': selcurso})
+
 
 
 def login_view(request):
@@ -170,14 +179,41 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+
+
 def profile_user(request):
-    return render(request,"certificados/profile.html")  
+    usuario = request.user
+    alumno = Alumno.objects.get(username=usuario.username)
+
+    print(alumno.nombre)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=alumno)
+        if form.is_valid():
+            form.save()
+            return redirect('certificados:profile')  # Redirige a la página de perfil actualizada
+    else:
+        form = ProfileForm(instance=alumno)
+
+    return render(request, "certificados/profile.html", {'form': form, 'alumno': alumno})
+
+def curso_info(request):
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario) 
+    return render(request, "certificados/info.html", {'curso_list': curso_list})
+
 
 
 
 @login_required
 def dash_view(request):
-    return render(request,"certificados/dashboard.html")
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+   
+    return render(request,"certificados/dashboard.html", {'curso_list': curso_list})
+
+
+
 
 
 

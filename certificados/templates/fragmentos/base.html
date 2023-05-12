@@ -7,11 +7,10 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-
     <!-- Custom styles for this template-->
     <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/cards.css">
-
+    <link rel="stylesheet" href="/static/css/dash.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,8 +74,17 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                                {% if alumno.avatar %}
+                                <img class="img-profile rounded-circle" src="{{ alumno.avatar.url }}">
+                                {% else %}
+                                <img class="img-profile rounded-circle"
+                                    src="/media/avatar/pngtree-business-male-user-avatar-vector-png-image_1511454.jpg">
+                                {% endif %}
+
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.nombre }}</span>
                                 <img class="img-profile rounded-circle" src="/static/img/undraw_profile.svg">
+
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -115,13 +123,7 @@
     <!-- End of Main Content -->
 
     <!-- Footer -->
-    <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-            <div class="copyright  my-auto">
-                <span></span>
-            </div>
-        </div>
-    </footer>
+
     <!-- End of Footer -->
 
     </div>
@@ -143,7 +145,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">¿Seguro que deseas cerrar sesion ?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">Si realmente desea salir presione "Salir" si no da click en "Cancelar"</div>
