@@ -8,10 +8,6 @@ from django.conf.urls.static import static
 
 
 
-
-
-
-
 app_name='certificados'
 
 urlpatterns = [
