@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import CursoAlumno, CalificacionCurso
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from usuarios.models import Usuario
+
 from django.http import FileResponse
 import io
 from pathlib import Path
@@ -17,7 +20,6 @@ from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.colors import blue
 import base64
-
 # Create your views here.
 
 
@@ -136,10 +138,11 @@ def pdfgen(request, curso_id, firma):
 @login_required
 def listar_cursos(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario, inscrito=True)
+    curso_list = CursoAlumno.objects.filter(alumno=usuario)
+   
 
     return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list})
+                  {'curso_list': curso_list}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
@@ -147,46 +150,6 @@ def mostrar_curso(request, curso_id):
 
     return render(request, 'certificados/mis_cursos_detail.html',
                   {'selcurso': selcurso})
-
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('certificados:dashboard')
-    form = LoginForm(request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        usuario = authenticate(request, username=username, password=password)
-        if usuario is not None:
-            auth_login(request, usuario)
-            if 'next' in request.GET:
-                return redirect(request.GET['next'])
-            return redirect("certificados:dashboard")
-        else:
-            messages.error(request, """Por favor introduzca un nombre de usuario y
-                        contraseña correctos.""")
-            return redirect('certificados:login')
-    context = {
-        'form': form,
-    }
-    return render(request, 'registration/login.html', context)
-
- 
-
-def logout_view(request):
-    auth_logout(request)
-    # Redirigir a la página de inicio o cualquier otra página deseada después del logout
-    return redirect('certificados:login')
-
-def profile_user(request):
-    return render(request,"certificados/profile.html")  
-
-
-
-@login_required
-def dash_view(request):
-    return render(request,"certificados/dashboard.html")
-
 
 
 

@@ -9,22 +9,52 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
 </div>
-<div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
-    <div class="mdl-card__media">
-        <img class="article-image" src="" border="0" alt="">
+<div class="mdl-grid">
+    {% for curso in curso_list %}
+    <div class="mdl-cell mdl-card mdl-shadow--4dp card">
+        
+        <div class="mdl-card__media">
+            <img class="article-image" src="{{ curso.curso.imagen.url }}">
+        </div>
+        <!-- 
+            {% if curso.curso.imagen.url == not null %}  
+            <div class="mdl-card__media">
+            <img class="article-image" src="{{ curso.curso.imagen.url }}">
+        </div>
+        {% else %}
+        <div class="mdl-card__media">
+            <img class="article-image" src="/media/cursos/default-image-curso-770x433.png">
+        </div>
+        {% endif %}-->
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">{{ curso.curso }}</h2>
+        </div>
+
+        <div class="mdl-card__supporting-text">
+            <table>
+                <tr>
+                    <td class="status">Estatus de Inscripcion:</td>
+                    <td>
+                        
+                        {% if curso.inscrito %}
+                        Inscrito
+                        {% else %}
+                        No inscrito
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="status">Duracion</td>
+                    <td>{{ curso.curso.duracion }}</td>
+
+                </tr>
+            </table>
+        </div><br>
+        <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
+                href="{%url 'certificados:info'%}">Leer más</a></p>
     </div>
-    <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text">Rocky Peak</h2>
-    </div>
-    <div class="mdl-card__supporting-text">
-        Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure
-        enim nostrud aliqua consectetur ad consectetur sunt..
-    </div><br>
-    <div class="mdl-card__actions mdl-card--border">
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent"
-            href="portfolio-page.html">
-            Learn More
-        </a>
-    </div>
+    {% endfor %}
 </div>
+
+
 {% endblock %}

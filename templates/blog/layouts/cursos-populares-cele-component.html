@@ -19,7 +19,7 @@
             <!-- Course -->
             <div class="col-lg-4 course_col">
                 <div class="course">
-                    <div class="course_image"><a href="{% url 'blog:curso_cele_detalle' curso.slug %}"><img src="{{ curso.imagen.url }}" alt="{{ curso.nombre }}"></a></div>
+                    <div class="course_image"><a href="{% url 'blog:curso_cele_detalle' curso.slug %}"><img src="{{ curso.curso.imagen.url }}" alt="{{ curso.nombre }}"></a></div>
                     <div class="course_body">
                         <h3 class="course_title"><a href="{% url 'blog:curso_cele_detalle' curso.slug %}">{{ curso.nombre }}</a></h3>
                         <div class="course_text">

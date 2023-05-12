@@ -13,7 +13,7 @@
     {% endif %} -->
     {% for curso in curso_list %}
     <div class="tarjeta">
-        <a class="link" href="{% url 'certificados:mis_cursos_detail' curso.id %}"></a>
+        <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
         <div class="tarjeta-imagen">
             <img src="{{ curso.curso.imagen.url}}" alt="">
         </div>
