@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
+
 class Empresa(models.Model):
     nombre = models.CharField(max_length=145)
     imagen = models.ImageField(upload_to='certificados')

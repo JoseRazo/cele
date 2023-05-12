@@ -11,6 +11,7 @@ from django.conf.urls.static import static
 
 
 
+
 app_name='certificados'
 
 urlpatterns = [
@@ -21,7 +22,14 @@ urlpatterns = [
     path('pdfgenerator', pdfgenerator, name="pdfgenerator"),
     path('mis_cursos/', mostrar_cursos, name="mis_cursos"),
     path('dashboard/info', curso_info, name="info")
+    
  
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+
+
 

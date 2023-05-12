@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from usuarios.models import Usuario
 from django.http import FileResponse
 import io
 from pathlib import Path
@@ -16,6 +17,12 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.colors import blue
+
+from .forms import ProfileForm
+
+
+
+
 
 # Create your views here.
 
@@ -144,15 +151,28 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+
+
 def profile_user(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario)
-    return render(request,"certificados/profile.html" , {'curso_list': curso_list})  
+    alumno = Alumno.objects.get(username=usuario.username)
 
+    print(alumno.nombre)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=alumno)
+        if form.is_valid():
+            form.save()
+            return redirect('certificados:profile')  # Redirige a la página de perfil actualizada
+    else:
+        form = ProfileForm(instance=alumno)
+
+    return render(request, "certificados/profile.html", {'form': form, 'alumno': alumno})
 
 def curso_info(request):
-    
-    return render(request, "certificados/info.html")
+    usuario = request.user
+    curso_list = CursoAlumno.objects.filter(alumno=usuario) 
+    return render(request, "certificados/info.html", {'curso_list': curso_list})
 
 
 
@@ -163,6 +183,9 @@ def dash_view(request):
     curso_list = CursoAlumno.objects.filter(alumno=usuario)
    
     return render(request,"certificados/dashboard.html", {'curso_list': curso_list})
+
+
+
 
 
 

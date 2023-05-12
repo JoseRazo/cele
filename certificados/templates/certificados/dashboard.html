@@ -11,45 +11,49 @@
 
     <!--BOTON PARA IMPRIMIR PDF-->
 </div>
-
-
 <div class="mdl-grid">
     {% for curso in curso_list %}
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
-
+        
         <div class="mdl-card__media">
-            <img class="article-image" src="{{ curso.curso.imagen.url }}" alt="">
+            <img class="article-image" src="{{ curso.curso.imagen.url }}">
         </div>
-
-
+        <!-- 
+            {% if curso.curso.imagen.url == not null %}  
+            <div class="mdl-card__media">
+            <img class="article-image" src="{{ curso.curso.imagen.url }}">
+        </div>
+        {% else %}
+        <div class="mdl-card__media">
+            <img class="article-image" src="/media/cursos/default-image-curso-770x433.png">
+        </div>
+        {% endif %}-->
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text">{{ curso.curso }}</h2>
         </div>
 
         <div class="mdl-card__supporting-text">
             <table>
-
                 <tr>
                     <td class="status">Estatus de Inscripcion:</td>
                     <td>
+                        
                         {% if curso.inscrito %}
-                            Inscrito
+                        Inscrito
                         {% else %}
-                            No inscrito
+                        No inscrito
                         {% endif %}
                     </td>
                 </tr>
-
                 <tr>
                     <td class="status">Duracion</td>
                     <td>{{ curso.curso.duracion }}</td>
-                </tr>
 
+                </tr>
             </table>
         </div><br>
-
-        <p class="descripcion">Descripcion:  {{ curso.curso.descripcion|slice:"199:" }} <a href="{%url 'certificados:info'%}">Leer más</a></p>
-
+        <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
+                href="{%url 'certificados:info'%}">Leer más</a></p>
     </div>
     {% endfor %}
 </div>

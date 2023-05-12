@@ -10,6 +10,7 @@ from sistema.models import Estado, Ciudad, Colonia
 
 # Create your models here.
 
+
 class Alumno(Usuario):
     ESTUDIANTE = 1
     EGRESADO = 2
@@ -20,7 +21,6 @@ class Alumno(Usuario):
         (EGRESADO, 'Egresado UTS'),
         (EXTERNO, 'Persona Externa'),
         (ADMINISTRATIVO, 'Personal Administrativo'),
-
     )
     telefono = models.CharField(max_length=15, null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE,
@@ -33,8 +33,7 @@ class Alumno(Usuario):
     num_exterior = models.CharField(max_length=15, null=True, blank=True)
     num_interior = models.CharField(max_length=15, null=True, blank=True)
     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
-    avatar = models.ImageField(
-        default='default.png', upload_to='avatar', null=True, blank=True)
+    avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
 
     class Meta:
         verbose_name = "Alumno"
@@ -49,6 +48,13 @@ class Alumno(Usuario):
             return f'{self.nombre} {self.apellido_paterno}'
         else:
             return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
+
+    def update_profile_image(self, image):
+        self.avatar = image
+        self.save()
+
+
+
 
 
 class Profesor(Usuario):
