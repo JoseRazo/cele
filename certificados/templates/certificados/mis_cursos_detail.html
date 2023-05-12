@@ -1,16 +1,36 @@
 {% extends 'fragmentos/base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
 
-<h1>{{ selcurso }}</h1>
+<div class="page">
+    <div class="contenido">
+        <h1>{{ selcurso }}</h1>
 
-<div class="testButtons">
-    <a href="{% url 'certificados:pdfgen' selcurso.id True %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF
-    </a>
-    <a href="{% url 'certificados:pdfgen' selcurso.id False %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF sin firma
-    </a>
+        {% if selcurso.curso.descripcion == '' %}
+            <h4>No hay descripción para mostrar.</h4>
+        {% else %}
+            <h4>{{ selcurso.curso.descripcion }}</h4>
+        {% endif %}
+        <label for="">Duración</label>
+        <h6>{{ selcurso.curso.duracion }}</h6>
+        <label for="">Periodo</label> 
+        <h6>{{ selcurso.periodo }}</h6>
+        <h6>Del {{ selcurso.periodo.fecha_inicio}} a {{ selcurso.periodo.fecha_fin }}</h6>
+
+        <div class="testButtons">
+            <a href="{% url 'certificados_back:pdfgen' selcurso.id True %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF
+            </a>
+            <a href="{% url 'certificados_back:pdfgen' selcurso.id False %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF sin firma
+            </a>
+        </div>
+    </div>
+    <div class="imagen">
+        <div class="gradiante"></div>
+        <img src="{{ selcurso.curso.imagen.url }}" alt="">
+    </div>
 </div>
 
 {% endblock %}
