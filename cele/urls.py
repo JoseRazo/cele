@@ -34,7 +34,8 @@ urlpatterns = [
     path('usuarios/', include('usuarios.urls')),
     path('alumnos/', include('gestion_escolar.urls')),
     path('chaining/', include('smart_selects.urls')),
-    path('', include('certificados.urls')),
+    path('', include('certificados.urls_front')),
+    path('', include('certificados.urls_back')),
     
     #re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
