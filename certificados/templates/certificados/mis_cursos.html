@@ -1,31 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Cursos</title>
-</head>
-<body>
+{% extends 'fragmentos/base.html' %}
 
-    {% block content %}
+{% block content %}
 
-    <h1>Mis Cursos</h1>
-    <ul>
+<h1>Mis Cursos</h1>
+
+<link rel="stylesheet" href="/static/css/mis_cursos.css">
+<div class="contenedor-tarjeta">
+    <!-- {% if curso_list == 'Null' %}
+    <div class="no-cursos">
+        <h2>Parece que no te has inscrito a ningún curso.</h2>
+    </div>
+    {% endif %} -->
     {% for curso in curso_list %}
-        <ul>
-            <li>{{ curso.alumno }}</li>
-            <li>{{ curso.curso }}</li>
-            <li>{{ curso.periodo }}</li>
-            <li>{{ curso.profesor }}</li>
-            <li>{{ curso.inscrito }}</li>
-            <a href="{% url 'certificados:pdfgenerator' %}">Generar PDF</a>
-        </ul>
-        <br>
+    <div class="tarjeta">
+        <a class="link" href="{% url 'certificados:mis_cursos_detail' curso.id %}"></a>
+        <div class="tarjeta-imagen">
+            <img src="{{ curso.curso.imagen.url}}" alt="">
+        </div>
+        <div class="tarjeta-content">
+                <h3>{{ curso.curso }}</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="thead">Profesor</td>
+                            <td>{{ curso.profesor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Periodo</td>
+                            <td>{{ curso.periodo }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Estatus</td>
+                            {% if curso.inscrito == True %}
+                                <td>Inscrito</td>
+                            {% endif %}
+                            {% if curso.inscrito == False %}
+                                <td>No Inscrito</td>
+                            {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+            <div class="botonDetalles">
+                Más detalles
+            </div>
+        </div>
+    </div>   
     {% endfor %}
-    </ul>
+</div>
 
 {% endblock %}
-    
-</body>
-</html>
