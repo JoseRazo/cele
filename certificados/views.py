@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from gestion_escolar.models import CursoAlumno, CalificacionCurso
 from django.http import FileResponse
 import io
 from pathlib import Path
@@ -16,6 +16,7 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.colors import blue
+import base64
 
 # Create your views here.
 
@@ -34,20 +35,27 @@ def pdfgen(request, curso_id, firma):
 
     # Agrega la imagen de fondo al PDF.
 
-    if firma == 'True':
-        BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-        STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+    BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+    STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+    
+    if firma == 'True':    
         bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
-        add_background(c, bg_path)
     else:
-        BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-        STATIC_ROOT = os.path.join(BASE_DIR, "media/")
         bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
-        add_background(c, bg_path)
+
+    add_background(c, bg_path)
+
     # Obtención de datos
 
     ## Nombre del Curso
     curso = CursoAlumno.objects.get(pk=curso_id)
+    # cali = CalificacionCurso.objects.get(pk=curso_id)
+
+    datos = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    datos += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+
+    datos = datos.encode()
+    datos = base64.b64encode(datos)
 
     ## Fecha de Inicio y de Término
     meses = {

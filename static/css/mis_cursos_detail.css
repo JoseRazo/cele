@@ -1,0 +1,28 @@
+.page {
+    display: flex;
+    flex-direction: row;
+}
+
+.contenido {
+    width: 100%;
+}
+
+label {
+    font-weight: bold;
+}
+
+.imagen {
+    width: 50%;
+    height: 100vh;
+}
+
+.gradiante {
+    position: absolute;
+    width: 75%;
+    height: 100%;
+    background-image: linear-gradient(to right, rgba(248, 249, 252, 1), transparent);
+}
+
+.imagen img {
+    height: 100%;
+}
