@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http.response import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from gestion_escolar.models import Curso
+from .models import Curso
 
 # Create your views here.
 
@@ -21,5 +21,3 @@ class AlumnosCursoList(APIView):
         else:
             alumno_grupo={}
         return JsonResponse(data=alumno_grupo, safe=False)
-
-

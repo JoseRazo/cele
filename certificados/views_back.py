@@ -22,7 +22,6 @@ from reportlab.lib.colors import blue
 import base64
 # Create your views here.
 
-
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
@@ -47,19 +46,19 @@ def pdfgen(request, curso_id, firma):
 
     add_background(c, bg_path)
 
-    # Obtención de datos
+    ############## Obtención de datos #################
 
-    ## Nombre del Curso
+# Nombre del Curso
     curso = CursoAlumno.objects.get(pk=curso_id)
     # cali = CalificacionCurso.objects.get(pk=curso_id)
 
-    datos = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
-    datos += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
-    datos = datos.encode()
-    datos = base64.b64encode(datos)
+    firmaDigital = cadena.encode()
+    firmaDigital = base64.b64encode(firmaDigital)
 
-    ## Fecha de Inicio y de Término
+# Fecha de Inicio y de Término
     meses = {
         "January": "enero",
         "February": "febrero",
@@ -82,11 +81,16 @@ def pdfgen(request, curso_id, firma):
     fecha += " de " + meses[curso.periodo.fecha_fin.strftime("%B")]
     fecha += " del " + curso.periodo.fecha_fin.strftime("%Y")
 
+    folio = "23-0000"
 
-    # Agrega contenido al PDF.
+
+    ############ Agrega contenido al PDF. ##############
     text_nombre = str(request.user)
     text_subtitulo =  str(curso)
     text_fecha = "Salamanca, Gto., del " + str(fecha)
+    text_folio = "FOLIO: " + str(folio)
+
+
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
@@ -123,6 +127,13 @@ def pdfgen(request, curso_id, firma):
     c.setFont("Helvetica", 10)
     c.setFillColor(HexColor('#9f9b9b'))
     c.drawString(x, (letter[1] / 3.04), text_fecha)
+
+    # Pasada 4: Folio
+    text_width = c.stringWidth(text_fecha, "Helvetica", 11)
+    x = 14
+    c.setFont("Helvetica", 11)
+    c.setFillColor(HexColor('#e40e1a'))
+    c.drawString(x, (letter[1] / 14.05), text_folio)
 
     # Finaliza el PDF.
     c.showPage()
