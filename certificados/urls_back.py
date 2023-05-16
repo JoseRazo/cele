@@ -6,8 +6,6 @@ from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 
-
-
 app_name='certificados_back'
 
 urlpatterns = [
@@ -15,5 +13,4 @@ urlpatterns = [
     path('mis_cursos/', listar_cursos, name="mis_cursos"),
     path('mis_cursos_detail/<curso_id>', mostrar_curso, name="mis_cursos_detail"),
 
-    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

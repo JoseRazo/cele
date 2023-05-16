@@ -5,11 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from sistema.models import Estado, Ciudad, Colonia
-
-
-
-
-# Create your models here.
+from datetime import datetime
 
 
 class Alumno(Usuario):

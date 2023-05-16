@@ -5,8 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
-from gestion_escolar.models import CursoAlumno, CalificacionCurso
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from .models import CertificadoAlumno, Plantilla
+from datetime import datetime
 from usuarios.models import Usuario
 
 from django.http import FileResponse
@@ -22,6 +23,18 @@ from reportlab.lib.colors import blue
 import base64
 # Create your views here.
 
+def incrementarFolio():
+    # if not ultimo_folio:
+    now = datetime.now()
+    folio_def = now.strftime("%y") + '-0001'
+    return folio_def
+    # num_folio = ultimo_folio.folio
+    # int_folio = int(num_folio.split("-")[-1])
+    # nuevo_int_folio = int_folio + 1
+    # nuevo_int_folio = '{0:04d}'.format(nuevo_int_folio)
+    # nuevo_int_folio = ultimo_folio.curso_alumno.periodo.fecha_fin.strftime("%y") +"-"+ str(nuevo_int_folio)
+    # return nuevo_int_folio
+    
 
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
@@ -29,6 +42,24 @@ def add_background(canvas, image_path):
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
+    ultimo_folio = CertificadoAlumno.objects.last()
+    if not ultimo_folio:
+        n_folio = incrementarFolio()
+
+        alumnoCert = CertificadoAlumno(
+        curso_alumno = CursoAlumno.objects.get(pk=curso_id),
+        plantilla = Plantilla.objects.last(),
+        folio = n_folio,
+        firma = "ajsla",
+        cadena = "dadlasñ"
+        )
+        alumnoCert.save()
+    else:
+        print(ultimo_folio.folio)
+
+    
+    # incrementarFolio()
+
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 
@@ -37,29 +68,35 @@ def pdfgen(request, curso_id, firma):
 
     # Agrega la imagen de fondo al PDF.
 
-    BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-    STATIC_ROOT = os.path.join(BASE_DIR, "media/")
+    # BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+    # STATIC_ROOT = os.path.join(BASE_DIR, "media/")
     
-    if firma == 'True':    
-        bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
-    else:
-        bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
+    # if firma == 'True':    
+    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
+    # else:
+    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
+
+    bg_path = CertificadoAlumno.objects.last()
+
+    bg_path = "/code" + bg_path.plantilla.imagen.url
+
+    print(bg_path)
 
     add_background(c, bg_path)
 
-    # Obtención de datos
+    ############## Obtención de datos #################
 
-    ## Nombre del Curso
+# Nombre del Curso
     curso = CursoAlumno.objects.get(pk=curso_id)
     # cali = CalificacionCurso.objects.get(pk=curso_id)
 
-    datos = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
-    datos += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
-    datos = datos.encode()
-    datos = base64.b64encode(datos)
+    firmaDigital = cadena.encode()
+    firmaDigital = base64.b64encode(firmaDigital)
 
-    ## Fecha de Inicio y de Término
+# Fecha de Inicio y de Término
     meses = {
         "January": "enero",
         "February": "febrero",
@@ -82,11 +119,16 @@ def pdfgen(request, curso_id, firma):
     fecha += " de " + meses[curso.periodo.fecha_fin.strftime("%B")]
     fecha += " del " + curso.periodo.fecha_fin.strftime("%Y")
 
+    folio = ""
 
-    # Agrega contenido al PDF.
+
+    ############ Agrega contenido al PDF. ##############
     text_nombre = str(request.user)
     text_subtitulo =  str(curso)
     text_fecha = "Salamanca, Gto., del " + str(fecha)
+    text_folio = "FOLIO: " + str(folio)
+
+
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
@@ -124,6 +166,13 @@ def pdfgen(request, curso_id, firma):
     c.setFillColor(HexColor('#9f9b9b'))
     c.drawString(x, (letter[1] / 3.04), text_fecha)
 
+    # Pasada 4: Folio
+    text_width = c.stringWidth(text_fecha, "Helvetica", 11)
+    x = 14
+    c.setFont("Helvetica", 11)
+    c.setFillColor(HexColor('#e40e1a'))
+    c.drawString(x, (letter[1] / 14.05), text_folio)
+
     # Finaliza el PDF.
     c.showPage()
     c.save()
@@ -146,10 +195,14 @@ def listar_cursos(request):
 
 @login_required
 def mostrar_curso(request, curso_id):
+    usuario = request.user
     selcurso = CursoAlumno.objects.get(pk=curso_id)
 
-    return render(request, 'certificados/mis_cursos_detail.html',
+    if usuario.id == selcurso.alumno_id:
+        return render(request, 'certificados/mis_cursos_detail.html',
                   {'selcurso': selcurso})
+    else:
+        return
 
 
 
