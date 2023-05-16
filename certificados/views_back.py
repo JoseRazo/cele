@@ -44,18 +44,41 @@ def add_background(canvas, image_path):
 def pdfgen(request, curso_id, firma):
     ultimo_folio = CertificadoAlumno.objects.last()
     if not ultimo_folio:
-        n_folio = incrementarFolio()
-
-        alumnoCert = CertificadoAlumno(
-        curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-        plantilla = Plantilla.objects.last(),
-        folio = n_folio,
-        firma = "ajsla",
-        cadena = "dadlasñ"
-        )
-        alumnoCert.save()
+        now = datetime.now()
+        folio_def = now.strftime("%y") + '-0001'
+        print(folio_def)
     else:
-        print(ultimo_folio.folio)
+        certificado_alumno = CertificadoAlumno.objects.get(pk=curso_id)
+        print(certificado_alumno)
+        now = datetime.now()
+        folio_def = ultimo_folio.folio
+        consecutivo = int(folio_def[-4:]) + 1
+        folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+        print(folio_def)
+    
+    # alumnoCert = CertificadoAlumno(
+    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
+    #     plantilla = Plantilla.objects.last(),
+    #     folio = folio_def,
+    #     firma = "ajsla",
+    #     cadena = "dadlasñ"
+    # )
+    # alumnoCert.save()
+
+    # ultimo_folio = CertificadoAlumno.objects.last()
+    # if not ultimo_folio:
+    #     n_folio = incrementarFolio()
+
+    #     alumnoCert = CertificadoAlumno(
+    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
+    #     plantilla = Plantilla.objects.last(),
+    #     folio = n_folio,
+    #     firma = "ajsla",
+    #     cadena = "dadlasñ"
+    #     )
+    #     alumnoCert.save()
+    # else:
+    #     print(ultimo_folio.folio)
 
     
     # incrementarFolio()
