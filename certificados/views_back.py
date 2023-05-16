@@ -42,47 +42,42 @@ def add_background(canvas, image_path):
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
-    ultimo_folio = CertificadoAlumno.objects.last()
-    if not ultimo_folio:
-        now = datetime.now()
-        folio_def = now.strftime("%y") + '-0001'
-        print(folio_def)
+    curso = CursoAlumno.objects.get(pk=curso_id)
+
+    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+
+    firmaDigital = cadena.encode()
+    firmaDigital = base64.b64encode(firmaDigital)
+
+    certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
+    if certificado_alumno:
+        folio = certificado_alumno.folio
+        print(folio)
     else:
-        certificado_alumno = CertificadoAlumno.objects.get(pk=curso_id)
-        print(certificado_alumno)
-        now = datetime.now()
-        folio_def = ultimo_folio.folio
-        consecutivo = int(folio_def[-4:]) + 1
-        folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
-        print(folio_def)
+        ultimo_folio = CertificadoAlumno.objects.last()
+        if not ultimo_folio:
+            now = datetime.now()
+            folio = now.strftime("%y") + '-0001'
+        else:
+            now = datetime.now()
+            folio_anterior = int(ultimo_folio.folio.split('-')[-1])
+            consecutivo = folio_anterior + 1
+            folio = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+
+        # Crea un nuevo registro en CertificadoAlumno con el folio generado
+        certificado_alumno = CertificadoAlumno.objects.create(
+            curso_alumno_id=curso_id,
+            plantilla = Plantilla.objects.last(),
+            folio=folio,
+            firma=firmaDigital,
+            cadena = cadena
+            )
+        print(folio)
+
+    print(certificado_alumno)
     
-    # alumnoCert = CertificadoAlumno(
-    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-    #     plantilla = Plantilla.objects.last(),
-    #     folio = folio_def,
-    #     firma = "ajsla",
-    #     cadena = "dadlasñ"
-    # )
-    # alumnoCert.save()
-
-    # ultimo_folio = CertificadoAlumno.objects.last()
-    # if not ultimo_folio:
-    #     n_folio = incrementarFolio()
-
-    #     alumnoCert = CertificadoAlumno(
-    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-    #     plantilla = Plantilla.objects.last(),
-    #     folio = n_folio,
-    #     firma = "ajsla",
-    #     cadena = "dadlasñ"
-    #     )
-    #     alumnoCert.save()
-    # else:
-    #     print(ultimo_folio.folio)
-
-    
-    # incrementarFolio()
-
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 

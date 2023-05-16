@@ -24,11 +24,15 @@ class DocumentoAdmin(admin.ModelAdmin):
     search_fields = ('tipo',)
 
 class CertificadoAlumnoAdmin(admin.ModelAdmin):
-    list_display = ('curso_alumno', 'plantilla', 'folio', 'firma', 'cadena', 'fecha_creacion', 'fecha_actualizacion',)
+    list_display = ('curso_alumno', 'get_nombre_alumno', 'plantilla', 'folio', 'firma', 'cadena', 'fecha_creacion', 'fecha_actualizacion',)
     search_fields = ('nombre',)
 
+    def get_nombre_alumno(self, obj):
+        return obj.curso_alumno.alumno.nombre_completo()
+    get_nombre_alumno.short_description = 'Alumno'
+
 class PlantillaAlumnoAdmin(admin.ModelAdmin):
-    list_display = ('imagen', 'fecha_creacion', 'fecha_actualizacion')
+    list_display = ('pk', 'imagen', 'fecha_creacion', 'fecha_actualizacion')
 
 admin.site.register(Empresa, EmpresaAdmin)
 admin.site.register(Documento, DocumentoAdmin)
