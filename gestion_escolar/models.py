@@ -5,21 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from sistema.models import Estado, Ciudad, Colonia
+from datetime import datetime
 
-
-
-
-# Create your models here.
-def incrementarFolio():
-    ultimo_folio = CursoAlumno.objects.all().order_by('id').last()
-    if not ultimo_folio:
-         folio_def = ultimo_folio.periodo.fecha_fin.strftime("%y") + '-0001'
-         return folio_def
-    num_folio = ultimo_folio.num_folio
-    int_folio = int(num_folio.split('23')[-1])
-    nuevo_int_folio = int_folio + 1
-    nuevo_int_folio = ultimo_folio.periodo.fecha_fin.strftime("%y") +"-"+ str(nuevo_int_folio)
-    return nuevo_int_folio
 
 class Alumno(Usuario):
     ESTUDIANTE = 1
@@ -131,7 +118,6 @@ class CursoAlumno(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
-    folio = models.CharField(max_length=8, default=incrementarFolio, null=True, blank=True)
    
     # grupo = models.ForeignKey('Grupo', on_delete=models.CASCADE, blank=True, null=True)
     inscrito = models.BooleanField(default=False)

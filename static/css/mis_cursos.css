@@ -50,6 +50,8 @@
 }
 
 .tarjeta-content {
+    width: 100%;
+    height: 100%;
     padding: 10px;
     background-color: transparent;
 }
@@ -90,7 +92,8 @@ td {
 .botonDetalles {
     margin-top: 10px;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
+    align-items: center;
     color: #4268d6;
 }
 

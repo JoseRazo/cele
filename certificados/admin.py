@@ -4,6 +4,8 @@ from .models import (
     Empresa,
     Documento,
     DocumentoLogo,
+    CertificadoAlumno,
+    Plantilla
 )
 
 # Register your models here.
@@ -21,5 +23,14 @@ class DocumentoAdmin(admin.ModelAdmin):
     list_display = ('tipo', 'fecha_creacion', 'fecha_actualizacion',)
     search_fields = ('tipo',)
 
+class CertificadoAlumnoAdmin(admin.ModelAdmin):
+    list_display = ('curso_alumno', 'plantilla', 'folio', 'firma', 'cadena', 'fecha_creacion', 'fecha_actualizacion',)
+    search_fields = ('nombre',)
+
+class PlantillaAlumnoAdmin(admin.ModelAdmin):
+    list_display = ('imagen', 'fecha_creacion', 'fecha_actualizacion')
+
 admin.site.register(Empresa, EmpresaAdmin)
 admin.site.register(Documento, DocumentoAdmin)
+admin.site.register(CertificadoAlumno, CertificadoAlumnoAdmin)
+admin.site.register(Plantilla, PlantillaAlumnoAdmin)
