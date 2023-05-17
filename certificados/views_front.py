@@ -5,12 +5,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from edcon.models import CursoEstudiante, Estudiante
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso
 from usuarios.models import Usuario
 import io
 from pathlib import Path
 import os
 from .forms import ProfileForm
+from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
+
+
+
 
 
 
@@ -28,13 +34,17 @@ def login_view(request):
                 return redirect(request.GET['next'])
             return redirect("certificados:dashboard")
         else:
-            messages.error(request, """Por favor introduzca un nombre de usuario y
-                        contraseña correctos.""")
-            return redirect('certificados:login')
+            error_message = "Por favor introduzca un nombre de usuario y contraseña correctos."
+            context = {
+                'form': form,
+                'error_message': error_message
+            }
+            return render(request, 'registration/login.html', context)
     context = {
         'form': form,
     }
     return render(request, 'registration/login.html', context)
+
 
 
 def logout_view(request):
@@ -43,10 +53,13 @@ def logout_view(request):
     return redirect('certificados:login')
 
 def profile_user(request):
+   
     usuario = request.user
-    alumno = Alumno.objects.get(username=usuario.username)
-
-    print(alumno.nombre)
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        alumno = Estudiante.objects.get(username=usuario.username)
+    else:
+        alumno = Alumno.objects.get(username=usuario.username)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=alumno)
@@ -56,45 +69,45 @@ def profile_user(request):
     else:
         form = ProfileForm(instance=alumno)
 
-    return render(request, "certificados/profile.html", {'form': form, 'alumno': alumno})
+    return render(request, "certificados/profile.html", {'form': form, 'alumno': alumno, 'usuario': usuario})
 
 def curso_info(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario) 
-    return render(request, "certificados/info.html", {'curso_list': curso_list})
+    grupos = request.user.groups.all()
+    curso_list = []
+    calificacion_curso = None
+    estatus_curso = None
+    
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            if curso_list:
+                try:
+                    curso_alumno = curso_list[0]
+                    calificacion_curso = CalificacionCurso.objects.get(curso_alumno=curso_alumno)
+                except ObjectDoesNotExist:
+                    pass
+        elif grupo.name == 'Estudiantes EDCON':
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+            
+              
+    
+    return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso})
 
 
 @login_required
 def dash_view(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario)
-   
-    return render(request,"certificados/dashboard.html", {'curso_list': curso_list})
+    grupos = request.user.groups.all()
+    curso_list = []
+    print(grupos)
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+        elif grupo.name == 'Estudiantes EDCON':
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
-
-
-
-
-
-
-
-  
-
- 
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
+    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list})
 
 
 

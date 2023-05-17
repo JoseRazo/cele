@@ -43,7 +43,9 @@ def add_background(canvas, image_path):
 @login_required
 def pdfgen(request, curso_id, firma):
     curso = CursoAlumno.objects.get(pk=curso_id)
-
+    if not str(request.user) == str(curso.alumno):
+        return render(request, 'certificados/curso_no_autorizado.html')
+    
     cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
     cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
@@ -124,19 +126,16 @@ def pdfgen(request, curso_id, firma):
         "December": "diciembre",
     }
 
-    fecha = curso.periodo.fecha_inicio.strftime("%d")
-    fecha += " de " + meses[curso.periodo.fecha_inicio.strftime("%B")]
-    fecha += " del " + curso.periodo.fecha_inicio.strftime("%Y")
-    fecha += " al " + curso.periodo.fecha_fin.strftime("%d")
-    fecha += " de " + meses[curso.periodo.fecha_fin.strftime("%B")]
-    fecha += " del " + curso.periodo.fecha_fin.strftime("%Y")
-
-    folio = ""
-
+    fecha = certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%d")
+    fecha += " de " + meses[certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%B")]
+    fecha += " del " + certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%Y")
+    fecha += " al " + certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%d")
+    fecha += " de " + meses[certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%B")]
+    fecha += " del " + certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%Y")
 
     ############ Agrega contenido al PDF. ##############
-    text_nombre = str(request.user)
-    text_subtitulo =  str(curso)
+    text_nombre = str(certificado_alumno.curso_alumno.alumno)
+    text_subtitulo =  str(certificado_alumno.curso_alumno)
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(folio)
 
@@ -207,33 +206,17 @@ def listar_cursos(request):
 
 @login_required
 def mostrar_curso(request, curso_id):
-    selcurso = get_object_or_404(CursoAlumno, id=curso_id)
+    filtro = str(CursoAlumno.objects.filter(pk=curso_id))
+    if filtro == "<QuerySet []>":
+        return render(request, 'certificados/404.html')
 
-    # Verificar si el curso de alumno pertenece al usuario logueado
-    if selcurso.usuario != request.user:
+    selcurso = CursoAlumno.objects.get(pk=curso_id)
+    alumno = str(selcurso.alumno)
+    usuario = str(request.user)
+
+    if alumno == usuario:
         # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
-        return render(request, 'certificados/curso_no_autorizado.html')
-    
-    return render(request, 'certificados/mis_cursos_detail.html', 
+        return render(request, 'certificados/mis_cursos_detail.html', 
                   {'selcurso': selcurso})
-
-  
-
- 
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
+    else:
+        return render(request, 'certificados/curso_no_autorizado.html')
