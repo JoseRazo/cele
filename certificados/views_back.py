@@ -58,43 +58,26 @@ def pdfgen(request, curso_id, firma):
         now = datetime.now()
         folio_def = now.strftime("%y") + '-0001'
         print(folio_def)
-
-        insertarFolio(curso_id, folio_def)
     else:
-        certificado_alumno = CursoAlumno.objects.get(pk=curso_id)
-        if not ultimo_folio.curso_alumno_id == curso_id:
-            print(certificado_alumno)
-            now = datetime.now()
-            folio_def = ultimo_folio.folio
-            consecutivo = int(folio_def[-4:]) + 1
-            folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
-            print(folio_def)
-
-            insertarFolio(curso_id, folio_def)
-        else:
-            folio_def = "xd"
-            print(folio_def)
+        certificado_alumno = CertificadoAlumno.objects.get(pk=curso_id)
+        print(certificado_alumno)
+        now = datetime.now()
+        folio_def = ultimo_folio.folio
+        consecutivo = int(folio_def[-4:]) + 1
+        folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+        print(folio_def)
     
-    
-
-    # ultimo_folio = CertificadoAlumno.objects.last()
-    # if not ultimo_folio:
-    #     n_folio = incrementarFolio()
-
-    #     alumnoCert = CertificadoAlumno(
+    # alumnoCert = CertificadoAlumno(
     #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
     #     plantilla = Plantilla.objects.last(),
-    #     folio = n_folio,
+    #     folio = folio_def,
     #     firma = "ajsla",
     #     cadena = "dadlasñ"
-    #     )
-    #     alumnoCert.save()
-    # else:
-    #     print(ultimo_folio.folio)
+    # )
+    # alumnoCert.save()
 
+    print(certificado_alumno)
     
-    # incrementarFolio()
-
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 

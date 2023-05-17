@@ -65,6 +65,9 @@ class Plantilla(models.Model):
         verbose_name_plural = "Plantillas"
         db_table = 'certificados_plantilla'
 
+    def __str__(self):
+        return str(self.imagen)
+
 
 class CertificadoAlumno(models.Model):
     curso_alumno = models.ForeignKey(CursoAlumno, on_delete=models.CASCADE)

@@ -23,3 +23,11 @@ class Usuario(AbstractUser):
             return f'{self.nombre} {self.apellido_paterno}'
         else:
             return f'{self.nombre} {self.apellido_paterno} {self.apellido_materno}'
+        
+    def nombre_completo(self):
+        campos_nombre = [self.nombre]
+        if self.apellido_paterno:
+            campos_nombre.append(self.apellido_paterno)
+        if self.apellido_materno:
+            campos_nombre.append(self.apellido_materno)
+        return ' '.join(campos_nombre)
