@@ -72,7 +72,7 @@ class Plantilla(models.Model):
 class CertificadoAlumno(models.Model):
     curso_alumno = models.ForeignKey(CursoAlumno, on_delete=models.CASCADE)
     plantilla = models.ForeignKey(Plantilla, on_delete=models.CASCADE)
-    folio = models.CharField(max_length=8, null=True, blank=True)
+    folio = models.CharField(max_length=20, null=True, blank=True)
     firma = models.TextField()
     cadena = models.TextField()
     fecha_creacion = models.DateTimeField(
