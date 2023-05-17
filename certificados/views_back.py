@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -39,42 +39,42 @@ def incrementarFolio():
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
-
-def insertarFolio(curso_id, folio_def):
-    alumnoCert = CertificadoAlumno(
-        curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-        plantilla = Plantilla.objects.last(),
-        folio = folio_def,
-        firma = "ajsla",
-        cadena = "dadlasñ"
-    )
-    alumnoCert.save()
-
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
-    ultimo_folio = CertificadoAlumno.objects.last()
-    if not ultimo_folio:
-        now = datetime.now()
-        folio_def = now.strftime("%y") + '-0001'
-        print(folio_def)
+    curso = CursoAlumno.objects.get(pk=curso_id)
+
+    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+
+    firmaDigital = cadena.encode()
+    firmaDigital = base64.b64encode(firmaDigital)
+
+    certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
+    if certificado_alumno:
+        folio = certificado_alumno.folio
+        print(folio)
     else:
-        certificado_alumno = CertificadoAlumno.objects.get(pk=curso_id)
-        print(certificado_alumno)
-        now = datetime.now()
-        folio_def = ultimo_folio.folio
-        consecutivo = int(folio_def[-4:]) + 1
-        folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
-        print(folio_def)
-    
-    # alumnoCert = CertificadoAlumno(
-    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-    #     plantilla = Plantilla.objects.last(),
-    #     folio = folio_def,
-    #     firma = "ajsla",
-    #     cadena = "dadlasñ"
-    # )
-    # alumnoCert.save()
+        ultimo_folio = CertificadoAlumno.objects.last()
+        if not ultimo_folio:
+            now = datetime.now()
+            folio = now.strftime("%y") + '-0001'
+        else:
+            now = datetime.now()
+            folio_anterior = int(ultimo_folio.folio.split('-')[-1])
+            consecutivo = folio_anterior + 1
+            folio = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+
+        # Crea un nuevo registro en CertificadoAlumno con el folio generado
+        certificado_alumno = CertificadoAlumno.objects.create(
+            curso_alumno_id=curso_id,
+            plantilla = Plantilla.objects.last(),
+            folio=folio,
+            firma=firmaDigital,
+            cadena = cadena
+            )
+        print(folio)
 
     print(certificado_alumno)
     
@@ -107,12 +107,6 @@ def pdfgen(request, curso_id, firma):
 # Nombre del Curso
     curso = CursoAlumno.objects.get(pk=curso_id)
     # cali = CalificacionCurso.objects.get(pk=curso_id)
-
-    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
-    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
-
-    firmaDigital = cadena.encode()
-    firmaDigital = base64.b64encode(firmaDigital)
 
 # Fecha de Inicio y de Término
     meses = {
@@ -213,17 +207,15 @@ def listar_cursos(request):
 
 @login_required
 def mostrar_curso(request, curso_id):
-    usuario = request.user
-    selcurso = CursoAlumno.objects.get(pk=curso_id)
+    selcurso = get_object_or_404(CursoAlumno, id=curso_id)
 
-    if usuario.id == selcurso.alumno_id:
-        return render(request, 'certificados/mis_cursos_detail.html',
+    # Verificar si el curso de alumno pertenece al usuario logueado
+    if selcurso.usuario != request.user:
+        # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
+        return render(request, 'certificados/curso_no_autorizado.html')
+    
+    return render(request, 'certificados/mis_cursos_detail.html', 
                   {'selcurso': selcurso})
-    else:
-        return
-
-
-
 
   
 
@@ -232,7 +224,6 @@ def mostrar_curso(request, curso_id):
 
 
   
-
 
 
 
