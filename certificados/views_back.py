@@ -39,6 +39,17 @@ def incrementarFolio():
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
+
+def insertarFolio(curso_id, folio_def):
+    alumnoCert = CertificadoAlumno(
+        curso_alumno = CursoAlumno.objects.get(pk=curso_id),
+        plantilla = Plantilla.objects.last(),
+        folio = folio_def,
+        firma = "ajsla",
+        cadena = "dadlasñ"
+    )
+    alumnoCert.save()
+
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
@@ -47,23 +58,24 @@ def pdfgen(request, curso_id, firma):
         now = datetime.now()
         folio_def = now.strftime("%y") + '-0001'
         print(folio_def)
+
+        insertarFolio(curso_id, folio_def)
     else:
-        certificado_alumno = CertificadoAlumno.objects.get(pk=curso_id)
-        print(certificado_alumno)
-        now = datetime.now()
-        folio_def = ultimo_folio.folio
-        consecutivo = int(folio_def[-4:]) + 1
-        folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
-        print(folio_def)
+        certificado_alumno = CursoAlumno.objects.get(pk=curso_id)
+        if not ultimo_folio.curso_alumno_id == curso_id:
+            print(certificado_alumno)
+            now = datetime.now()
+            folio_def = ultimo_folio.folio
+            consecutivo = int(folio_def[-4:]) + 1
+            folio_def = now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+            print(folio_def)
+
+            insertarFolio(curso_id, folio_def)
+        else:
+            folio_def = "xd"
+            print(folio_def)
     
-    # alumnoCert = CertificadoAlumno(
-    #     curso_alumno = CursoAlumno.objects.get(pk=curso_id),
-    #     plantilla = Plantilla.objects.last(),
-    #     folio = folio_def,
-    #     firma = "ajsla",
-    #     cadena = "dadlasñ"
-    # )
-    # alumnoCert.save()
+    
 
     # ultimo_folio = CertificadoAlumno.objects.last()
     # if not ultimo_folio:
