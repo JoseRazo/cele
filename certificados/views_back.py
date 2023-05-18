@@ -49,30 +49,34 @@ def pdfgen(request, curso_id, firma):
     if filtro == "<QuerySet []>":
         curso = CursoEstudiante.objects.get(pk=curso_id)
         print("usuario edcon")
+
         if not str(request.user) == str(curso.estudiante):
             return render(request, 'certificados/curso_no_autorizado.html')
         
-        cadena = str(curso.estudiante) +"|"+ str(curso.curso) +"|"+ str(curso.instructor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"
-        cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
-
-        firmaDigital = cadena.encode()
-        firmaDigital = base64.b64encode(firmaDigital)
-
-        certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+        c_alumno = curso.estudiante
+        c_profesor = curso.instructor
     else:
-        curso = CursoAlumno.objects.get(pk=curso_id)
+        curso = CursoAlumno.objects.get(pk=curso_id)    
         print("usuario cele")
 
         if not str(request.user) == str(curso.alumno):
             return render(request, 'certificados/curso_no_autorizado.html')
-        
-        cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
-        cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
-        firmaDigital = cadena.encode()
-        firmaDigital = base64.b64encode(firmaDigital)
+        c_alumno = curso.alumno
+        c_profesor = curso.profesor
 
-        certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
+    if not str(request.user) == str(curso.alumno):
+        return render(request, 'certificados/curso_no_autorizado.html')
+    
+    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+
+    firmaDigital = cadena.encode()
+    firmaDigital = base64.b64encode(firmaDigital)
+
+    certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
 
     if certificado_alumno:
         folio = certificado_alumno.folio
