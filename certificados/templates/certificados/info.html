@@ -7,19 +7,41 @@
 {% block content %}
 
 <link rel="stylesheet" href="/static/css/info.css">
-
 <div class="info-card">
     {% for curso in curso_list %}
     <div class="card_titleInfo">
-        <p>{{curso.curso}}</p>
+        <p>{{ curso.curso }}</p>
     </div>
     <div class="text-info" style="color: black !important;">
         <h4>Descripcion:</h4><br>
-        <h5>{{curso.curso.descripcion}}</h5>
-       
+        <h5>{{ curso.curso.descripcion }}</h5>
     </div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: black;">
+        <h4 class="tituloCalf">Calificación del curso</h4>
+        {% if curso.estatus == 1 %}
+        <h1>En progreso</h1>
+    {% elif curso.estatus == 2 %}
+        <h1>Completado</h1>
+    {% elif curso.estatus == 3 %}
+        <h1>No completado</h1>
+    {% else %}
+        {% if not calificacion_curso.primer_examen and not calificacion_curso.segundo_examen and not calificacion_curso.calificacion_final %}
+            <h1>Sin calificación</h1>
+        {% else %}
+            <ul>
+                {% if calificacion_curso.primer_examen %}
+                    <li>Primer Examen: {{ calificacion_curso.primer_examen }}</li>
+                {% endif %}
+                {% if calificacion_curso.segundo_examen %}
+                    <li>Segundo Examen: {{ calificacion_curso.segundo_examen }}</li>
+                {% endif %}
+                {% if calificacion_curso.calificacion_final %}
+                    <li>Calificación Final: {{ calificacion_curso.calificacion_final }}</li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    {% endif %}
+    </div>  
     {% endfor %}
-
-
 </div>
 {% endblock %}
