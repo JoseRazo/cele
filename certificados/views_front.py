@@ -19,7 +19,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 
-
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('certificados:dashboard')
@@ -44,8 +43,6 @@ def login_view(request):
         'form': form,
     }
     return render(request, 'registration/login.html', context)
-
-
 
 def logout_view(request):
     auth_logout(request)
@@ -101,14 +98,17 @@ def dash_view(request):
     grupos = request.user.groups.all()
     curso_list = []
     print(grupos)
+
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        alumno = Estudiante.objects.get(username=usuario.username)
+    else:
+        alumno = Alumno.objects.get(username=usuario.username)
+
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
         elif grupo.name == 'Estudiantes EDCON':
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
-    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list})
-
-
-
-
+    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno})
