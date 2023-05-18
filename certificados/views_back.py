@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from edcon.models import CursoEstudiante
 from .models import CertificadoAlumno, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
@@ -198,20 +199,32 @@ def pdfgen(request, curso_id, firma):
 @login_required
 def listar_cursos(request):
     usuario = request.user
-    curso_list = CursoAlumno.objects.filter(alumno=usuario)
-   
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+    else:
+        curso_list = CursoAlumno.objects.filter(alumno=usuario)
 
     return render(request, 'certificados/mis_cursos.html',
                   {'curso_list': curso_list}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
+    usuario = request.user
+    filtro2 = str(Alumno.objects.filter(username=usuario.username))
+    if filtro2 == "<QuerySet []>":
+        selcurso = CursoEstudiante.objects.get(pk=curso_id)
+        alumno = str(selcurso.estudiante)
+    else:
+        selcurso = CursoAlumno.objects.get(pk=curso_id)
+        alumno = str(selcurso.alumno)
+
+
     filtro = str(CursoAlumno.objects.filter(pk=curso_id))
     if filtro == "<QuerySet []>":
         return render(request, 'certificados/404.html')
 
-    selcurso = CursoAlumno.objects.get(pk=curso_id)
-    alumno = str(selcurso.alumno)
+    
     usuario = str(request.user)
 
     if alumno == usuario:
