@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
+from edcon.models import CursoEstudiante
 from .models import CertificadoAlumno, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
@@ -42,17 +43,36 @@ def add_background(canvas, image_path):
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
-    curso = CursoAlumno.objects.get(pk=curso_id)
-    if not str(request.user) == str(curso.alumno):
-        return render(request, 'certificados/curso_no_autorizado.html')
+    usuario = request.user
     
-    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
-    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso = CursoEstudiante.objects.get(pk=curso_id)
+        print("usuario edcon")
+        if not str(request.user) == str(curso.estudiante):
+            return render(request, 'certificados/curso_no_autorizado.html')
+        
+        cadena = str(curso.estudiante) +"|"+ str(curso.curso) +"|"+ str(curso.instructor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"
+        cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
-    firmaDigital = cadena.encode()
-    firmaDigital = base64.b64encode(firmaDigital)
+        firmaDigital = cadena.encode()
+        firmaDigital = base64.b64encode(firmaDigital)
 
-    certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+        certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+    else:
+        curso = CursoAlumno.objects.get(pk=curso_id)
+        print("usuario cele")
+
+        if not str(request.user) == str(curso.alumno):
+            return render(request, 'certificados/curso_no_autorizado.html')
+        
+        cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+        cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+
+        firmaDigital = cadena.encode()
+        firmaDigital = base64.b64encode(firmaDigital)
+
+        certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
 
     if certificado_alumno:
         folio = certificado_alumno.folio
