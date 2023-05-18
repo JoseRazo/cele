@@ -64,12 +64,8 @@ def pdfgen(request, curso_id, firma):
 
         c_alumno = curso.alumno
         c_profesor = curso.profesor
-
-
-    if not str(request.user) == str(curso.alumno):
-        return render(request, 'certificados/curso_no_autorizado.html')
     
-    cadena = str(curso.alumno) +"|"+ str(curso.curso) +"|"+ str(curso.profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
+    cadena = str(c_alumno) +"|"+ str(curso.curso) +"|"+ str(c_profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(curso.curso.duracion) +"|"
     cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
 
     firmaDigital = cadena.encode()
