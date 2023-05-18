@@ -43,7 +43,29 @@ def add_background(canvas, image_path):
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
-    curso = CursoAlumno.objects.get(pk=curso_id)
+    usuario = request.user
+    
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso = CursoEstudiante.objects.get(pk=curso_id)
+        print("usuario edcon")
+
+        if not str(request.user) == str(curso.estudiante):
+            return render(request, 'certificados/curso_no_autorizado.html')
+        
+        c_alumno = curso.estudiante
+        c_profesor = curso.instructor
+    else:
+        curso = CursoAlumno.objects.get(pk=curso_id)    
+        print("usuario cele")
+
+        if not str(request.user) == str(curso.alumno):
+            return render(request, 'certificados/curso_no_autorizado.html')
+
+        c_alumno = curso.alumno
+        c_profesor = curso.profesor
+
+
     if not str(request.user) == str(curso.alumno):
         return render(request, 'certificados/curso_no_autorizado.html')
     
@@ -54,6 +76,7 @@ def pdfgen(request, curso_id, firma):
     firmaDigital = base64.b64encode(firmaDigital)
 
     certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
 
     if certificado_alumno:
         folio = certificado_alumno.folio

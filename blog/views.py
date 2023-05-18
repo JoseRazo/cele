@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import Slider
 from gestion_escolar.models import Curso as CursoCele
 from edcon.models import Curso as CursoEdcon
+from certificados.models import CertificadoAlumno
 from .forms import AspiranteCeleForm, AspiranteEdconForm, ContactoForm
 # Create your views here.
 
@@ -180,3 +181,37 @@ def formContacto(request):
         else:
             status = 'errors'
             return HttpResponse(status)
+
+class ValidarCertificadoListView(ListView):
+    model = CertificadoAlumno
+    template_name = 'blog/certificados/validar_certificado.html'
+    context_object_name = 'validar_certificado'
+    ordering = ['curso_alumno']
+    paginate_by = 3
+
+    def get_queryset(self):
+        queryset = CertificadoAlumno.objects.filter(pk=0)
+        return queryset
+
+def is_valid_queryparam(param):
+    return param != '' and param is not None
+def invalid_queryparam(param):
+    return param == '' and param is None
+
+class SearchCertificadoView(ListView):
+    model = CertificadoAlumno
+    template_name = 'blog/certificados/validar_certificado.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'validar_certificado'      # default >> erf24/post_list.html
+    ordering = ['curso_alumno']
+    paginate_by = 1
+
+    def get_queryset(self): # new
+        search = self.request.GET.get('q')
+
+        if is_valid_queryparam(search):
+            obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio__icontains=search)).distinct().order_by('folio')
+
+        if invalid_queryparam(search):
+            obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
+    
+        return obj

@@ -1740,6 +1740,14 @@ section
 {
 	color: #FFFFFF;
 }
+.footer_actions {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	justify-content: space-between;
+	padding-bottom: 20px;
+}
 .footer_social
 {
 	margin-top: 23px;

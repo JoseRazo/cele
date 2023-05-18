@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 
 from . import views
-from .views import CursoEdconListView, SearchEdconView, CursoCeleListView, SearchCeleView
+from .views import CursoEdconListView, SearchEdconView, CursoCeleListView, SearchCeleView, ValidarCertificadoListView, SearchCertificadoView
 from django.conf.urls import url
 
 app_name='blog'
@@ -17,6 +17,8 @@ urlpatterns = [
     path('cursos-edcon/<slug:slug>/', views.cursoEdconDetalle, name="curso_edcon_detalle"),
     path('form-aspirante-edcon', views.formAspiranteEdcon, name="form_aspirante_edcon"),
     path('cursos-edcon-search/', SearchEdconView.as_view(), name='cursos_edcon_search'),
+    path('validar-certificado/', ValidarCertificadoListView.as_view(), name="validar_certificado"),
+    path('validar-certificado-search/', SearchCertificadoView.as_view(), name='validar_certificado_search'),
 
     path('contacto/', views.contacto, name="contacto"),
     path('form-contacto', views.formContacto, name="form_contacto"),
