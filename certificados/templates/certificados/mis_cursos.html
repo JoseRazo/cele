@@ -6,11 +6,6 @@
 
 <link rel="stylesheet" href="/static/css/mis_cursos.css">
 <div class="contenedor-tarjeta">
-    <!-- {% if curso_list == 'Null' %}
-    <div class="no-cursos">
-        <h2>Parece que no te has inscrito a ningún curso.</h2>
-    </div>
-    {% endif %} -->
     {% for curso in curso_list %}
     <div class="tarjeta">
         <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
@@ -33,10 +28,10 @@
                         <tr>
                             <td class="thead">Estatus</td>
                             {% if curso.inscrito == True %}
-                                <td>Inscrito</td>
+                            <td>Inscrito</td>
                             {% endif %}
                             {% if curso.inscrito == False %}
-                                <td>No Inscrito</td>
+                            <td>No Inscrito</td>
                             {% endif %}
                         </tr>
                     </tbody>
@@ -46,8 +41,7 @@
                 <h6>Más detalles</h6>
             </div>
         </div>
-    </div>   
+    </div>
     {% endfor %}
 </div>
-
 {% endblock %}

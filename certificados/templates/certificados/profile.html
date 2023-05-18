@@ -6,16 +6,9 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/css/profile.css">
-
-<!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Mi Informacion</h1>
-
-    <!--BOTON PARA IMPRIMIR PDF-->
 </div>
-
-
-
 <div class="profile-card">
     <div class="card_titleprofile">
         <p> {{ usuario.nombre }} </p>
@@ -37,8 +30,6 @@
         <h6> Numero Exterior: {{alumno.num_exterior}}</h6>
         <h6>Estado: {{alumno.estado}}</h6>
         <h6>Telefono: {{alumno.telefono}}</h6>
-
-
     </div>
 </div>
 {% endblock %}
