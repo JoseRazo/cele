@@ -8,7 +8,7 @@ from django.db.models import Q
 from .models import Slider
 from gestion_escolar.models import Curso as CursoCele
 from edcon.models import Curso as CursoEdcon
-from certificados.models import CertificadoAlumno
+from certificados.models import CertificadoAlumno, CertificadoEstudiante
 from .forms import AspiranteCeleForm, AspiranteEdconForm, ContactoForm
 # Create your views here.
 
@@ -183,7 +183,7 @@ def formContacto(request):
             return HttpResponse(status)
 
 class ValidarCertificadoListView(ListView):
-    model = CertificadoAlumno
+    model = CertificadoAlumno, CertificadoEstudiante
     template_name = 'blog/certificados/validar_certificado.html'
     context_object_name = 'validar_certificado'
     ordering = ['curso_alumno']
@@ -199,19 +199,27 @@ def invalid_queryparam(param):
     return param == '' and param is None
 
 class SearchCertificadoView(ListView):
-    model = CertificadoAlumno
+    model = CertificadoAlumno, CertificadoEstudiante
     template_name = 'blog/certificados/validar_certificado.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'validar_certificado'      # default >> erf24/post_list.html
-    ordering = ['curso_alumno']
+    ordering = ['folio']
     paginate_by = 1
 
     def get_queryset(self): # new
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio__icontains=search)).distinct().order_by('folio')
+            if search.startswith("C"):
+                obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio=search)).distinct().order_by('folio')
+            elif search.startswith("E"):
+                obj = CertificadoEstudiante.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio=search)).distinct().order_by('folio')
+            else:
+                obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio=search)).distinct().order_by('folio')
 
         if invalid_queryparam(search):
-            obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
-    
+            if search.startswith("C"):
+                obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
+            if search.startswith("E"):
+                obj = CertificadoEstudiante.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
+                
         return obj

@@ -5,6 +5,7 @@ from .models import (
     Documento,
     DocumentoLogo,
     CertificadoAlumno,
+    CertificadoEstudiante,
     Plantilla
 )
 
@@ -31,10 +32,19 @@ class CertificadoAlumnoAdmin(admin.ModelAdmin):
         return obj.curso_alumno.alumno.nombre_completo()
     get_nombre_alumno.short_description = 'Alumno'
 
+class CertificadoEstudianteAdmin(admin.ModelAdmin):
+    list_display = ('curso_alumno', 'get_nombre_alumno', 'plantilla', 'folio', 'firma', 'cadena', 'fecha_creacion', 'fecha_actualizacion',)
+    search_fields = ('nombre',)
+
+    def get_nombre_alumno(self, obj):
+        return obj.curso_alumno.estudiante.nombre_completo()
+    get_nombre_alumno.short_description = 'Estudiante'
+
 class PlantillaAlumnoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'imagen', 'fecha_creacion', 'fecha_actualizacion')
 
 admin.site.register(Empresa, EmpresaAdmin)
 admin.site.register(Documento, DocumentoAdmin)
 admin.site.register(CertificadoAlumno, CertificadoAlumnoAdmin)
+admin.site.register(CertificadoEstudiante, CertificadoEstudianteAdmin)
 admin.site.register(Plantilla, PlantillaAlumnoAdmin)

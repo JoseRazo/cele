@@ -90,7 +90,7 @@ class CertificadoAlumno(models.Model):
     #     return self.curso_alumno.curso
 
 class CertificadoEstudiante(models.Model):
-    curso_estudiante = models.ForeignKey(CursoEstudiante, on_delete=models.CASCADE)
+    curso_alumno = models.ForeignKey(CursoEstudiante, on_delete=models.CASCADE)
     plantilla = models.ForeignKey(Plantilla, on_delete=models.CASCADE)
     folio = models.CharField(max_length=20, null=True, blank=True)
     firma = models.TextField()
