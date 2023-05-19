@@ -14,13 +14,44 @@ import os
 from .forms import ProfileForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
+from .models import CertificadoAlumno, Plantilla
+from datetime import datetime
 
 
 
 
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import LoginForm
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('certificados:dashboard')
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            usuario = authenticate(request, username=username, password=password)
+            if usuario is not None:
+                auth_login(request, usuario)
+                if 'next' in request.GET:
+                    return redirect(request.GET['next'])
+                return redirect("certificados:dashboard")
+            else:
+                error_message = "Por favor introduzca un nombre de usuario y contraseña correctos."
+                messages.error(request, error_message)
+    else:
+        form = LoginForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'registration/login.html', context)
+
     if request.user.is_authenticated:
         return redirect('certificados:dashboard')
     form = LoginForm(request.POST or None)
@@ -44,8 +75,6 @@ def login_view(request):
         'form': form,
     }
     return render(request, 'registration/login.html', context)
-
-
 
 def logout_view(request):
     auth_logout(request)
@@ -73,11 +102,18 @@ def profile_user(request):
 
 def curso_info(request):
     usuario = request.user
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    
+    if filtro == "<QuerySet []>":
+        alumno = Estudiante.objects.get(username=usuario.username)
+    else:
+        alumno = Alumno.objects.get(username=usuario.username)
+    
     grupos = request.user.groups.all()
     curso_list = []
     calificacion_curso = None
     estatus_curso = None
-    
+        
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
@@ -89,11 +125,8 @@ def curso_info(request):
                     pass
         elif grupo.name == 'Estudiantes EDCON':
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
-            
-              
-    
-    return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso})
 
+    return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso, 'alumno': alumno})
 
 @login_required
 def dash_view(request):
@@ -115,7 +148,3 @@ def dash_view(request):
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno})
-
-
-
-

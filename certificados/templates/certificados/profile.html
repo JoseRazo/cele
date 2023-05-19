@@ -6,12 +6,12 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/css/profile.css">
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
+<div class="d-sm-flex align-items-center justify-content-between mb-4"> 
     <h1 class="h3 mb-0 text-gray-800">Mi Informacion</h1>
 </div>
 <div class="profile-card">
     <div class="card_titleprofile">
-        <p> {{ usuario.nombre }} </p>
+        <p> {{ request.user }} </p>
     </div>
     {% if alumno.avatar %}
     <img class="img-profile rounded-circle" src="{{ alumno.avatar.url }}">
