@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
-from edcon.models import CursoEstudiante
+from edcon.models import Estudiante, CursoEstudiante
 from .models import CertificadoAlumno, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
@@ -43,7 +43,29 @@ def add_background(canvas, image_path):
 # Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma):
-    curso = CursoAlumno.objects.get(pk=curso_id)
+    usuario = request.user
+    
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso = CursoEstudiante.objects.get(pk=curso_id)
+        print("usuario edcon")
+
+        if not str(request.user) == str(curso.estudiante):
+            return render(request, 'certificados/curso_no_autorizado.html')
+        
+        c_alumno = curso.estudiante
+        c_profesor = curso.instructor
+    else:
+        curso = CursoAlumno.objects.get(pk=curso_id)    
+        print("usuario cele")
+
+        if not str(request.user) == str(curso.alumno):
+            return render(request, 'certificados/curso_no_autorizado.html')
+
+        c_alumno = curso.alumno
+        c_profesor = curso.profesor
+
+
     if not str(request.user) == str(curso.alumno):
         return render(request, 'certificados/curso_no_autorizado.html')
     
@@ -54,6 +76,7 @@ def pdfgen(request, curso_id, firma):
     firmaDigital = base64.b64encode(firmaDigital)
 
     certificado_alumno = CertificadoAlumno.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
+
 
     if certificado_alumno:
         folio = certificado_alumno.folio
@@ -202,34 +225,42 @@ def listar_cursos(request):
     filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
         curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+        alumno = Estudiante.objects.get(username=usuario.username)
     else:
         curso_list = CursoAlumno.objects.filter(alumno=usuario)
+        alumno = Alumno.objects.get(username=usuario.username)
 
     return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list}) 
+                  {'curso_list': curso_list, 'alumno': alumno}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
     usuario = request.user
     filtro2 = str(Alumno.objects.filter(username=usuario.username))
+    #filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro2 == "<QuerySet []>":
+        #curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+        alumno = Estudiante.objects.get(username=usuario.username)
         selcurso = CursoEstudiante.objects.get(pk=curso_id)
-        alumno = str(selcurso.estudiante)
+        log_alumno = str(selcurso.estudiante)
     else:
+        #curso_list = CursoAlumno.objects.filter(alumno=usuario)
+        alumno = Alumno.objects.get(username=usuario.username)
         selcurso = CursoAlumno.objects.get(pk=curso_id)
-        alumno = str(selcurso.alumno)
+        log_alumno = str(selcurso.alumno)
 
 
     filtro = str(CursoAlumno.objects.filter(pk=curso_id))
+    #filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
         return render(request, 'certificados/404.html')
 
     
     usuario = str(request.user)
 
-    if alumno == usuario:
+    if log_alumno == usuario:
         # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
         return render(request, 'certificados/mis_cursos_detail.html', 
-                  {'selcurso': selcurso})
+                  {'selcurso': selcurso, 'alumno': alumno})
     else:
         return render(request, 'certificados/curso_no_autorizado.html')

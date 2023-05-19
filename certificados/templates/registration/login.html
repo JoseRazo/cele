@@ -5,56 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
-	<meta name="cele" content="login">
+    <meta name="cele" content="login">
     <meta name="description" content="">
     <link rel="stylesheet" href="/static/css/diseño_login.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-   
 </head>
 <body class="body-bg min-h-screen pt-12 md:pt-20 pb-6 px-2 md:px-0" style="font-family:'Lato',sans-serif;">
-    <header >
-       
+    <header>
     </header>
 
     <main class="bg-white max-w-lg mx-auto p-8 md:p-12 my-10 rounded-lg shadow-2xl">
         <section>
-            <h3 class="font-bold ">Bienvenido</h3>
-            
+            <h1 style="font-size: 24px; color: #333333; color: black; ">Educacion Continua</h1>
         </section>
+        <section>
+            <h3 class="font-bold ">Bienvenido</h3>
+        </section>
+
+
+        {% if messages %}
+            <div class="alert alert-danger" style="margin: 20px;">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
 
         <section class="mt-10">
             {% if form.errors %}
-            <div class="alert alert-danger"><p>Tu usuario y contraseña no coinciden. Porfavor intenta otra vez</p>
+            <div class="alert alert-danger">
+                <p>Tu usuario y contraseña no coinciden. Por favor inténtalo de nuevo.</p>
             </div>
             {% endif %}
             <form class="flex flex-col" method="post" >
                 {% csrf_token %}
-                <div class="mb-6 pt-3 rounded ">
+                <div class="mb-6 pt-3 rounded">
                     <label class="block text-700 text-sm font-bold mb-2 ml-3" for="username">Nombre de Usuario</label>
-                    <input type="text" id="username" name="username" class="bg-gray-200 w-300 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-blue-600 transition duration-500  pb-3">
+                    <input type="text" id="username" name="username" class="bg-gray-200 w-300 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-blue-600 transition duration-500  pb-3" required>
                 </div>
 
-                <div class="mb-6 pt-3 rounded ">
+                <div class="mb-6 pt-3 rounded">
                     <label class="block text-700 text-sm font-bold mb-2 ml-3" for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" class="bg-gray-200 w-300 text-gray-700 focus:outline-none border-b-6 border-gray-300 focus:border-blue-700 transition duration-500  pb-3">
-    
+                    <input type="password" id="password" name="password" class="bg-gray-200 w-300 text-gray-700 focus:outline-none border-b-6 border-gray-300 focus:border-blue-700 transition duration-500  pb-3" required>
                 </div>
 
                 <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">Entrar</button>
             </form>
         </section>
     </main>
-
-  
-
 </body>
 </html>
-
-
-
-
-
-
-
-

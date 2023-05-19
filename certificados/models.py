@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from gestion_escolar.models import CursoAlumno
+from edcon.models import CursoEstudiante
 
 # Create your models here.
 
@@ -87,3 +88,19 @@ class CertificadoAlumno(models.Model):
     
     # def __str__(self):
     #     return self.curso_alumno.curso
+
+class CertificadoEstudiante(models.Model):
+    curso_estudiante = models.ForeignKey(CursoEstudiante, on_delete=models.CASCADE)
+    plantilla = models.ForeignKey(Plantilla, on_delete=models.CASCADE)
+    folio = models.CharField(max_length=20, null=True, blank=True)
+    firma = models.TextField()
+    cadena = models.TextField()
+    fecha_creacion = models.DateTimeField(
+        _('Fecha de creación'), auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(
+        _('Fecha de actualización'), auto_now=True)
+    
+    class Meta:
+        verbose_name = "Certificado Estudiante"
+        verbose_name_plural = "Certificados Estudiante"
+        db_table = 'certificados_certificado_estudiante'

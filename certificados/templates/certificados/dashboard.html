@@ -7,6 +7,8 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Cursos</h1>
 </div>
+
+
 <div class="mdl-grid">
     {% for curso in curso_list %}
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
@@ -36,8 +38,11 @@
             </table>
         </div><br>
         <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
-                href="{%url 'certificados:info'%}">Leer más</a></p>
+                href="{% url 'certificados_back:mis_cursos_detail' curso.id %}">Leer más</a></p>
     </div>
     {% endfor %}
+
 </div>
+
+
 {% endblock %}
