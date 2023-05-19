@@ -1,0 +1,39 @@
+.tarjeta {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100px;
+    margin-inline: 1.5%;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    opacity: 0;
+    animation: aparicionTarjeta 1s ease-in-out 0s forwards;
+}
+
+.tarjeta-contenedor {
+    margin: 20px;
+    width: 100%;
+    display: flex;
+    background-color: white;
+}
+
+table {
+    width: 100%;
+}
+
+th, td {
+    font-size: medium;
+}
+
+
+@keyframes aparicionTarjeta {
+    0%{
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    100%{
+        opacity: 1;
+    }
+}

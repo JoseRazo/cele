@@ -9,3 +9,4 @@ django-smart-selects == 1.5.9
 django-jazzmin == 2.5.0
 django-import-export == 2.8.0
 reportlab == 3.6.13
+qrcode==7.4.2
