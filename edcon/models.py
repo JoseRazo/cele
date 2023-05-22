@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
-from sistema.models import Estado, Ciudad, Colonia
+from sistema.models import Estado, Ciudad, Colonia, Carrera
 
 
 # Create your models here.
@@ -28,6 +28,8 @@ class Estudiante(Usuario):
     num_exterior = models.CharField(max_length=15, null=True, blank=True)
     num_interior = models.CharField(max_length=15, null=True, blank=True)
     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True, blank=True, 
+                                help_text="Selecciona una opción solo si es estudiante o egresado UTS")
     avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
 
     class Meta:
