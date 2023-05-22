@@ -6,45 +6,91 @@
 
 {% block content %}
 
-<h1>Mis Cursos</h1>
+<h1>Mis Cursos Activos</h1>
 
 <link rel="stylesheet" href="/static/css/mis_cursos.css">
 <div class="contenedor-tarjeta">
     {% for curso in curso_list %}
-        {% if curso.inscrito %}
-        <div class="tarjeta">
-            <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
-            <div class="tarjeta-imagen">
-                <img src="{{ curso.curso.imagen.url}}" alt="">
+    {% if curso.inscrito and curso.periodo.fecha_fin %}
+    {% if curso.periodo.fecha_fin|date:"Y-m-d" > today|date:"Y-m-d" %}
+    <div class="tarjeta">
+        <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
+        <div class="tarjeta-imagen">
+            <img src="{{ curso.curso.imagen.url }}" alt="">
+        </div>
+        <div class="tarjeta-content">
+            <div class="content">
+                <h3>{{ curso.curso }}</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="thead">Profesor</td>
+                            <td>{{ curso.profesor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Periodo</td>
+                            <td>{{ curso.periodo }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Estatus</td>
+                            <td>Inscrito</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="tarjeta-content">
-                <div class="content">
-                    <h3>{{ curso.curso }}</h3>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td class="thead">Profesor</td>
-                                <td>{{ curso.profesor }}</td>
-                            </tr>
-                            <tr>
-                                <td class="thead">Periodo</td>
-                                <td>{{ curso.periodo }}</td>
-                            </tr>
-                            <tr>
-                                <td class="thead">Estatus</td>
-                                <td>Inscrito</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="botonDetalles">
-                    <h6>Más detalles</h6>
-                </div>
+            <div class="botonDetalles">
+                <h6>Mas Detalles</h6>
             </div>
         </div>
-        {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
     {% empty %}
-        <p>No hay cursos inscritos.</p>
+    <p>No hay cursos inscritos.</p>
     {% endfor %}
 </div>
+
+<h1>Mis Cursos Completados </h1>
+
+<div class="contenedor-tarjeta">
+    {% for curso in curso_list %}
+    {% if curso.inscrito and curso.periodo.fecha_fin %}
+    {% if curso.periodo.fecha_fin|date:"Y-m-d" < today|date:"Y-m-d" %}
+    <div class="tarjeta">
+        <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
+        <div class="tarjeta-imagen">
+            <img src="{{ curso.curso.imagen.url }}" alt="">
+        </div>
+        <div class="tarjeta-content">
+            <div class="content">
+                <h3>{{ curso.curso }}</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="thead">Profesor</td>
+                            <td>{{ curso.profesor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Periodo</td>
+                            <td>{{ curso.periodo }}</td>
+                        </tr>
+                        <tr>
+                            <td class="thead">Estatus</td>
+                            <td>Inscrito</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="botonDetalles">
+                <h6>Mas Detalles</h6>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% empty %}
+    <p>No hay cursos inscritos.</p>
+    {% endfor %}
+</div>
+
 {% endblock %}

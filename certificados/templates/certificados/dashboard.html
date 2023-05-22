@@ -10,40 +10,35 @@
 
 
 <div class="mdl-grid">
-    {% for curso in curso_list %}
-    {% if curso.inscrito %}
+    {% for curso in curso_data %}
+    
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
         <div class="mdl-card__media">
-            <img class="article-image" src="{{ curso.curso.imagen.url }}">
+            <img class="article-image" src="{{ curso.imagen.url }}">
         </div>
         <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">{{ curso.curso }}</h2>
+            <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>
         </div>
         <div class="mdl-card__supporting-text">
             <table>
                 <tr>
-                    <td class="status">Estatus de Inscripcion:</td>
-                    <td>
-                        {% if curso.inscrito %}
-                        Inscrito
-                        {% else %}
-                        No inscrito
-                        {% endif %}
-                    </td>
+                    <td class="status" >Precio Estudiante:</td>
+                    <td>{{curso.precio_estudiante_uts}}</td>
+                </tr>
+                <tr>
+                    <td class="status" >Precio Persona Externa:</td>
+                    <td>{{curso.precio_persona_externa}}</td>
                 </tr>
                 <tr>
                     <td class="status">Duracion</td>
-                    <td>{{ curso.curso.duracion }}</td>
+                    <td>{{ curso.duracion }}</td>
 
                 </tr>
             </table>
         </div><br>
-        <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
-                href="{% url 'certificados_back:mis_cursos_detail' curso.id %}">Leer más</a></p>
+        <p class="descripcion">Descripcion: {{ curso.descripcion|slice:"5:" }} </p>
     </div>
-    {% endif %}
-    {% empty %}
-        <p>No hay cursos inscritos.</p>
+    
     {% endfor %}
 
 </div>

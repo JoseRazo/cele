@@ -10,8 +10,7 @@ from edcon.models import Estudiante, CursoEstudiante
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
-
-import qrcode
+from datetime import date as fecha_actual
 
 from django.http import FileResponse
 import io
@@ -383,6 +382,7 @@ def pdfgen(request, curso_id, firma):
 
 @login_required
 def listar_cursos(request):
+    today = fecha_actual.today()
     usuario = request.user
     filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
@@ -393,7 +393,7 @@ def listar_cursos(request):
         alumno = Alumno.objects.get(username=usuario.username)
 
     return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list, 'alumno': alumno}) 
+                  {'curso_list': curso_list, 'alumno': alumno, 'today': today}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
