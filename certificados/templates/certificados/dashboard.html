@@ -11,6 +11,7 @@
 
 <div class="mdl-grid">
     {% for curso in curso_list %}
+    {% if curso.inscrito %}
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
         <div class="mdl-card__media">
             <img class="article-image" src="{{ curso.curso.imagen.url }}">
@@ -40,6 +41,9 @@
         <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
                 href="{% url 'certificados_back:mis_cursos_detail' curso.id %}">Leer más</a></p>
     </div>
+    {% endif %}
+    {% empty %}
+        <p>No hay cursos inscritos.</p>
     {% endfor %}
 
 </div>
