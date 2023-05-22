@@ -208,6 +208,8 @@ class SearchCertificadoView(ListView):
     def get_queryset(self): # new
         search = self.request.GET.get('q')
 
+        search = search.replace(" ", "")
+
         if is_valid_queryparam(search):
             if search.startswith("C"):
                 obj = CertificadoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno')).filter(Q(folio=search)).distinct().order_by('folio')

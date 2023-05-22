@@ -1,6 +1,9 @@
+body {
+    overflow: hidden;
+}
+
 .page {
     display: flex;
-    flex-direction: row;
 }
 
 .contenido {
@@ -12,17 +15,17 @@ label {
 }
 
 .imagen {
-    width: 50%;
+    width: 100%;
     height: 100vh;
 }
 
 .gradiante {
     position: absolute;
-    width: 75%;
+    width: 100%;
     height: 100%;
     background-image: linear-gradient(to right, rgba(248, 249, 252, 1), transparent);
 }
 
 .imagen img {
-    height: 100%;
+    height: 100vh;
 }

@@ -136,9 +136,12 @@ def dash_view(request):
     print(grupos)
 
     filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
+    if usuario.is_staff == 1:
+        return redirect('/admin/')
+    elif filtro == "<QuerySet []>":
         alumno = Estudiante.objects.get(username=usuario.username)
-    else:
+    elif 'Alumno' in filtro:
+        print(filtro)
         alumno = Alumno.objects.get(username=usuario.username)
 
     for grupo in grupos:

@@ -24,6 +24,7 @@ table {
 }
 
 th, td {
+    padding-inline: 10px;
     font-size: medium;
 }
 
@@ -35,5 +36,26 @@ th, td {
     }
     100%{
         opacity: 1;
+    }
+}
+
+
+@media (max-width: 700px){
+    th, td {
+        font-size: small;
+    }
+
+    .tarjeta {
+        height: 150px;
+    }
+
+    .tarjeta-contenedor {
+        margin: 5px;
+    }
+}
+
+@media (max-width: 350px){
+    .tarjeta {
+        height: 100%;
     }
 }

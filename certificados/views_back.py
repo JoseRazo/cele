@@ -12,6 +12,8 @@ from datetime import datetime
 from usuarios.models import Usuario
 
 import qrcode
+import random
+import string
 
 from django.http import FileResponse
 import io
@@ -61,16 +63,6 @@ def pdfget(request, certfolio):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-
-    # BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-    # STATIC_ROOT = os.path.join(BASE_DIR, "media/")
-    
-    # if firma == 'True':    
-    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
-    # else:
-    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
-
-
     bg_path = "/code" + curso.plantilla.imagen.url
 
     print(bg_path)
@@ -198,6 +190,9 @@ def pdfgen(request, curso_id, firma):
     firmaDigital = cadena.encode()
     firmaDigital = base64.b64encode(firmaDigital)
 
+    digits = string.digits + string.ascii_uppercase
+    result_str = ''.join(random.choice(digits) for i in range(6))
+
     if filtro == "<QuerySet []>":
         certificado_alumno = CertificadoEstudiante.objects.filter(curso_alumno_id=curso_id, firma=firmaDigital).first()
 
@@ -208,12 +203,12 @@ def pdfgen(request, curso_id, firma):
             ultimo_folio = CertificadoEstudiante.objects.last()
             if not ultimo_folio:
                 now = datetime.now()
-                folio = "E" + now.strftime("%y") + '-0001'
+                folio = "E" + now.strftime("%y") +'-'+ result_str + '-0001'
             else:
                 now = datetime.now()
                 folio_anterior = int(ultimo_folio.folio.split('-')[-1])
                 consecutivo = folio_anterior + 1
-                folio = 'E' + now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+                folio = 'E' + now.strftime("%y") + '-'+ result_str +'-'+ str(consecutivo).zfill(4)
 
                 # Crea un nuevo registro en CertificadoAlumno con el folio generado
             certificado_alumno = CertificadoEstudiante.objects.create(
@@ -234,12 +229,12 @@ def pdfgen(request, curso_id, firma):
             ultimo_folio = CertificadoAlumno.objects.last()
             if not ultimo_folio:
                 now = datetime.now()
-                folio = 'C' + now.strftime("%y") + '-0001'
+                folio = 'C' + now.strftime("%y") +'-'+ result_str + '-0001'
             else:
                 now = datetime.now()
                 folio_anterior = int(ultimo_folio.folio.split('-')[-1])
                 consecutivo = folio_anterior + 1
-                folio = 'C' + now.strftime("%y") + '-' + str(consecutivo).zfill(4)
+                folio = 'C' + now.strftime("%y") + '-'+ result_str +'-'+ str(consecutivo).zfill(4)
 
             certificado_alumno = CertificadoAlumno.objects.create(
                 curso_alumno_id=curso_id,
@@ -265,15 +260,6 @@ def pdfgen(request, curso_id, firma):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-
-    # BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-    # STATIC_ROOT = os.path.join(BASE_DIR, "media/")
-    
-    # if firma == 'True':    
-    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts.png"
-    # else:
-    #     bg_path = STATIC_ROOT + "certificados/plantilla-certificado-uts_nofirma.png"
-
     bg_path = "/code" + bg_path.plantilla.imagen.url
 
     
