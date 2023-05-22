@@ -118,7 +118,8 @@ class CursoEstudiante(models.Model):
         verbose_name_plural = 'Cursos Estudiantes'
 
     def __str__(self):
-        return self.estudiante.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
+        return self.curso.nombre
+        # return self.estudiante.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
 
 # class CalificacionCurso(models.Model):
 #     curso_estudiante = models.OneToOneField(CursoEstudiante, on_delete=models.CASCADE)
