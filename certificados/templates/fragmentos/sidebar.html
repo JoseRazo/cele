@@ -29,7 +29,12 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Opciones</h6>
+                {% if request.user.is_staff == 1 %}
+                <a class="collapse-item" href="{% url 'certificados_back:certi_cele' %}">Certificados CELE</a>
+                <a class="collapse-item" href="{% url 'certificados_back:certi_edcon' %}">Certificados EDCON</a>
+                {% else %}
                 <a class="collapse-item" href="{% url 'certificados_back:mis_cursos' %}">Mis Cursos</a>
+                {% endif %}
             </div>
         </div>
     </li>

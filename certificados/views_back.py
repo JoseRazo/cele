@@ -4,12 +4,15 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
+from django.views.generic.list import ListView
+from django.db.models import Count, Q 
 from .forms import LoginForm
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo
 from edcon.models import Estudiante, CursoEstudiante
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
+from datetime import date as fecha_actual
 
 import qrcode
 import random
@@ -25,6 +28,9 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.colors import blue
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+import textwrap
 import base64
 # Create your views here.
 
@@ -103,6 +109,7 @@ def pdfget(request, certfolio):
     text_subtitulo =  str(curso.curso_alumno.curso)
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(certfolio)
+    text_firma = str(curso.firma)
 
 
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
@@ -149,6 +156,27 @@ def pdfget(request, certfolio):
     c.setFillColor(HexColor('#e40e1a'))
     c.drawString(x, (letter[1] / 14.05), text_folio)
 
+    # Pasada 5: Firma
+    c.setFont("Helvetica", 8)
+    c.setFillColor(HexColor('#9f9b9b'))
+
+    if len(text_firma) > 45:
+        wrap_text = textwrap.wrap(str(text_firma), width=45)
+        y = 120
+        pos = 0
+        for i in wrap_text:
+            text_width = c.stringWidth(wrap_text[pos], "Helvetica", 8)
+            x = (letter[0] - text_width) / 2
+            c.drawString(x, y, wrap_text[pos])
+            y -= 10
+            print(y)
+            pos = pos + 1
+    else:
+        text_width = c.stringWidth(text_firma, "Helvetica", 8)
+        x = (letter[0] - text_width) / 2
+        c.drawString(x, (letter[1] / 12.05), text_firma)
+        
+
     # Finaliza el PDF.
     c.showPage()
     c.save()
@@ -161,31 +189,45 @@ def pdfget(request, certfolio):
 
 
 @login_required
-def pdfgen(request, curso_id, firma):
-    usuario = request.user
-    
+def pdfgen(request, curso_id, firma, type):
+    print(settings.LLAVE_PRIVADA)
+    usuario = request.user    
     filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
-        curso = CursoEstudiante.objects.get(pk=curso_id)
-        print("usuario edcon")
 
-        if not str(request.user) == str(curso.estudiante):
-            return render(request, 'certificados/curso_no_autorizado.html')
-        
-        c_alumno = curso.estudiante
-        c_profesor = curso.instructor
+    if usuario.is_staff == 1:
+        if type == "AC":
+            curso = CursoAlumno.objects.get(pk=curso_id)
+            filtro = "Alumno"
+
+            c_alumno = curso.alumno
+            c_profesor = curso.profesor
+        elif type == "AE":
+            curso = CursoEstudiante.objects.get(pk=curso_id)
+            filtro = "<QuerySet []>"
+
+            c_alumno = curso.estudiante
+            c_profesor = curso.instructor
     else:
-        curso = CursoAlumno.objects.get(pk=curso_id)    
-        print("usuario cele")
+        if filtro == "<QuerySet []>":
+            curso = CursoEstudiante.objects.get(pk=curso_id)
+            print("usuario edcon")
 
-        if not str(request.user) == str(curso.alumno):
-            return render(request, 'certificados/curso_no_autorizado.html')
+            if not str(request.user) == str(curso.estudiante):
+                return render(request, 'certificados/curso_no_autorizado.html')
+            
+            c_alumno = curso.estudiante
+            c_profesor = curso.instructor
+        else:
+            curso = CursoAlumno.objects.get(pk=curso_id)    
+            print("usuario cele")
 
-        c_alumno = curso.alumno
-        c_profesor = curso.profesor
+            if not str(request.user) == str(curso.alumno):
+                return render(request, 'certificados/curso_no_autorizado.html')
+
+            c_alumno = curso.alumno
+            c_profesor = curso.profesor
     
-    cadena = str(c_alumno) +"|"+ str(curso.curso) +"|"+ str(c_profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"
-    cadena += str(curso.inscrito) +"|"+ str(curso.curso.precio_estudiante_uts) +"|"+ str(curso.curso.precio_persona_externa)# +"|"+ str(cali.primer_examen) +"|"+ str(cali.segundo_examen) +"|"+ str(cali.calificacion_final)
+    cadena = str(c_alumno) +"|"+ str(curso.curso) +"|"+ str(c_profesor) +"|"+ str(curso.periodo) +"|"+ str(curso.periodo.fecha_inicio) +"|"+ str(curso.periodo.fecha_fin) +"|"+ str(settings.LLAVE_PRIVADA)
 
     firmaDigital = cadena.encode()
     firmaDigital = base64.b64encode(firmaDigital)
@@ -213,7 +255,7 @@ def pdfgen(request, curso_id, firma):
                 # Crea un nuevo registro en CertificadoAlumno con el folio generado
             certificado_alumno = CertificadoEstudiante.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.last(),
+                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
@@ -238,14 +280,13 @@ def pdfgen(request, curso_id, firma):
 
             certificado_alumno = CertificadoAlumno.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.last(),
+                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
             )
 
         bg_path = CertificadoAlumno.objects.last()
-    
     
 
 
@@ -262,8 +303,6 @@ def pdfgen(request, curso_id, firma):
     # Agrega la imagen de fondo al PDF.
     bg_path = "/code" + bg_path.plantilla.imagen.url
 
-    
-
     print(bg_path)
 
     add_background(c, bg_path)
@@ -272,14 +311,15 @@ def pdfgen(request, curso_id, firma):
         add_qrcode(c, folio)
 
     if firma == 'True':
-        image_path = "/code/media/certificados/firma_rector.png"
+        firma_path = Plantilla.objects.filter(firma_rector=True).last()
+        image_path = "/code" + firma_path.imagen.url 
         c.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
     ############## Obtención de datos #################
 
-# Nombre del Curso
+    # Nombre del Curso
 
-# Fecha de Inicio y de Término
+    # Fecha de Inicio y de Término
     meses = {
         "January": "enero",
         "February": "febrero",
@@ -353,7 +393,28 @@ def pdfgen(request, curso_id, firma):
     c.setFillColor(HexColor('#e40e1a'))
     c.drawString(x, (letter[1] / 14.05), text_folio)
 
-    # Pasada 5: Código QR
+    # Pasada 5: Firma}
+
+    if firma == 'False':
+        c.setFont("Helvetica", 8)
+        c.setFillColor(HexColor('#9f9b9b'))
+
+        if len(firmaDigital) > 45:
+            wrap_text = textwrap.wrap(str(firmaDigital), width=45)
+            y = 120
+            pos = 0
+            for i in wrap_text:
+                text_width = c.stringWidth(wrap_text[pos], "Helvetica", 8)
+                x = (letter[0] - text_width) / 2
+                c.drawString(x, y, wrap_text[pos])
+                y -= 10
+                print(y)
+                pos = pos + 1
+        else:
+            text_width = c.stringWidth(firmaDigital, "Helvetica", 8)
+            x = (letter[0] - text_width) / 2
+            c.drawString(x, (letter[1] / 12.05), firmaDigital)
+    
         
 
     # Finaliza el PDF.
@@ -369,6 +430,7 @@ def pdfgen(request, curso_id, firma):
 
 @login_required
 def listar_cursos(request):
+    today = fecha_actual.today()
     usuario = request.user
     filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
@@ -379,7 +441,7 @@ def listar_cursos(request):
         alumno = Alumno.objects.get(username=usuario.username)
 
     return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list, 'alumno': alumno}) 
+                  {'curso_list': curso_list, 'alumno': alumno, 'today': today}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
@@ -412,3 +474,75 @@ def mostrar_curso(request, curso_id):
                   {'selcurso': selcurso, 'alumno': alumno})
     else:
         return render(request, 'certificados/curso_no_autorizado.html')
+    
+
+class CursosAlumnoCeleListView(ListView):
+    model = CursoAlumno
+    # template_name = 'blog/certificados/certi-cele.html'
+    context_object_name = 'cursos_cele'
+    ordering = ['alumno']
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno')).order_by('alumno')
+        return queryset
+
+def is_valid_queryparam(param):
+    return param != '' and param is not None
+def invalid_queryparam(param):
+    return param == '' and param is None
+
+
+class SearchCursosAlumnoCeleView(ListView):
+    model = CursoAlumno
+    # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'cursos_cele'      # default >> erf24/post_list.html
+    ordering = ['alumno']
+    paginate_by = 10
+
+    def get_queryset(self): # new
+        search = self.request.GET.get('q')
+
+        if is_valid_queryparam(search):
+            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno')).filter(Q(alumno__nombre__icontains=search) | Q(alumno__username__icontains=search)).distinct().order_by('alumno')
+
+        if invalid_queryparam(search):
+            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno'))
+    
+        return obj
+
+
+class CursosEstudianteEdconListView(ListView):
+    model = CursoEstudiante
+    # template_name = 'blog/certificados/certi-cele.html'
+    context_object_name = 'cursos_edcon'
+    ordering = ['estudiante']
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante')).order_by('estudiante')
+        return queryset
+
+def is_valid_queryparam(param):
+    return param != '' and param is not None
+def invalid_queryparam(param):
+    return param == '' and param is None
+
+
+class SearchCursosEstudianteEdconView(ListView):
+    model = CursoEstudiante
+    # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'cursos_edcon'      # default >> erf24/post_list.html
+    ordering = ['estudiante']
+    paginate_by = 10
+
+    def get_queryset(self): # new
+        search = self.request.GET.get('q')
+
+        if is_valid_queryparam(search):
+            obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante')).filter(Q(estudiante__nombre__icontains=search) | Q(estudiante__username__icontains=search)).distinct().order_by('estudiante')
+
+        if invalid_queryparam(search):
+            obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante'))
+    
+        return obj
