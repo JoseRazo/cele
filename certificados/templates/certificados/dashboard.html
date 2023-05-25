@@ -5,43 +5,55 @@
 {% block content %}
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Cursos</h1>
+  <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
 </div>
-
-
-<div class="mdl-grid">
-    {% for curso in curso_data %}
-    
-    <div class="mdl-cell mdl-card mdl-shadow--4dp card">
-        <div class="mdl-card__media">
-            <img class="article-image" src="{{ curso.imagen.url }}">
-        </div>
-        <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            <table>
-                <tr>
-                    <td class="status" >Precio Estudiante:</td>
-                    <td>{{curso.precio_estudiante_uts}}</td>
-                </tr>
-                <tr>
-                    <td class="status" >Precio Persona Externa:</td>
-                    <td>{{curso.precio_persona_externa}}</td>
-                </tr>
-                <tr>
-                    <td class="status">Duracion</td>
-                    <td>{{ curso.duracion }}</td>
-
-                </tr>
-            </table>
-        </div><br>
-        <p class="descripcion">Descripcion: {{ curso.descripcion|slice:"5:" }} </p>
+<link rel="stylesheet" href="/static/css/mis_cursos.css">
+<div class="contenedor-tarjeta">
+  {% for curso in curso_list %}
+  {% if curso.inscrito and curso.periodo.fecha_fin%}
+  {% if curso.inscrito %}
+  {% if curso.periodo.fecha_fin|date:"Y-m-d" >= today|date:"Y-m-d" %}
+  <div class="tarjeta">
+    <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
+    <div class="tarjeta-imagen">
+      <img src="{{ curso.curso.imagen.url }}" alt="">
     </div>
-    
-    {% endfor %}
+    <div class="tarjeta-content">
+      <div class="content">
+        <h3>{{ curso.curso }}</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td class="thead">Profesor</td>
+              <td>{{ curso.instructor }}</td>
+            </tr>
+            <tr>
+              <td class="thead">Periodo</td>
+              <td>{{ curso.periodo }}</td>
+            </tr>
+            <tr>
+              <td class="thead">Estatus</td>
+              <td>Inscrito</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="botonDetalles">
+        <h6>Mas Detalles</h6>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="tarjeta-content" style="text-align: center; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); width: 100%; height: 150px; background-color: white; margin: 30%; margin-top: 10%; border-radius: 10px;">
+    <p class="text" style="font-size: large; color: black; margin-left: 1%;">Por El Momento No Estás En Ningún Curso</p>
+    <a href="{% url 'certificados_back:mis_cursos' %}" class="btn btn-primary" style="margin-top: 40px;">Ver Cursos</a>
+  </div>
+  {% endif %}
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+  
 
 </div>
-
 
 {% endblock %}

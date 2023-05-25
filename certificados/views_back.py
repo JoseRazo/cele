@@ -5,8 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo
-from edcon.models import Estudiante, CursoEstudiante
+from edcon.models import Curso as Curso2
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo, Curso
+from edcon.models import Estudiante, CursoEstudiante, Periodo
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
 from usuarios.models import Usuario
@@ -382,8 +383,13 @@ def pdfgen(request, curso_id, firma):
 
 @login_required
 def listar_cursos(request):
-    today = fecha_actual.today()
     usuario = request.user
+    curso_periodo = []
+    curso_data = []
+    grupos = request.user.groups.all()
+    curso_list = []
+    today = fecha_actual.today()
+
     filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
         curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
@@ -392,8 +398,17 @@ def listar_cursos(request):
         curso_list = CursoAlumno.objects.filter(alumno=usuario)
         alumno = Alumno.objects.get(username=usuario.username)
 
-    return render(request, 'certificados/mis_cursos.html',
-                  {'curso_list': curso_list, 'alumno': alumno, 'today': today}) 
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_data = Curso.objects.all()
+            curso_periodo = Curso.objects.all()
+        elif grupo.name == 'Estudiantes EDCON':
+            curso_data = Curso2.objects.all()
+            curso_periodo = Curso.objects.all()
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)    
+
+    return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
@@ -413,7 +428,7 @@ def mostrar_curso(request, curso_id):
 
 
     filtro = str(CursoAlumno.objects.filter(pk=curso_id))
-    #filtro = str(Alumno.objects.filter(username=usuario.username))
+     #filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
         return render(request, 'certificados/404.html')
 
