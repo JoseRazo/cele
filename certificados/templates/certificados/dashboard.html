@@ -21,7 +21,6 @@
   {% for curso in curso_list %}
   {% if curso.inscrito and curso.periodo.fecha_fin%}
   {% if curso.inscrito %}
-  {% if curso.periodo.fecha_fin|date:"Y-m-d" >= today|date:"Y-m-d" %}
   <div class="tarjeta">
     <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
     <div class="tarjeta-imagen">
@@ -54,15 +53,18 @@
       </div>
     </div>
   </div>
-  {% else %}
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+
+  {% if not curso_list %}
   <div class="tarjeta-content" style="text-align: center; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); width: 100%; height: 150px; background-color: white; margin: 30%; margin-top: 10%; border-radius: 10px;">
     <p class="text" style="font-size: large; color: black; margin-left: 1%;">Por El Momento No Estás En Ningún Curso</p>
     <a href="{% url 'certificados_back:mis_cursos' %}" class="btn btn-primary" style="margin-top: 40px;">Ver Cursos</a>
   </div>
   {% endif %}
-  {% endif %}
-  {% endif %}
-  {% endfor %}
+
+
 </div>
 {% endif %}
 {% endblock %}
