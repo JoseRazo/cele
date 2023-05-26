@@ -109,6 +109,7 @@
 .mdl-cell {
   width: calc(33.33% - 20px); /* Ajusta el ancho según tus necesidades */
   margin-bottom: 20px;
+  height: 100%;
 }
 
 .mdl-card {

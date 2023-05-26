@@ -8,22 +8,22 @@
 
 
 <div class="mdl-grid">
-    {% for curso in curso_data %}
+    {% for curso in curso_list %}
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
         <div class="mdl-card__media">
-            {% if curso.imagen %}
-            <img class="article-image" src="{{ curso.imagen.url }}">
+            {% if curso.curso.imagen %}
+            <img class="article-image" src="{{ curso.curso.imagen.url }}">
             {% endif %}
         </div>
         <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>
+            <h2 class="mdl-card__title-text">{{ curso.curso.nombre }}</h2>
         </div>
         <div class="mdl-card__supporting-text">
             <table>
                 <tr>
                     <td class="status">Fecha de inicio</td>
                     <td>
-                        {{ curso.curso.periodo.fecha_creacion}}
+                        {{ curso.periodo.fecha_creacion}}
                     </td>
                 </tr>
                 <tr>
@@ -35,11 +35,11 @@
                 <tr>
                     <td class="status">Duracion</td>
                     <td>
-                        {% if curso.duracion %}
-                        {{ curso.duracion }}
+                        {% if curso.curso.duracion %}
+                        {{ curso.curso.duracion }}
                         {% else %}
 
-                         {% if curso.activo  %}
+                         {% if curso.curso.activo  %}
                          Activo
                          {% else %}
                          No esta activo
