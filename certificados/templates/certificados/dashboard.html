@@ -5,44 +5,54 @@
 {% block content %}
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Cursos</h1>
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
 </div>
 
+{% if request.user.is_staff == 1%}
+<div class="isStaff">
+    <center>
+        <h2>Bienvenido al Dashboard</h2>
+        <h4>Sesión de Staff</h4>
+    </center>
+</div>
 
+{% else %}
 <div class="mdl-grid">
-    {% for curso in curso_list %}
+    {% for curso in curso_data %}
+    
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
         <div class="mdl-card__media">
-            <img class="article-image" src="{{ curso.curso.imagen.url }}">
+            {% if curso.imagen %}
+            <img class="article-image" src="{{ curso.imagen.url }}">
+            {% endif %}
         </div>
         <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">{{ curso.curso }}</h2>
+            <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>
         </div>
         <div class="mdl-card__supporting-text">
             <table>
                 <tr>
-                    <td class="status">Estatus de Inscripcion:</td>
-                    <td>
-                        {% if curso.inscrito %}
-                        Inscrito
-                        {% else %}
-                        No inscrito
-                        {% endif %}
-                    </td>
+                    <td class="status" >Precio Estudiante:</td>
+                    <td>{{curso.precio_estudiante_uts}}</td>
+                </tr>
+                <tr>
+                    <td class="status" >Precio Persona Externa:</td>
+                    <td>{{curso.precio_persona_externa}}</td>
                 </tr>
                 <tr>
                     <td class="status">Duracion</td>
-                    <td>{{ curso.curso.duracion }}</td>
+                    <td>{{ curso.duracion }}</td>
 
                 </tr>
             </table>
         </div><br>
-        <p class="descripcion">Descripcion: {{ curso.curso.descripcion|slice:"199:" }} <a
-                href="{% url 'certificados_back:mis_cursos_detail' curso.id %}">Leer más</a></p>
+        <p class="descripcion">Descripcion: {{ curso.descripcion|slice:"5:" }} </p>
     </div>
+    
     {% endfor %}
 
 </div>
+{% endif %}
 
 
 {% endblock %}

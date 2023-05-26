@@ -1,0 +1,105 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} Certificados EDCON {% endblock %}
+
+{% block content %}
+<h1>Certificados EDCON</h1>
+
+<link rel="stylesheet" href="/static/css/certi_search.css"/>
+<script src="https://kit.fontawesome.com/3235fff4fa.js" crossorigin="anonymous"></script>
+
+<div class="contenedor">
+    <div class="barraFiltros">
+        <form action="{% url 'certificados_back:certi_edcon_search' %}" method="get" id="courses_search_form">
+            <input type="search" name="q" placeholder="Buscar por Alumno/Matricula" required/>
+            <button>
+                Buscar Ahora
+            </button>
+        </form>
+    </div>
+    {% if cursos_edcon %}
+    <div class="tarjeta">
+        <div class="tarjeta-contenido">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matricula</th>
+                        <th>Estudiante</th>
+                        <th>Curso</th>
+                        <th>Instructor</th>
+                        <th>Periodo</th>
+                        <th>Certificado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos_edcon %}
+                    <tr>
+                        <td class="ignoreBorder">{{ curso.estudiante.username }}</td>
+                        <td>{{ curso.estudiante }}</td>
+                        <td>{{ curso.curso }}</td>
+                        <td>{{ curso.instructor }}</td>
+                        <td>{{ curso.periodo }}</td>
+                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id True 'AE' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="courses_show_text d-flex justify-content-center mb-3">
+        Mostrando {{ page_obj.object_list|length }} de {{ page_obj.paginator.count }} Resultados en la Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        {% if request.GET.q is not None %}
+        &nbsp; <a href="{% url 'certificados_back:certi_edcon' %}">(Mostrar Todo)</a>
+        {% endif %}
+    </div>
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Anterior</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Anterior</a>
+            </li>
+            {% endif %}
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">
+                        {{ i }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="{% if request.GET.q is not None %}?page={{ i }}&q={{ request.GET.q }}{% else %}?page={{ i }}{% endif %}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Siguiente</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endif %} 
+    
+    
+    {% if not cursos_edcon %}
+    <div class="noCursos">
+        <i class="fa fa-search fa-5x"></i>
+        <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
+        <div class="section_subtitle">
+            <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

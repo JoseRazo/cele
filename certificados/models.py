@@ -54,8 +54,10 @@ class DocumentoLogo(models.Model):
         return self.nombre
 
 class Plantilla(models.Model):
+    nombre = models.CharField(max_length=30, null=True, blank=True)
     imagen = models.ImageField(
         default='default-image-certi-540x540.png', upload_to='certificados', help_text="El tamaño de la imagen debe ser de 540 x 540 pixeles", blank=True, null=True)
+    firma_rector = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(
         _('Fecha de creación'), auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(

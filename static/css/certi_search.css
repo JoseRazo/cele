@@ -1,0 +1,121 @@
+.contenedor {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+
+/* Barra de Filtros (Búsqueda y filtrado) */
+
+.barraFiltros {
+    width: 100%;
+    background-color: #e6e6e6;
+    padding: 10px;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.barraFiltros form{
+    display: flex;
+}
+
+.barraFiltros input {
+    width: 25%;
+    padding-block: 5px;
+    padding-inline: 15px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+
+    transition: 0.3s;
+}
+
+.barraFiltros input:focus {
+    outline: 1px solid #4268d6;
+
+    transition: 0.3s;
+}
+
+.barraFiltros button {
+    border: none;
+    padding: 5px;
+    padding-inline: 10px;
+    border-radius: 5px;
+    background-color: #4268d6;
+    color: white;
+
+    transition: 0.1s;
+}
+
+.barraFiltros button:hover {
+    background-color: #2b4288;
+}
+
+.barraFiltros button:focus {
+    transform: scale(0.9);
+}
+
+
+/* Tabla Contenedora */
+
+.tarjeta {
+    padding: 10px;
+}
+
+.tarjeta-contenido table {
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+thead {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+th, td {
+    padding: 5px;
+}
+
+td {
+    border-inline: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+
+.ignoreBorder {
+    border: none;
+}
+
+.noCursos {
+    text-align: center;
+    padding-block: 50px;
+}
+
+@media (max-width: 500px){
+    .contenedor {
+        font-size: x-small;
+    }
+
+    .barraFiltros input {
+        width: 100%;
+    }
+
+    .barraFiltros button {
+        width: 50%;
+    }
+}
+
+@media (max-width: 350px){
+    .contenedor {
+        font-size: xx-small;
+        overflow: scroll;
+    }
+
+    .barraFiltros input {
+        width: 100%;
+    }
+
+    .barraFiltros button {
+        width: 25%;
+    }
+}

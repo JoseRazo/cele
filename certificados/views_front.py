@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
 from edcon.models import CursoEstudiante, Estudiante
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso
+from edcon.models import Curso as Curso2
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso, Curso
 from usuarios.models import Usuario
 import io
 from pathlib import Path
@@ -16,11 +17,6 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from .models import CertificadoAlumno, Plantilla
 from datetime import datetime
-
-
-
-
-
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -128,23 +124,30 @@ def curso_info(request):
 
     return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso, 'alumno': alumno})
 
+
+
 @login_required
 def dash_view(request):
     usuario = request.user
+    curso_data = []
     grupos = request.user.groups.all()
     curso_list = []
-    print(grupos)
+    print(curso_data)
 
     filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
+    if usuario.is_staff == 1:
+        alumno = Alumno.objects.filter(username=usuario.username)
+    elif filtro == "<QuerySet []>":
         alumno = Estudiante.objects.get(username=usuario.username)
-    else:
+    elif "Alumno" in filtro:
         alumno = Alumno.objects.get(username=usuario.username)
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_data = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
+            curso_data = Curso2.objects.all()
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
-    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno})
+    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data})
