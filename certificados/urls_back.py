@@ -19,3 +19,4 @@ urlpatterns = [
     path('certi-edcon-search/', SearchCursosEstudianteEdconView.as_view(template_name="certificados/certi_edcon.html"), name='certi_edcon_search'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ 

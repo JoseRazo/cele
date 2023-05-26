@@ -182,4 +182,3 @@ def dash_view(request):
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
-
