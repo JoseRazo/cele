@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
-from sistema.models import Estado, Ciudad, Colonia
+from sistema.models import Estado, Ciudad, Colonia, Carrera
 from datetime import datetime
 
 
@@ -30,6 +30,8 @@ class Alumno(Usuario):
     num_exterior = models.CharField(max_length=15, null=True, blank=True)
     num_interior = models.CharField(max_length=15, null=True, blank=True)
     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True, blank=True, 
+                                help_text="Selecciona una opción solo si es estudiante o egresado UTS")
     avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
 
     class Meta:
@@ -84,7 +86,7 @@ class Curso(models.Model):
         _('Precio Persona Externa'), max_digits=6, decimal_places=2)
     activo = models.BooleanField(default=True)
     imagen = models.ImageField(
-        default='', upload_to='cursos', help_text="El tamaño de la imagen debe ser de 770 x 436 pixeles", blank=True, null=True)
+        default='cursos/default-image-curso-770x433.png', upload_to='cursos', help_text="El tamaño de la imagen debe ser de 770 x 436 pixeles", blank=True, null=True)
     slug=models.SlugField(null=True, unique=True)
     fecha_creacion = models.DateTimeField(
         _('Fecha de creación'), auto_now_add=True)

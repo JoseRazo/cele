@@ -134,7 +134,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_form = AlumnoCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password', 'contraseña',)}),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -152,7 +152,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -162,9 +162,9 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
 
     search_fields = ('username', 'email', 'nombre')
     list_filter = ('tipo_usuario', 'is_active')
-    # autocomplete_fields = ['estado', 'ciudad', 'colonia']
+
     # class Media:
-    #     js = ("usuarios/newajax.js",)
+    #     js = ('jazzmin/js/alumno_admin.js',)
 
 @admin.register(Profesor)
 class ProfesorAdmin(DjangoUserAdmin):

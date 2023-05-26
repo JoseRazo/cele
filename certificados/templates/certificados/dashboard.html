@@ -53,7 +53,52 @@
   {% endif %}
   {% endfor %}
   
+</div>
+
+{% if request.user.is_staff == 1%}
+<div class="isStaff">
+    <center>
+        <h2>Bienvenido al Dashboard</h2>
+        <h4>Sesión de Staff</h4>
+    </center>
+</div>
+
+{% else %}
+<div class="mdl-grid">
+    {% for curso in curso_data %}
+    
+    <div class="mdl-cell mdl-card mdl-shadow--4dp card">
+        <div class="mdl-card__media">
+            {% if curso.imagen %}
+            <img class="article-image" src="{{ curso.imagen.url }}">
+            {% endif %}
+        </div>
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <table>
+                <tr>
+                    <td class="status" >Precio Estudiante:</td>
+                    <td>{{curso.precio_estudiante_uts}}</td>
+                </tr>
+                <tr>
+                    <td class="status" >Precio Persona Externa:</td>
+                    <td>{{curso.precio_persona_externa}}</td>
+                </tr>
+                <tr>
+                    <td class="status">Duracion</td>
+                    <td>{{ curso.duracion }}</td>
+
+                </tr>
+            </table>
+        </div><br>
+        <p class="descripcion">Descripcion: {{ curso.descripcion|slice:"5:" }} </p>
+    </div>
+    
+    {% endfor %}
 
 </div>
+{% endif %}
 
 {% endblock %}

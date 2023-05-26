@@ -156,7 +156,6 @@ def Cursos_det(request):
     return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo})
 
 
-
 @login_required
 def dash_view(request):
     today = fecha_actual.today()
@@ -167,9 +166,11 @@ def dash_view(request):
     print(curso_data)
 
     filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
+    if usuario.is_staff == 1:
+        alumno = Alumno.objects.filter(username=usuario.username)
+    elif filtro == "<QuerySet []>":
         alumno = Estudiante.objects.get(username=usuario.username)
-    else:
+    elif "Alumno" in filtro:
         alumno = Alumno.objects.get(username=usuario.username)
 
     for grupo in grupos:
@@ -181,3 +182,4 @@ def dash_view(request):
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
+
