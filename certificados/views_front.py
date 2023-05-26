@@ -9,6 +9,8 @@ from edcon.models import CursoEstudiante, Estudiante
 from edcon.models import Curso as Curso2
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso, Curso
 from usuarios.models import Usuario
+from datetime import date as fecha_actual
+
 import io
 from pathlib import Path
 import os
@@ -125,9 +127,38 @@ def curso_info(request):
     return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso, 'alumno': alumno})
 
 
+def Cursos_det(request):
+    usuario = request.user
+    curso_periodo = []
+    curso_data = []
+    grupos = request.user.groups.all()
+    curso_list = []
+    today = fecha_actual.today()
+
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+        alumno = Estudiante.objects.get(username=usuario.username)
+    else:
+        curso_list = CursoAlumno.objects.filter(alumno=usuario)
+        alumno = Alumno.objects.get(username=usuario.username)
+
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_data = Curso.objects.all()
+            curso_periodo = Curso.objects.all()
+        elif grupo.name == 'Estudiantes EDCON':
+            curso_data = Curso2.objects.all()
+            curso_periodo = Curso.objects.all()
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)    
+
+    return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo})
+
 
 @login_required
 def dash_view(request):
+    today = fecha_actual.today()
     usuario = request.user
     curso_data = []
     grupos = request.user.groups.all()
@@ -150,4 +181,5 @@ def dash_view(request):
             curso_data = Curso2.objects.all()
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
-    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data})
+    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
+

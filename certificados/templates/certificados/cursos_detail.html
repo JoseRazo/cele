@@ -1,0 +1,27 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} Detalles Cursos {% endblock %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
+
+<div class="page">
+    {% for curso in curso_data %}
+    <div class="contenido">
+        <h1>{{ curso.nombre }}</h1>
+        <h4>{{ curso.curso.descripcion }}</h4>
+        <label for="">Duración</label>
+        <h6>{{ curso.periodo.nombre }}</h6>
+        <label for="">Periodo</label>
+        <h6>Del {{ curso.periodo.fecha_inicio}} a {{ curso.periodo.fecha_fin }}</h6>
+    </div>
+    <div class="imagen">
+        <div class="gradiante"></div>
+        <img src="{{ curso.imagen.url }}" alt="">
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
