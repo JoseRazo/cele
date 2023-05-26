@@ -14,7 +14,7 @@ urlpatterns = [
     path('dashboard/profile/', profile_user, name="profile"),
     path('logout/', logout_view, name="logout"),
     path('dashboard/info', curso_info, name="info"),
-    path('cursos/', Cursos_det, name="Cursos"),
+    path('cursos/<curso_id>', Cursos_det, name="Cursos"),
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

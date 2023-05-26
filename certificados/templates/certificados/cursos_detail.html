@@ -6,22 +6,49 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
-
 <div class="page">
-    {% for curso in curso_data %}
+    {% for curso in curso_list %}
     <div class="contenido">
-        <h1>{{ curso.nombre }}</h1>
+
+        {{ curso.alumno.primer_examen }}
+
+        <h1>{{ curso.curso }}</h1> <br>
+        <label for="">Descripcion: </label>
         <h4>{{ curso.curso.descripcion }}</h4>
-        <label for="">Duración</label>
+        <label for="">Duración: </label>
         <h6>{{ curso.periodo.nombre }}</h6>
-        <label for="">Periodo</label>
+        <label for="">Periodo: </label>
         <h6>Del {{ curso.periodo.fecha_inicio}} a {{ curso.periodo.fecha_fin }}</h6>
+        <h4 class="tituloCalf">Calificación del curso</h4>
+        {% if curso.estatus == 1 %}
+        <h1>En progreso</h1>
+        {% elif curso.estatus == 2 %}
+        <h1>Completado</h1>
+        {% elif curso.estatus == 3 %}
+        <h1>No completado</h1>
+        {% else %}
+            {% if not curso.primer_examen and not curso.segundo_examen and not curso.calificacion_final %}
+            <ul>
+                {% if curso.primer_examen %}
+                <li>Primer Examen: {{ curso.primer_examen }}</li>
+                {% endif %}
+                {% if curso.segundo_examen %}
+                <li>Segundo Examen: {{ curso.segundo_examen }}</li>
+                {% endif %}
+                {% if curso.calificacion_final %}
+                <li>Calificación Final: {{ curso.calificacion_final }}</li>
+                {% endif %}
+            </ul>
+            {% else %}
+            <h1>Sin calificación</h1>
+            {% endif %}
+        {% endif %}
     </div>
     <div class="imagen">
         <div class="gradiante"></div>
-        <img src="{{ curso.imagen.url }}" alt="">
+        <img src="{{ curso.curso.imagen.url }}" alt="">
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 
 {% endblock %}

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
 
 <div class="page">
+    
     <div class="contenido">
         <h1>{{ selcurso }}</h1>
 
@@ -38,3 +39,5 @@
 </div>
 
 {% endblock %}
+
+{% url 'certificados_back:pdfgen' selcurso.id False %}
