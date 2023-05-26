@@ -11,7 +11,9 @@
     {% for curso in curso_data %}
     <div class="mdl-cell mdl-card mdl-shadow--4dp card">
         <div class="mdl-card__media">
+            {% if curso.imagen %}
             <img class="article-image" src="{{ curso.imagen.url }}">
+            {% endif %}
         </div>
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text">{{ curso.nombre }}</h2>

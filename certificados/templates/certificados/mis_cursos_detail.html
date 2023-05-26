@@ -1,6 +1,6 @@
 {% extends 'fragmentos/base.html' %}
 
-{% block title %} Detalles Curso {% endblock %}
+{% block title %} {{ selcurso }} {% endblock %}
 
 {% load static %}
 
@@ -24,17 +24,19 @@
         <h6>Del {{ selcurso.periodo.fecha_inicio}} a {{ selcurso.periodo.fecha_fin }}</h6>
 
         <div class="testButtons">
-            <a href="{% url 'certificados_back:pdfgen' selcurso.id False %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF con Firma Digital + QR
             </a>
-            <a href="{% url 'certificados_back:pdfgen' selcurso.id True %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <a href="{% url 'certificados_back:pdfgen' selcurso.id True ' ' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF con Firma de Rector
             </a>
         </div>
     </div>
     <div class="imagen">
         <div class="gradiante"></div>
+        {% if selcurso.curso.imagen %}
         <img src="{{ selcurso.curso.imagen.url }}" alt="">
+        {% endif %}
     </div>
 </div>
 

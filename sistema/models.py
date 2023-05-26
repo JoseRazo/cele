@@ -49,3 +49,16 @@ class Colonia(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class Carrera(models.Model):
+    nombre = models.CharField(max_length=200)
+    abreviatura = models.CharField(max_length=3, blank=True, null=True)
+    activo = models.BooleanField()
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Carrera'
+        verbose_name_plural = 'Carreras'
+
+    def __str__(self):
+        return self.nombre

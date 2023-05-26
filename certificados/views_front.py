@@ -129,54 +129,31 @@ def curso_info(request):
 
 def Cursos_det(request, curso_id):
     usuario = request.user
-    filtro2 = str(Alumno.objects.filter(username=usuario.username))
-    #filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro2 == "<QuerySet []>":
-        #curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
-        alumno = Estudiante.objects.get(username=usuario.username)
-        selcurso = Curso2.objects.get(pk=curso_id)
-        # log_alumno = str(selcurso.estudiante)
-    else:
-        #curso_list = CursoAlumno.objects.filter(alumno=usuario)
-        alumno = Alumno.objects.get(username=usuario.username)
-        selcurso = Curso.objects.get(pk=curso_id)
-        # log_alumno = str(selcurso.alumno)
-
-
-    # filtro = str(CursoAlumno.objects.filter(pk=curso_id))
-    #  #filtro = str(Alumno.objects.filter(username=usuario.username))
-    # if filtro == "<QuerySet []>":
-    #     return render(request, 'certificados/404.html')
-
-    usuario = request.user
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    
-    if filtro == "<QuerySet []>":
-        alumno = Estudiante.objects.get(username=usuario.username)
-    else:
-        alumno = Alumno.objects.get(username=usuario.username)
-    
+    curso_periodo = []
+    curso_data = []
     grupos = request.user.groups.all()
     curso_list = []
-    calificacion_curso = None
-    estatus_curso = None
-        
+    today = fecha_actual.today()
+
+    filtro = str(Alumno.objects.filter(username=usuario.username))
+    if filtro == "<QuerySet []>":
+        curso_list = CursoEstudiante.objects.get(pk=curso_id)
+        alumno = Estudiante.objects.get(username=usuario.username)
+    else:
+        curso_list = CursoAlumno.objects.get(pk=curso_id)
+        alumno = Alumno.objects.get(username=usuario.username)
+
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.filter(alumno=usuario)
-            if curso_list:
-                try:
-                    curso_alumno = curso_list[0]
-                    calificacion_curso = CalificacionCurso.objects.get(curso_alumno=curso_alumno)
-                except ObjectDoesNotExist:
-                    pass
+            curso_list = CursoAlumno.objects.get(pk=curso_id)
+            curso_data = Curso.objects.all()
+            curso_periodo = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+            curso_data = Curso2.objects.all()
+            curso_periodo = Curso.objects.all()
+            curso_list = CursoEstudiante.objects.get(pk=curso_id)    
 
-
-    return render(request, 'certificados/cursos_detail.html', 
-                  {'selcurso': selcurso, 'alumno': alumno, 'curso_list': curso_list})
-
+    return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo})
 
 
 @login_required
@@ -189,9 +166,11 @@ def dash_view(request):
     print(curso_data)
 
     filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
+    if usuario.is_staff == 1:
+        alumno = Alumno.objects.filter(username=usuario.username)
+    elif filtro == "<QuerySet []>":
         alumno = Estudiante.objects.get(username=usuario.username)
-    else:
+    elif "Alumno" in filtro:
         alumno = Alumno.objects.get(username=usuario.username)
 
     for grupo in grupos:
@@ -203,3 +182,4 @@ def dash_view(request):
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
+

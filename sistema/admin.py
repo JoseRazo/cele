@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pais, Estado, Ciudad, Colonia
+from .models import Pais, Estado, Ciudad, Colonia, Carrera
 # Register your models here.
 
 class PaisAdmin(admin.ModelAdmin):
@@ -28,7 +28,13 @@ class ColoniaAdmin(admin.ModelAdmin):
     ordering = ('nombre', 'codigo_postal', 'ciudad')
     # autocomplete_fields = ['ciudad']
 
+class CarreraAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'abreviatura', 'activo', 'fecha_registro')
+    list_filter = ('activo',)
+    search_fields = ('nombre',)
+
 admin.site.register(Pais, PaisAdmin,)
 admin.site.register(Estado, EstadoAdmin,)
 admin.site.register(Ciudad, CiudadAdmin,)
 admin.site.register(Colonia, ColoniaAdmin,)
+admin.site.register(Carrera, CarreraAdmin,)
