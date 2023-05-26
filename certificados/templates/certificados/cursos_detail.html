@@ -8,20 +8,20 @@
 <link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
 
 <div class="page">
-    {% for curso in curso_data %}
     <div class="contenido">
-        <h1>{{ curso.nombre }}</h1>
-        <h4>{{ curso.curso.descripcion }}</h4>
+        <h1>{{ curso_list.curso.nombre }}</h1>
+        <h4>{{ curso_list.curso.descripcion }}</h4>
         <label for="">Duración</label>
-        <h6>{{ curso.periodo.nombre }}</h6>
+        <h6>{{ curso_list.periodo.nombre }}</h6>
         <label for="">Periodo</label>
-        <h6>Del {{ curso.periodo.fecha_inicio}} a {{ curso.periodo.fecha_fin }}</h6>
+        <h6>Del {{ curso_list.periodo.fecha_inicio}} a {{ curso_list.periodo.fecha_fin }}</h6>
     </div>
     <div class="imagen">
         <div class="gradiante"></div>
-        <img src="{{ curso.imagen.url }}" alt="">
+        {% if curso_list.curso.imagen %}
+        <img src="{{ curso_list.curso.imagen.url }}" alt="">
+        {% endif %}
     </div>
 </div>
-{% endfor %}
 
 {% endblock %}

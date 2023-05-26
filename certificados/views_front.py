@@ -127,7 +127,7 @@ def curso_info(request):
     return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso, 'alumno': alumno})
 
 
-def Cursos_det(request):
+def Cursos_det(request, curso_id):
     usuario = request.user
     curso_periodo = []
     curso_data = []
@@ -137,21 +137,21 @@ def Cursos_det(request):
 
     filtro = str(Alumno.objects.filter(username=usuario.username))
     if filtro == "<QuerySet []>":
-        curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+        curso_list = CursoEstudiante.objects.get(pk=curso_id)
         alumno = Estudiante.objects.get(username=usuario.username)
     else:
-        curso_list = CursoAlumno.objects.filter(alumno=usuario)
+        curso_list = CursoAlumno.objects.get(pk=curso_id)
         alumno = Alumno.objects.get(username=usuario.username)
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_list = CursoAlumno.objects.get(pk=curso_id)
             curso_data = Curso.objects.all()
             curso_periodo = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
             curso_data = Curso2.objects.all()
             curso_periodo = Curso.objects.all()
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)    
+            curso_list = CursoEstudiante.objects.get(pk=curso_id)    
 
     return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo})
 
@@ -175,11 +175,11 @@ def dash_view(request):
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_list = CursoAlumno.objects.filter(alumno=usuario, periodo__fecha_fin__gte=today)
             curso_data = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
             curso_data = Curso2.objects.all()
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
 
