@@ -50,29 +50,29 @@ def login_view(request):
     }
     return render(request, 'registration/login.html', context)
 
-    if request.user.is_authenticated:
-        return redirect('certificados:dashboard')
-    form = LoginForm(request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        usuario = authenticate(request, username=username, password=password)
-        if usuario is not None:
-            auth_login(request, usuario)
-            if 'next' in request.GET:
-                return redirect(request.GET['next'])
-            return redirect("certificados:dashboard")
-        else:
-            error_message = "Por favor introduzca un nombre de usuario y contraseña correctos."
-            context = {
-                'form': form,
-                'error_message': error_message
-            }
-            return render(request, 'registration/login.html', context)
-    context = {
-        'form': form,
-    }
-    return render(request, 'registration/login.html', context)
+    # if request.user.is_authenticated:
+    #     return redirect('certificados:dashboard')
+    # form = LoginForm(request.POST or None)
+    # if form.is_valid():
+    #     username = form.cleaned_data['username']
+    #     password = form.cleaned_data['password']
+    #     usuario = authenticate(request, username=username, password=password)
+    #     if usuario is not None:
+    #         auth_login(request, usuario)
+    #         if 'next' in request.GET:
+    #             return redirect(request.GET['next'])
+    #         return redirect("certificados:dashboard")
+    #     else:
+    #         error_message = "Por favor introduzca un nombre de usuario y contraseña correctos."
+    #         context = {
+    #             'form': form,
+    #             'error_message': error_message
+    #         }
+    #         return render(request, 'registration/login.html', context)
+    # context = {
+    #     'form': form,
+    # }
+    # return render(request, 'registration/login.html', context)
 
 def logout_view(request):
     auth_logout(request)
@@ -82,11 +82,15 @@ def logout_view(request):
 def profile_user(request):
    
     usuario = request.user
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
-        alumno = Estudiante.objects.get(username=usuario.username)
+
+    if usuario.is_staff == 1:
+        alumno = Usuario.objects.get(username=usuario.username)
     else:
-        alumno = Alumno.objects.get(username=usuario.username)
+        filtro = str(Alumno.objects.filter(username=usuario.username))
+        if filtro == "<QuerySet []>":
+            alumno = Estudiante.objects.get(username=usuario.username)
+        else:
+            alumno = Alumno.objects.get(username=usuario.username)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=alumno)

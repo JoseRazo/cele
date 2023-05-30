@@ -11,6 +11,9 @@
 </div>
 <div class="profile-card">
     <div class="card_titleprofile">
+        {% if request.user.is_staff == 1 %}
+        <p> {{ request.user.username }} </p>
+        {% endif %}
         <p> {{ request.user }} </p>
     </div>
     {% if alumno.avatar %}
