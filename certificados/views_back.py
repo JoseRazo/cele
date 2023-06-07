@@ -105,6 +105,7 @@ def pdfget(request, certfolio):
     fecha += " de " + meses[curso.curso_alumno.periodo.fecha_fin.strftime("%B")]
     fecha += " del " + curso.curso_alumno.periodo.fecha_fin.strftime("%Y")
 
+
     ############ Agrega contenido al PDF. ##############
     text_nombre = str(c_alumno)
     text_subtitulo =  str(curso.curso_alumno.curso)
@@ -349,7 +350,7 @@ def pdfgen(request, curso_id, firma, type):
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(folio)
 
-
+    # Recordar de escalar la fuente del nombre acorde al tamaño del string
     text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
@@ -433,64 +434,51 @@ def pdfgen(request, curso_id, firma, type):
 def listar_cursos(request):
     today = fecha_actual.today()
     usuario = request.user
-    curso_periodo = []
-    curso_data = []
-    grupos = request.user.groups.all()
     curso_list = []
+    grupos = request.user.groups.all()
     today = fecha_actual.today()
-
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
-        curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
-        alumno = Estudiante.objects.get(username=usuario.username)
-    else:
-        curso_list = CursoAlumno.objects.filter(alumno=usuario)
-        alumno = Alumno.objects.get(username=usuario.username)
+    
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
+            usuario_log = Alumno.objects.get(username=usuario.username)
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
-            curso_data = Curso.objects.all()
-            curso_periodo = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
-            curso_data = Curso2.objects.all()
-            curso_periodo = Curso.objects.all()
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)    
+            usuario_log = Estudiante.objects.get(username=usuario.username)
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario) 
+        else:
+            usuario_log = request.user
 
-    return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo}) 
+    return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today}) 
 
 
 @login_required
 def mostrar_curso(request, curso_id):
     usuario = request.user
-    filtro2 = str(Alumno.objects.filter(username=usuario.username))
-    #filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro2 == "<QuerySet []>":
-        #curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
-        alumno = Estudiante.objects.get(username=usuario.username)
-        selcurso = CursoEstudiante.objects.get(pk=curso_id)
-        log_alumno = str(selcurso.estudiante)
-    else:
-        #curso_list = CursoAlumno.objects.filter(alumno=usuario)
-        alumno = Alumno.objects.get(username=usuario.username)
-        selcurso = CursoAlumno.objects.get(pk=curso_id)
-        log_alumno = str(selcurso.alumno)
+    grupos = request.user.groups.all()
 
-
-    filtro = str(CursoAlumno.objects.filter(pk=curso_id))
-     #filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
-        return render(request, 'certificados/404.html')
-
-    
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            usuario_log = Alumno.objects.get(username=usuario.username)
+            selcurso = CursoAlumno.objects.get(pk=curso_id)
+            log_alumno = str(selcurso.alumno)
+        elif grupo.name == 'Estudiantes EDCON':
+            usuario_log = Estudiante.objects.get(username=usuario.username)
+            selcurso = CursoEstudiante.objects.get(pk=curso_id)
+            log_alumno = str(selcurso.estudiante)
+        else:
+            usuario_log = request.user
+            return render(request, 'certificados/404.html')
+        
     usuario = str(request.user)
 
     if log_alumno == usuario:
         # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
         return render(request, 'certificados/mis_cursos_detail.html', 
-                  {'selcurso': selcurso, 'alumno': alumno})
+                  {'selcurso': selcurso, 'usuario_log': usuario_log})
     else:
-        return render(request, 'certificados/curso_no_autorizado.html')
+        return render(request, 'certificados/curso_no_autorizado.html',
+                      {'usuario_log': usuario_log})
     
 
 class CursosAlumnoCeleListView(ListView):
