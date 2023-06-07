@@ -179,10 +179,10 @@ def dash_view(request):
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.filter(alumno=usuario, periodo__fecha_fin__gte=today)
+            curso_list = CursoAlumno.objects.filter(alumno=usuario, periodo__fecha_fin__gte=today, inscrito=True)
             curso_data = Curso.objects.all()
         elif grupo.name == 'Estudiantes EDCON':
             curso_data = Curso2.objects.all()
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today)
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today, inscrito=True)
 
     return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
