@@ -62,11 +62,11 @@
 
 .tarjeta-content a:hover {
     text-decoration: none;
-    color: aqua;
+    color: #002052;
 }
 
 .tarjeta:hover{
-    background-color: #4268d6;
+    background-color: #002052;
     color: white;
     cursor: pointer;
 }
@@ -94,7 +94,7 @@ td {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #4268d6;
+    color: #002052;
 }
 
 @keyframes aparicionTarjeta {

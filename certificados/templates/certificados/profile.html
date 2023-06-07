@@ -6,12 +6,15 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/css/profile.css">
-<div class="d-sm-flex align-items-center justify-content-between mb-4"> 
-    <h1 class="h3 mb-0 text-gray-800">Mi Informacion</h1>
+<div class="titulo"> 
+    <h1 class="h3 text-black-800">Mi Informacion</h1>
 </div>
 <div class="profile-card">
     <div class="card_titleprofile">
-        <p> {{ request.user }} </p>
+        {% if request.user.is_staff == 1 %}
+        <p class="user"> {{ request.user.username }} </p>
+        {% endif %}
+        <p class="user"> {{ request.user }} </p>
     </div>
     {% if alumno.avatar %}
     <img class="img-profile rounded-circle" src="{{ alumno.avatar.url }}">
@@ -22,7 +25,7 @@
     <form method="POST" enctype="multipart/form-data"  style="text-align: center;">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="guardar" type="submit" style="display: inline-block; margin-top: 250px; border-radius: 5px; background-color: blue; color: white; padding: 10px 20px; border: none;">Guardar</button>
+        <button class="guardar" type="submit" style="display: inline-block; margin-top: 250px; border-radius: 5px; background-color: #002052; color: white; padding: 10px 20px; border: none;">Guardar</button>
     </form>
     <div class="text-profile" style="color: black !important;">
 
