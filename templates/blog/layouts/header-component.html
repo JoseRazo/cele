@@ -29,10 +29,7 @@
                     <div class="top_bar_login">
                         <div class="row">
                             <div class="login_button">
-                                <a href="{% url 'certificados:login' %}" class="login">Iniciar Sesión</a>
-                            </div>
-                            <div class="login_button">
-                                <a href="{% url 'certificados:login' %}" class="login">Panel de Control</a>
+                                <a href="{% url 'admin:login' %}" class="login">Panel de Administración</a>
                             </div>
                         </div>
                     </div>
@@ -53,11 +50,12 @@
                             </a>
                         </div>
                         <nav class="main_nav_contaner ml-auto">
-                            <ul class="main_nav">
-                                <li class="active"><a href="{% url 'blog:home' %}">Home</a></li>
-                                <li><a href="{% url 'blog:cursos_cele' %}">Centro de Lenguas</a></li>
-                                <li><a href="{% url 'blog:cursos_edcon' %}">Educación Continua</a></li>
-                                <li><a href="{% url 'blog:contacto' %}">Contacto</a></li>
+                            <ul class="main_nav" id="barra_nav">
+                                <li {% if request.get_full_path == '/' %} class="active" {% endif %}><a href="{% url 'blog:home' %}">Home</a></li>
+                                <li {% if 'cursos-cele' in request.get_full_path %} class="active" {% endif %}><a href="{% url 'blog:cursos_cele' %}">Centro de Lenguas</a></li>
+                                <li {% if 'cursos-edcon' in request.get_full_path %} class="active" {% endif %}><a href="{% url 'blog:cursos_edcon' %}">Educación Continua</a></li>
+                                <li {% if 'contacto' in request.get_full_path %} class="active" {% endif %}><a href="{% url 'blog:contacto' %}">Contacto</a></li>
+                                <li><a href="{% url 'certificados:login' %}">Iniciar Sesión</a></li>
                             </ul>
                             <div class="search_button">
                                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -117,7 +115,8 @@
             <li class="menu_mm"><a href="{% url 'blog:cursos_cele' %}">Centro de Lenguas</a></li>
             <li class="menu_mm"><a href="{% url 'blog:cursos_edcon' %}">Educación Continua</a></li>
             <li class="menu_mm"><a href="{% url 'blog:contacto' %}">Contacto</a></li>
-            <li class="menu_mm"><a href="{% url 'admin:index' %}">Iniciar Sesión</a></li>
+            <li class="menu_mm"><a href="{% url 'certificados:login' %}">Iniciar Sesión</a></li>
+            <li class="menu_mm"><a href="{% url 'admin:login' %}">Panel de Administración</a></li>
         </ul>
     </nav>
 </div>
