@@ -1,59 +1,74 @@
-.profile-card {
+.contenedor {
+    display: flex;
+    justify-content: center;
+}
+
+.tarjeta {
     width: 50%;
-    height: 50%;
+    height: 100%;
+    text-align: center;
+}
+
+.profile-card {
+    width: 100%;
+    height: 100%;
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-    align-items: center;
-    margin-left: 30%;
+    overflow: hidden;
 }
 
 .card_titleprofile {
-    margin: 0 ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: 10px;
     width: 100%;
-    height: 30px;
-    border-radius: 10px;
+    height: 100%;
     background-color: #002052;
-    box-shadow: inset;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     color: white;
-    
+}
+
+.datos {
+    margin: 20px;
 }
 
 .text-profile {
-    margin: 0 auto;
-    height: 244px;
+    height: 100%;
     border-radius: 5px;
     color: #0c0c0c;
     font-weight: bold;
 }
 
 img {
-    display: block;
-    margin: auto;
     width: 200px;
     height: 200px;
 }
-h6{
-    text-align: center;
-    margin-top: 20px;
+
+.guardar {
+    display: inline-block; 
+    border-radius: 5px; 
+    background-color: #002052; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none;
 }
-p{
-    text-align:center;
-    
+
+@media (max-width: 1400px) {
+    .tarjeta {
+        width: 80%;
+    }
 }
-.user{
-    text-align:center;
-    position: static;
-    top: 100;
-    left: 20;
-    margin: 0;
+
+@media (max-width: 1200px) {
+    .tarjeta {
+        width: 75%;
+    }
 }
-form{
-    width: 500px;
-    height: 130px;
-    margin: 0 auto;
-}
-.titulo{
-    width: 200px;
-    height: 5px;
+
+@media (max-width: 900px) {
+    .tarjeta {
+        width: 100%;
+    }
 }

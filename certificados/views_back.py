@@ -1,14 +1,16 @@
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic.list import ListView
-from django.db.models import Count, Q 
+from django.db.models import Count, Q, Value as V
+from django.db.models.functions import Concat
 from .forms import LoginForm
 from edcon.models import Curso as Curso2
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo, Curso
+from gestion_escolar.models import Alumno, CursoAlumno, CalificacionCurso
 from edcon.models import Estudiante, CursoEstudiante, Periodo
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
@@ -17,6 +19,7 @@ from datetime import date as fecha_actual
 import qrcode
 import random
 import string
+
 
 
 from django.http import FileResponse
@@ -38,8 +41,8 @@ import base64
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
 
-def add_qrcode(canvas, folio):
-    data = "http://127.0.0.1:8000/validar-certificado-search/?q=" + folio
+def add_qrcode(request, canvas, folio):
+    data = request.build_absolute_uri('/validar-certificado-search/?q=' + folio)
     qrimg = qrcode.make(data)
     img_name = 'qr-'+ str(folio) + str(datetime.now()) + '.png'
     img_path = '/code/media/certificados/' + img_name
@@ -192,19 +195,34 @@ def pdfget(request, certfolio):
 
 @login_required
 def pdfgen(request, curso_id, firma, type):
-    print(settings.LLAVE_PRIVADA)
     usuario = request.user    
+    grupos = request.user.groups.all()
+    status = ''
     filtro = str(Alumno.objects.filter(username=usuario.username))
+    calicurso = None
 
-    if usuario.is_staff == 1:
+    for grupo in grupos:
+        if grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
+            status = 'admin'
+
+
+    if usuario.is_superuser == 1 or status == 'admin':
         if type == "AC":
             curso = CursoAlumno.objects.get(pk=curso_id)
+            try:
+                calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                if calicurso.calificacion_final < 8.0:
+                    return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'calicurso': calicurso})
+            except ObjectDoesNotExist:
+                    pass
             filtro = "Alumno"
 
             c_alumno = curso.alumno
             c_profesor = curso.profesor
         elif type == "AE":
             curso = CursoEstudiante.objects.get(pk=curso_id)
+            if curso.estatus != 2:
+                return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'selcurso': curso})
             filtro = "<QuerySet []>"
 
             c_alumno = curso.estudiante
@@ -212,6 +230,8 @@ def pdfgen(request, curso_id, firma, type):
     else:
         if filtro == "<QuerySet []>":
             curso = CursoEstudiante.objects.get(pk=curso_id)
+            if curso.estatus != 2:
+                return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'selcurso': curso})
             print("usuario edcon")
 
             if not str(request.user) == str(curso.estudiante):
@@ -221,6 +241,12 @@ def pdfgen(request, curso_id, firma, type):
             c_profesor = curso.instructor
         else:
             curso = CursoAlumno.objects.get(pk=curso_id)    
+            try:
+                calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                if calicurso.calificacion_final < 8.0:
+                    return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'calicurso': calicurso})
+            except ObjectDoesNotExist:
+                    return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario})
             print("usuario cele")
 
             if not str(request.user) == str(curso.alumno):
@@ -310,9 +336,9 @@ def pdfgen(request, curso_id, firma, type):
     add_background(c, bg_path)
 
     if firma == 'False':
-        add_qrcode(c, folio)
+        add_qrcode(request, c, folio)
 
-    if firma == 'True':
+    if str(firma) == 'cfdr':
         firma_path = Plantilla.objects.filter(firma_rector=True).last()
         image_path = "/code" + firma_path.imagen.url 
         c.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
@@ -395,7 +421,7 @@ def pdfgen(request, curso_id, firma, type):
     c.setFillColor(HexColor('#e40e1a'))
     c.drawString(x, (letter[1] / 14.05), text_folio)
 
-    # Pasada 5: Firma}
+    # Pasada 5: Firma
 
     if firma == 'False':
         c.setFont("Helvetica", 8)
@@ -456,11 +482,17 @@ def listar_cursos(request):
 def mostrar_curso(request, curso_id):
     usuario = request.user
     grupos = request.user.groups.all()
+    calicurso = None
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             usuario_log = Alumno.objects.get(username=usuario.username)
             selcurso = CursoAlumno.objects.get(pk=curso_id)
+            if selcurso:
+                try:
+                    calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                except ObjectDoesNotExist:
+                    pass
             log_alumno = str(selcurso.alumno)
         elif grupo.name == 'Estudiantes EDCON':
             usuario_log = Estudiante.objects.get(username=usuario.username)
@@ -475,21 +507,21 @@ def mostrar_curso(request, curso_id):
     if log_alumno == usuario:
         # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
         return render(request, 'certificados/mis_cursos_detail.html', 
-                  {'selcurso': selcurso, 'usuario_log': usuario_log})
+                  {'selcurso': selcurso, 'usuario_log': usuario_log, 'calicurso': calicurso})
     else:
         return render(request, 'certificados/curso_no_autorizado.html',
                       {'usuario_log': usuario_log})
     
 
 class CursosAlumnoCeleListView(ListView):
-    model = CursoAlumno
+    model = CalificacionCurso
     # template_name = 'blog/certificados/certi-cele.html'
     context_object_name = 'cursos_cele'
-    ordering = ['alumno']
+    ordering = ['curso_alumno__alumno']
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno')).order_by('alumno')
+        queryset = CalificacionCurso.objects.filter(calificacion_final__gte=8.0).order_by('curso_alumno__alumno')
         return queryset
 
 def is_valid_queryparam(param):
@@ -499,20 +531,20 @@ def invalid_queryparam(param):
 
 
 class SearchCursosAlumnoCeleView(ListView):
-    model = CursoAlumno
+    model = CalificacionCurso
     # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'cursos_cele'      # default >> erf24/post_list.html
-    ordering = ['alumno']
+    ordering = ['curso_alumno__alumno']
     paginate_by = 10
 
     def get_queryset(self): # new
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno')).filter(Q(alumno__nombre__icontains=search) | Q(alumno__username__icontains=search)).distinct().order_by('alumno')
+            obj = CalificacionCurso.objects.annotate(nombres=Concat('curso_alumno__alumno__nombre', V(' '),  'curso_alumno__alumno__apellido_paterno', V(' '),'curso_alumno__alumno__apellido_materno')).filter(Q(nombres__icontains=search, calificacion_final__gte=8.0) | Q(curso_alumno__alumno__username__icontains=search, calificacion_final__gte=8.0)).distinct().order_by('curso_alumno__periodo')
 
         if invalid_queryparam(search):
-            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno'))
+            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
     
         return obj
 
@@ -525,7 +557,7 @@ class CursosEstudianteEdconListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante')).order_by('estudiante')
+        queryset = CursoEstudiante.objects.filter(estatus=2).order_by('estudiante')
         return queryset
 
 def is_valid_queryparam(param):
@@ -545,7 +577,7 @@ class SearchCursosEstudianteEdconView(ListView):
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante')).filter(Q(estudiante__nombre__icontains=search) | Q(estudiante__username__icontains=search)).distinct().order_by('estudiante')
+            obj = CursoEstudiante.objects.annotate(nombres=Concat('estudiante__nombre', V(' '),'estudiante__apellido_paterno', V(' '), 'estudiante__apellido_materno')).filter(Q(nombres__icontains=search, estatus=2) | Q(estudiante__username__icontains=search, estatus=2)).distinct().order_by('estudiante')
 
         if invalid_queryparam(search):
             obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante'))

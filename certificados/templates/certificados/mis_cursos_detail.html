@@ -23,11 +23,58 @@
         <h6>{{ selcurso.periodo }}</h6>
         <h6>Del {{ selcurso.periodo.fecha_inicio}} a {{ selcurso.periodo.fecha_fin }}</h6>
 
-        <div class="testButtons">
-            <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}" style="background-color:#002052;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-download fa-sm text-white-50"></i> Generar PDF con Firma Digital + QR
+        
+        <div class="contenedor">
+            <div class="barraTitulo">
+                {% if not selcurso.estatus %}
+                    Calificaciones Obtenidas
+                {% else %}
+                    Estatus del Curso
+                {% endif %}
+            </div>
+            <div class="tarjeta">
+                <div class="tarjeta-contenido">
+                    {% if not selcurso.estatus %}
+                    {% if calicurso %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Primera Calificación</th>
+                                <th>Segunda Calificación</th>
+                                <th>Calificación Final</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ignoreBorder">{{ calicurso.primer_examen }}</td>
+                                <td>{{ calicurso.segundo_examen }}</td>
+                                <td class="ignoreBorder">{{ calicurso.calificacion_final }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% else %}
+                        Aún no cuentas con calificaciones para este curso, regresa más tarde.
+                    {% endif %}
+                    {% else %}
+                        {% if selcurso.estatus == 1 %}
+                            En progreso
+                        {% elif selcurso.estatus == 2 %}
+                            Completado
+                        {% elif selcurso.estatus == 3 %}
+                            No completado
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if calicurso.calificacion_final >= 8.0 or selcurso.estatus == 2 %}
+        <div class="pdfButton">
+            <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}" style="background-color:#002052;" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Descargar Certificado
             </a>
         </div>
+        {% endif %}
     </div>
     <div class="imagen">
         <div class="gradiante"></div>

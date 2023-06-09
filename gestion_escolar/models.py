@@ -52,7 +52,13 @@ class Alumno(Usuario):
         self.avatar = image
         self.save()
 
-
+    def nombre_completo(self):
+        campos_nombre = [self.nombre]
+        if self.apellido_paterno:
+            campos_nombre.append(self.apellido_paterno)
+        if self.apellido_materno:
+            campos_nombre.append(self.apellido_materno)
+        return ' '.join(campos_nombre)
 
 
 

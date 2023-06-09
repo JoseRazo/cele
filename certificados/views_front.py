@@ -79,6 +79,7 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+@login_required
 def profile_user(request):
     usuario = request.user
     grupos = request.user.groups.all()
@@ -108,6 +109,7 @@ def profile_user(request):
 
     return render(request, "certificados/profile.html", {'form': form, 'usuario_log': usuario_log, 'usuario': usuario})
 
+@login_required
 def curso_info(request):
     usuario = request.user   
     grupos = request.user.groups.all()
@@ -130,7 +132,7 @@ def curso_info(request):
 
     return render(request, "certificados/info.html", {'curso_list': curso_list, 'usuario_log': usuario_log,  'calificacion_curso': calificacion_curso})
 
-
+@login_required
 def Cursos_det(request, curso_id):
     usuario = request.user
     grupos = request.user.groups.all()

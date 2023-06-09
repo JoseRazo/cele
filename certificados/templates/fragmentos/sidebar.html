@@ -1,6 +1,7 @@
 <div class="sidebar">
-    <ul class="navbar-nav bg-primary sidebar" id="accordionSidebar" style="border-top-right-radius: 15px; background-color: #002052 !important; color: white;" >
-        <a class="sidebar-brand d-flex align-items-center justify-content-center"
+    <ul class="navbar-nav bg-primary sidebar" id="accordionSidebar" style="height: 100%; border-top-right-radius: 15px; background-color: #002052 !important; color: white;" >
+        <div class="contenido-sidebar" style="position: static;">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center"
             href="{% url 'certificados:dashboard' %}">
             <img src="/static/img/logo_uts.png" class="logo_uts">
             <div class="sidebar-brand-text mx-3" style="color: white;">EdCon </div>
@@ -34,6 +35,7 @@
         <hr class="sidebar-divider d-none d-md-block">
         <div class=" d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
         </div>
     </ul>
 </div>
