@@ -3,12 +3,16 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
-
-{% if request.user.is_staff == 1%}
+{% if request.user.is_superuser == 1 or status == 'profe' or status == 'admin' %}
 <div class="isStaff">
     <center>
         <h2>Bienvenido al Dashboard</h2>
-        <h4>Sesión de Staff</h4>
+        {% if request.user.is_superuser == 1 or status == 'admin' %}
+        <h4>Sesión de Admin</h4>
+        {% else %}
+        <h4>Sesión de Profesor</h4>
+        {% endif %}
+        <a href="/admin">Ir al Panel de Administración</a>
     </center>
 </div>
 {% else %}
@@ -19,7 +23,7 @@
 <link rel="stylesheet" href="/static/css/mis_cursos.css">
 <div class="contenedor-tarjeta">
   {% for curso in curso_list %}
-  {% if curso.periodo.fecha_fin%}
+  {% if curso.periodo.fecha_fin %}
   <div class="tarjeta">
     <a class="link" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}"></a>
     <div class="tarjeta-imagen">

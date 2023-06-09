@@ -9,30 +9,36 @@
 <div class="titulo"> 
     <h1 class="h3 text-black-800">Mi Informacion</h1>
 </div>
-<div class="profile-card">
-    <div class="card_titleprofile">
-        {% if request.user.is_staff == 1 %}
-        <p class="user"> {{ request.user.username }} </p>
-        {% endif %}
-        <p class="user"> {{ request.user }} </p>
-    </div>
-    {% if alumno.avatar %}
-    <img class="img-profile rounded-circle" src="{{ alumno.avatar.url }}">
-    {% else %}
-    <img class="img-profile rounded-circle" src="/media/default.png">
-    {% endif %}
-
-    <form method="POST" enctype="multipart/form-data"  style="text-align: center;">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="guardar" type="submit" style="display: inline-block; margin-top: 250px; border-radius: 5px; background-color: #002052; color: white; padding: 10px 20px; border: none;">Guardar</button>
-    </form>
-    <div class="text-profile" style="color: black !important;">
-
-        <h6>Nombre de la calle : {{alumno.calle}}</h6>
-        <h6> Numero Exterior: {{alumno.num_exterior}}</h6>
-        <h6>Estado: {{alumno.estado}}</h6>
-        <h6>Telefono: {{alumno.telefono}}</h6>
+<div class="contenedor">
+    <div class="tarjeta">
+        <div class="profile-card">
+            <div class="card_titleprofile">
+                {% if request.user.is_superuser == 1 %}
+                {{ request.user.username }}
+                {% else %}
+                {{ request.user.nombre_completo }}
+                {% endif %}
+            </div>
+            <div class="datos">
+                {% if usuario_log.avatar %}
+            <img class="img-profile rounded-circle" src="{{ usuario_log.avatar.url }}">
+            {% else %}
+            <img class="img-profile rounded-circle" src="/media/default.png">
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="text-profile">
+                    <h6>Nombre de la calle : {{usuario_log.calle}}</h6>
+                    <h6> Numero Exterior: {{usuario_log.num_exterior}}</h6>
+                    <h6>Estado: {{usuario_log.estado}}</h6>
+                    <h6>Telefono: {{usuario_log.telefono}}</h6>
+                </div>
+    
+                <button class="guardar" type="submit">Guardar</button>
+            </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

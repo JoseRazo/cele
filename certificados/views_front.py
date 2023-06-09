@@ -5,9 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .forms import LoginForm
-from edcon.models import CursoEstudiante, Estudiante
+from edcon.models import CursoEstudiante, Estudiante, Instructor
 from edcon.models import Curso as Curso2
-from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso, Curso
+from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso, Curso, Profesor
 from usuarios.models import Usuario
 from datetime import date as fecha_actual
 
@@ -79,46 +79,47 @@ def logout_view(request):
     # Redirigir a la página de inicio o cualquier otra página deseada después del logout
     return redirect('certificados:login')
 
+@login_required
 def profile_user(request):
-   
     usuario = request.user
+    grupos = request.user.groups.all()
 
-    if usuario.is_staff == 1:
-        alumno = Usuario.objects.get(username=usuario.username)
-    else:
-        filtro = str(Alumno.objects.filter(username=usuario.username))
-        if filtro == "<QuerySet []>":
-            alumno = Estudiante.objects.get(username=usuario.username)
-        else:
-            alumno = Alumno.objects.get(username=usuario.username)
+    if usuario.is_superuser == 1:
+        usuario_log = Usuario.objects.get(username=usuario.username)
+
+    for grupo in grupos:
+        if grupo.name == 'Alumnos CELE':
+            usuario_log = Alumno.objects.get(username=usuario.username)
+        elif grupo.name == 'Estudiantes EDCON':
+            usuario_log = Estudiante.objects.get(username=usuario.username)
+        elif grupo.name == 'Profesores CELE':
+            usuario_log = Profesor.objects.get(username=usuario.username)
+        elif grupo.name == 'Instructores EDCON':
+            usuario_log = Instructor.objects.get(username=usuario.username)
+        elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON':
+            usuario_log = request.user
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=alumno)
+        form = ProfileForm(request.POST, request.FILES, instance=usuario_log)
         if form.is_valid():
             form.save()
             return redirect('certificados:profile')  # Redirige a la página de perfil actualizada
     else:
-        form = ProfileForm(instance=alumno)
+        form = ProfileForm(instance=usuario_log)
 
-    return render(request, "certificados/profile.html", {'form': form, 'alumno': alumno, 'usuario': usuario})
+    return render(request, "certificados/profile.html", {'form': form, 'usuario_log': usuario_log, 'usuario': usuario})
 
+@login_required
 def curso_info(request):
-    usuario = request.user
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    
-    if filtro == "<QuerySet []>":
-        alumno = Estudiante.objects.get(username=usuario.username)
-    else:
-        alumno = Alumno.objects.get(username=usuario.username)
-    
+    usuario = request.user   
     grupos = request.user.groups.all()
     curso_list = []
     calificacion_curso = None
-    estatus_curso = None
         
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            usuario_log = Alumno.objects.get(username=usuario.username)
             if curso_list:
                 try:
                     curso_alumno = curso_list[0]
@@ -127,62 +128,54 @@ def curso_info(request):
                     pass
         elif grupo.name == 'Estudiantes EDCON':
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
+            usuario_log = Estudiante.objects.get(username=usuario.username)
 
-    return render(request, "certificados/info.html", {'curso_list': curso_list, 'calificacion_curso': calificacion_curso, 'alumno': alumno})
+    return render(request, "certificados/info.html", {'curso_list': curso_list, 'usuario_log': usuario_log,  'calificacion_curso': calificacion_curso})
 
-
+@login_required
 def Cursos_det(request, curso_id):
     usuario = request.user
-    curso_periodo = []
-    curso_data = []
     grupos = request.user.groups.all()
     curso_list = []
     today = fecha_actual.today()
 
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    if filtro == "<QuerySet []>":
-        curso_list = CursoEstudiante.objects.get(pk=curso_id)
-        alumno = Estudiante.objects.get(username=usuario.username)
-    else:
-        curso_list = CursoAlumno.objects.get(pk=curso_id)
-        alumno = Alumno.objects.get(username=usuario.username)
-
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.get(pk=curso_id)
-            curso_data = Curso.objects.all()
-            curso_periodo = Curso.objects.all()
+            usuario_log = Alumno.objects.get(username=usuario.username)
         elif grupo.name == 'Estudiantes EDCON':
-            curso_data = Curso2.objects.all()
-            curso_periodo = Curso.objects.all()
-            curso_list = CursoEstudiante.objects.get(pk=curso_id)    
+            curso_list = CursoEstudiante.objects.get(pk=curso_id)
+            usuario_log = Estudiante.objects.get(username=usuario.username)
 
-    return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'alumno': alumno, 'today': today, 'curso_data': curso_data, 'curso_periodo': curso_periodo})
+    return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today})
 
 
 @login_required
 def dash_view(request):
     today = fecha_actual.today()
     usuario = request.user
-    curso_data = []
+    status = ''
     grupos = request.user.groups.all()
     curso_list = []
-    print(curso_data)
 
-    filtro = str(Alumno.objects.filter(username=usuario.username))
-    if usuario.is_staff == 1:
-        alumno = Alumno.objects.filter(username=usuario.username)
-    elif filtro == "<QuerySet []>":
-        alumno = Estudiante.objects.get(username=usuario.username)
-    elif "Alumno" in filtro:
-        alumno = Alumno.objects.get(username=usuario.username)
+    if 'CELE' or 'EDCON' not in str(grupos) and usuario.is_superuser == 0:
+        usuario_log = request.user
 
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario, periodo__fecha_fin__gte=today, inscrito=True)
-            curso_data = Curso.objects.all()
+            usuario_log = Alumno.objects.get(username=usuario.username)
         elif grupo.name == 'Estudiantes EDCON':
-            curso_data = Curso2.objects.all()
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today, inscrito=True)
+            usuario_log = Estudiante.objects.get(username=usuario.username)
+        elif grupo.name == 'Profesores CELE':
+            usuario_log = Profesor.objects.get(username=usuario.username)
+            status = 'profe'
+        elif grupo.name == 'Instructores EDCON':
+            usuario_log = Instructor.objects.get(username=usuario.username)
+            status = 'profe'
+        elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
+            usuario_log = request.user
+            status = 'admin'
 
-    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'alumno': alumno, 'curso_data': curso_data, 'today': today})
+    return render(request, 'certificados/dashboard.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today, 'status': status})

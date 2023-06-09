@@ -1,0 +1,72 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} No Autorizado {% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
+
+<div style="display: flex; justify-content: center; text-align: center;">
+    <div>
+        <div class="error mx-auto" data-text="401">401</div>
+            <p class="lead text-gray-800 mb-5">No autorizado</p>
+            {% if 'AC' in request.get_full_path %}
+            <p class="text-gray-500 mb-0">Parece que el alumno no cumple con los requisitos para obtener un certificado...</p>
+            {% else %}
+            <p class="text-gray-500 mb-0">Parece que el estudiante no cumple con los requisitos para obtener un certificado...</p>
+            {% endif %}
+
+            <div class="contenedor">
+                <div class="barraTitulo">
+                    {% if not selcurso.estatus %}
+                        Calificaciones Obtenidas
+                    {% else %}
+                        Estatus del Curso
+                    {% endif %}
+                </div>
+                <div class="tarjeta">
+                    <div class="tarjeta-contenido">
+                        {% if not selcurso.estatus %}
+                        {% if calicurso %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Primera Calificación</th>
+                                    <th>Segunda Calificación</th>
+                                    <th>Calificación Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ignoreBorder">{{ calicurso.primer_examen }}</td>
+                                    <td>{{ calicurso.segundo_examen }}</td>
+                                    <td class="ignoreBorder">{{ calicurso.calificacion_final }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% else %}
+                            Aún no cuentas con calificaciones para este curso, regresa más tarde.
+                        {% endif %}
+                        {% else %}
+                            {% if selcurso.estatus == 1 %}
+                                En progreso
+                            {% elif selcurso.estatus == 2 %}
+                                Completado
+                            {% elif selcurso.estatus == 3 %}
+                                No completado
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if 'AC' in request.get_full_path %}
+                <a href="{% url 'certificados_back:certi_cele' %}">&larr; Volver a Certificados CELE</a>
+            {% elif 'AE' in request.get_full_path %}
+                <a href="{% url 'certificados_back:certi_edcon' %}">&larr; Volver a Certificados EDCON</a>
+            {% else %}
+                <a href="{% url 'certificados_back:mis_cursos' %}">&larr; Volver a Mis Cursos</a>
+            {% endif %}
+    </div>
+
+</div>
+{% endblock %}

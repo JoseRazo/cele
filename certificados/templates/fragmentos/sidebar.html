@@ -1,6 +1,7 @@
 <div class="sidebar">
-    <ul class="navbar-nav bg-primary sidebar" id="accordionSidebar" style="border-top-right-radius: 15px; background-color: #002052 !important; color: white;" >
-        <a class="sidebar-brand d-flex align-items-center justify-content-center"
+    <ul class="navbar-nav bg-primary sidebar" id="accordionSidebar" style="height: 100%; border-top-right-radius: 15px; background-color: #002052 !important; color: white;" >
+        <div class="contenido-sidebar" style="position: static;">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center"
             href="{% url 'certificados:dashboard' %}">
             <img src="/static/img/logo_uts.png" class="logo_uts">
             <div class="sidebar-brand-text mx-3" style="color: white;">EdCon </div>
@@ -10,16 +11,18 @@
         <div class="sidebar-heading">
             Interface
         </div>
+        {% if status == 'profe'%}
+        {% else %}
         <li class="nav-item">
             <a style="color: white;" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                 aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-cog"></i>
+                <i class="fas fa-file-signature"></i>
                 <span>Certificados</span>
             </a>
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Opciones</h6>
-                    {% if request.user.is_staff == 1 %}
+                    {% if request.user.is_superuser == 1 or status == 'admin'%}
                     <a class="collapse-item" href="{% url 'certificados_back:certi_cele' %}">Certificados CELE</a>
                     <a class="collapse-item" href="{% url 'certificados_back:certi_edcon' %}">Certificados EDCON</a>
                     {% else %}
@@ -28,9 +31,11 @@
                 </div>
             </div>
         </li>
+        {% endif %}
         <hr class="sidebar-divider d-none d-md-block">
         <div class=" d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
         </div>
     </ul>
 </div>

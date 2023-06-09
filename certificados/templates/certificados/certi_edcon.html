@@ -39,7 +39,7 @@
                         <td>{{ curso.curso }}</td>
                         <td>{{ curso.instructor }}</td>
                         <td>{{ curso.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id True 'AE' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
+                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AE' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -97,6 +97,7 @@
         <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
         <div class="section_subtitle">
             <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
+            &nbsp; <a href="{% url 'certificados_back:certi_edcon' %}">(Mostrar Todo)</a>
         </div>
     </div>
     {% endif %}

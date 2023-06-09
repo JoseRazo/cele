@@ -29,3 +29,96 @@ label {
 .imagen img {
     height: 100vh;
 }
+
+/* Contenedor Calificaciones */
+
+.contenedor {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.barraTitulo {
+    text-align: center;
+    font-weight: bold;
+    width: 100%;
+    background-color: #e6e6e6;
+    padding: 5px;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Tabla Contenedora */
+
+.tarjeta {
+    padding: 10px;
+}
+
+.tarjeta-contenido {
+    text-align: center;
+}
+
+.tarjeta-contenido table {
+    table-layout: fixed;
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+thead {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+th, td {
+    padding: 5px;
+}
+
+td {
+    border-inline: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+
+.ignoreBorder {
+    border: none;
+}
+
+.noCursos {
+    text-align: center;
+    padding-block: 50px;
+}
+
+.pdfButton {
+    width: 100%;
+    height: 100px;
+    padding-block: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.pdfButton a {
+    height: 30px;
+}
+
+@media (max-width: 700px){
+    .page{
+        flex-direction: column;
+    }
+
+    .imagen {
+        display: none;
+    }
+
+
+    .contenedor {
+        font-size: small;
+    }
+}
+
+@media (max-width: 350px){
+    .contenedor {
+        font-size: x-small;
+        overflow: scroll;
+    }
+}

@@ -34,12 +34,12 @@
                 <tbody>
                     {% for curso in cursos_cele %}
                     <tr>
-                        <td class="ignoreBorder">{{ curso.alumno.username }}</td>
-                        <td>{{ curso.alumno }}</td>
-                        <td>{{ curso.curso }}</td>
-                        <td>{{ curso.profesor }}</td>
-                        <td>{{ curso.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id True 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
+                        <td class="ignoreBorder">{{ curso.curso_alumno.alumno.username }}</td>
+                        <td>{{ curso.curso_alumno.alumno }}</td>
+                        <td>{{ curso.curso_alumno.curso }}</td>
+                        <td>{{ curso.curso_alumno.profesor }}</td>
+                        <td>{{ curso.curso_alumno.periodo }}</td>
+                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.curso_alumno.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -97,6 +97,7 @@
         <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
         <div class="section_subtitle">
             <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
+            &nbsp; <a href="{% url 'certificados_back:certi_cele' %}">(Mostrar Todo)</a>
         </div>
     </div>
     {% endif %}
