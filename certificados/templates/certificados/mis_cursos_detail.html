@@ -37,15 +37,19 @@
                     <table>
                         <thead>
                             <tr>
+                                {% if selcurso.horario == 'Sabatino' %}
                                 <th>Primera Calificación</th>
                                 <th>Segunda Calificación</th>
+                                {% endif %}
                                 <th>Calificación Final</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                {% if selcurso.horario == 'Sabatino'%}
                                 <td class="ignoreBorder">{{ calicurso.primer_examen }}</td>
                                 <td>{{ calicurso.segundo_examen }}</td>
+                                {% endif %}
                                 <td class="ignoreBorder">{{ calicurso.calificacion_final }}</td>
                             </tr>
                         </tbody>

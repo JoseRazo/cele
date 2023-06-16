@@ -150,7 +150,7 @@ class CursoAlumno(models.Model):
         # return self.alumno.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
 
 class CalificacionCurso(models.Model):
-    curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE)
+    curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE, related_name='calicurso')
     primer_examen = models.DecimalField(_('Primer Examen'), max_digits=6, decimal_places=2, default=0, validators=[
                                         MinValueValidator(Decimal('0.00'))])
     segundo_examen = models.DecimalField(_('Segundo Examen'), max_digits=6, decimal_places=2, default=0, validators=[
@@ -175,7 +175,7 @@ class CalificacionCurso(models.Model):
         verbose_name_plural = 'Calificaciones'
 
 class CalificacionCursoSemanal(models.Model):
-    curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE)
+    curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE, related_name='calicursosem')
     calificacion_final = models.DecimalField(
         _('Calificación Final'), max_digits=6, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     fecha_creacion = models.DateTimeField(
