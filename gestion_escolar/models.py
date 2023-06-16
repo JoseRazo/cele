@@ -122,11 +122,18 @@ class Periodo(models.Model):
 
 
 class CursoAlumno(models.Model):
+    SABATINO = 'Sabatino'
+    SEMANAL = 'Semanal'
+    HORARIO_CHOICES = (
+        (SABATINO, 'Sabatino'),
+        (SEMANAL, 'Semanal'),
+    )
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
-   
+    horario = models.CharField(max_length=10, choices=HORARIO_CHOICES, default='Sabatino')
+
     # grupo = models.ForeignKey('Grupo', on_delete=models.CASCADE, blank=True, null=True)
     inscrito = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(
@@ -141,7 +148,6 @@ class CursoAlumno(models.Model):
     def __str__(self):
         return self.curso.nombre
         # return self.alumno.nombre + ' - ' + self.curso.nombre + ' - ' + self.periodo.nombre
-
 
 class CalificacionCurso(models.Model):
     curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE)
@@ -167,6 +173,22 @@ class CalificacionCurso(models.Model):
     class Meta:
         verbose_name = 'Calificacion'
         verbose_name_plural = 'Calificaciones'
+
+class CalificacionCursoSemanal(models.Model):
+    curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE)
+    calificacion_final = models.DecimalField(
+        _('Calificación Final'), max_digits=6, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    fecha_creacion = models.DateTimeField(
+        _('Fecha de creación'), auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(
+        _('Fecha de actualización'), auto_now=True)
+    
+    def __str__(self):
+        return self.curso_alumno.curso.nombre
+
+    class Meta:
+        verbose_name = 'Calificacion Curso Semanal'
+        verbose_name_plural = 'Calificaciones Curso Semanal'
 
 # class Grupo(models.Model):
 #     nombre = models.CharField(max_length=100)

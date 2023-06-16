@@ -52,6 +52,11 @@ def add_qrcode(request, canvas, folio):
 
     os.remove(img_path)
 
+def add_sello(canvas):
+    sello_path = '/code/media/sello.png'
+
+    canvas.drawImage(sello_path, (letter[0] / 2) + 125, letter[1] / 6, width=100, height=100, preserveAspectRatio=True, mask='auto')
+
 # Generar PDF
 
 def pdfget(request, certfolio):
@@ -73,13 +78,13 @@ def pdfget(request, certfolio):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-    bg_path = "/code" + curso.plantilla.imagen.url
+    bg_path = "/code" + curso.plantilla.plantilla_sin_firma.url
 
     print(bg_path)
 
     add_background(c, bg_path)
 
-    add_qrcode(c, certfolio)
+    add_qrcode(request, c, certfolio)
 
     ############## Obtención de datos #################
 
@@ -116,13 +121,15 @@ def pdfget(request, certfolio):
     text_folio = "FOLIO: " + str(certfolio)
     text_firma = str(curso.firma)
 
-
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
+    nombre_len = 16
+    if len(text_nombre) > 35:
+        nombre_len = 12
+    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
 
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", nombre_len)
     c.setFillColor(HexColor('#204089'))
     c.drawString(x, y, text_nombre)
 
@@ -283,7 +290,7 @@ def pdfgen(request, curso_id, firma, type):
                 # Crea un nuevo registro en CertificadoAlumno con el folio generado
             certificado_alumno = CertificadoEstudiante.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
+                plantilla = Plantilla.objects.last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
@@ -308,7 +315,7 @@ def pdfgen(request, curso_id, firma, type):
 
             certificado_alumno = CertificadoAlumno.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
+                plantilla = Plantilla.objects.last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
@@ -329,19 +336,16 @@ def pdfgen(request, curso_id, firma, type):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-    bg_path = "/code" + bg_path.plantilla.imagen.url
-
-    print(bg_path)
-
-    add_background(c, bg_path)
+    plantilla_path = "/code" + bg_path.plantilla.plantilla_sin_firma.url
+    firma_path = "/code" + bg_path.plantilla.plantilla_con_firma.url
 
     if firma == 'False':
+        add_background(c, plantilla_path)
         add_qrcode(request, c, folio)
 
     if str(firma) == 'cfdr':
-        firma_path = Plantilla.objects.filter(firma_rector=True).last()
-        image_path = "/code" + firma_path.imagen.url 
-        c.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
+        add_background(c, firma_path)
+        add_sello(c)
 
     ############## Obtención de datos #################
 
@@ -377,12 +381,15 @@ def pdfgen(request, curso_id, firma, type):
     text_folio = "FOLIO: " + str(folio)
 
     # Recordar de escalar la fuente del nombre acorde al tamaño del string
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
+    nombre_len = 16
+    if len(text_nombre) > 35:
+        nombre_len = 12
+    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
 
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", nombre_len)
     c.setFillColor(HexColor('#204089'))
     c.drawString(x, y, text_nombre)
 

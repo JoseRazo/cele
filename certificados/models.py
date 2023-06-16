@@ -55,9 +55,10 @@ class DocumentoLogo(models.Model):
 
 class Plantilla(models.Model):
     nombre = models.CharField(max_length=30, null=True, blank=True)
-    imagen = models.ImageField(
-        default='default-image-certi-540x540.png', upload_to='certificados', help_text="El tamaño de la imagen debe ser de 540 x 540 pixeles", blank=True, null=True)
-    firma_rector = models.BooleanField(default=False)
+    plantilla_con_firma = models.ImageField(_('Plantilla con Firma'),
+        default='default-image-certi-850x1100.png', upload_to='certificados', help_text="El tamaño de la imagen debe estar en múltiplos de 850 x 1100 pixeles")
+    plantilla_sin_firma = models.ImageField(_('Plantilla sin Firma'),
+        default='default-image-certi-850x1100.png', upload_to='certificados', help_text="El tamaño de la imagen debe estar en múltiplos de 850 x 1100 pixeles")
     fecha_creacion = models.DateTimeField(
         _('Fecha de creación'), auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(
@@ -69,7 +70,7 @@ class Plantilla(models.Model):
         db_table = 'certificados_plantilla'
 
     def __str__(self):
-        return str(self.imagen)
+        return str(self.nombre)
 
 
 class CertificadoAlumno(models.Model):

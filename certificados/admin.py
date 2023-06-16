@@ -41,7 +41,7 @@ class CertificadoEstudianteAdmin(admin.ModelAdmin):
     get_nombre_alumno.short_description = 'Estudiante'
 
 class PlantillaAlumnoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'imagen', 'firma_rector', 'fecha_creacion', 'fecha_actualizacion')
+    list_display = ('nombre', 'plantilla_con_firma', 'plantilla_sin_firma', 'fecha_creacion', 'fecha_actualizacion')
 
 admin.site.register(Empresa, EmpresaAdmin)
 admin.site.register(Documento, DocumentoAdmin)

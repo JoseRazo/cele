@@ -7,7 +7,8 @@ from import_export.admin import ImportExportModelAdmin, ExportMixin
 from django.contrib.auth.hashers import make_password
 from .models import (
     Alumno, 
-    CalificacionCurso, 
+    CalificacionCurso,
+    CalificacionCursoSemanal,
     Profesor, 
     Curso, 
     Periodo, 
@@ -21,6 +22,7 @@ from .forms import (
     # ProfesorChangeForm,
     ProfesorCreationForm,
     CalificacionCursoForm,
+    CalificacionCursoSemanalForm,
     # GrupoCreationForm
 )
 
@@ -76,13 +78,21 @@ class CalificacionCursoInline(admin.StackedInline):
     can_delete = False
     extra = 0
 
+class CalificacionCursoSemanalInline(admin.StackedInline):
+    form = CalificacionCursoSemanalForm
+    model = CalificacionCursoSemanal
+    can_delete = False
+    extra = 0
+
 
 class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CursoAlumnoResource
-    inlines = [CalificacionCursoInline]
+    inlines = []
+    
     list_display = ('alumno', 'curso', 'profesor',
-                    'periodo', 'inscrito', 'fecha_creacion',)
+                    'periodo', 'horario', 'inscrito', 'fecha_creacion',)
     list_filter = ('curso',)
+    radio_fields = {'horario': admin.HORIZONTAL}
     search_fields = ('alumno__nombre', 'alumno__username', 'alumno__email', 'curso__nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion',)
 
@@ -95,15 +105,23 @@ class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
         return qs.filter(Q(profesor=request.user, inscrito=True))
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj=None, **kwargs)
+        form = super(CursoAlumnoAdmin, self).get_form(request, obj=None, **kwargs)
         if obj:
+            if obj.horario == 'Semanal':
+                self.inlines = [CalificacionCursoSemanalInline]
+            elif obj.horario == 'Sabatino':
+                self.inlines = [CalificacionCursoInline]
+                
             if request.user.groups.filter(name='Profesores CELE'):
                 form.base_fields["alumno"].disabled = True
                 form.base_fields["curso"].disabled = True
                 form.base_fields["profesor"].disabled = True
                 form.base_fields["periodo"].disabled = True
                 form.base_fields["inscrito"].disabled = True
+                form.base_fields["horario"].disabled = True
+
             return form
+        
         return form
 
 class CursoAlumnoInline(admin.TabularInline):
@@ -200,6 +218,28 @@ class ProfesorAdmin(DjangoUserAdmin):
 @admin.register(CalificacionCurso)
 class CalificacionCursoAdmin(admin.ModelAdmin):
     list_display = ('curso_alumno', 'primer_examen', 'segundo_examen', 'calificacion_final')
+    def has_view_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Alumnos CELE'):
+            return True
+        else:
+            return False
+    def has_add_permission(self, request, obj=None):
+        return False
+        
+    def has_change_permission(self, request, obj=None):
+        return False
+        
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name='Alumnos CELE'):
+            return qs.filter(Q(curso_alumno__alumno=request.user))
+        
+@admin.register(CalificacionCursoSemanal)
+class CalificacionCursoSemanalAdmin(admin.ModelAdmin):
+    list_display = ('curso_alumno', 'calificacion_final')
     def has_view_permission(self, request, obj=None):
         if request.user.groups.filter(name='Alumnos CELE'):
             return True

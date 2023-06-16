@@ -7,7 +7,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 # from .models import Grupo
 
 from usuarios.models import Usuario
-from .models import Alumno, Profesor
+from .models import Alumno, Profesor, CursoAlumno
 import uuid
 
 class AlumnoCreationForm(forms.ModelForm):
@@ -147,6 +147,9 @@ class ProfesorCreationForm(forms.ModelForm):
 
 class CalificacionCursoForm(forms.ModelForm):
     calificacion_final = forms.CharField(initial=0, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+class CalificacionCursoSemanalForm(forms.ModelForm):
+    calificacion_final = forms.CharField(initial=0, widget=forms.TextInput)
 
 # class GrupoCreationForm(forms.ModelForm):
 #     def generar_codigo():
