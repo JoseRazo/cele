@@ -10,7 +10,7 @@ from django.db.models import Count, Q, Value as V
 from django.db.models.functions import Concat
 from .forms import LoginForm
 from edcon.models import Curso as Curso2
-from gestion_escolar.models import Alumno, CursoAlumno, CalificacionCurso
+from gestion_escolar.models import Alumno, CursoAlumno, CalificacionCurso, CalificacionCursoSemanal
 from edcon.models import Estudiante, CursoEstudiante, Periodo
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
@@ -52,6 +52,11 @@ def add_qrcode(request, canvas, folio):
 
     os.remove(img_path)
 
+def add_sello(canvas):
+    sello_path = '/code/media/sello.png'
+
+    canvas.drawImage(sello_path, (letter[0] / 2) + 125, letter[1] / 6, width=100, height=100, preserveAspectRatio=True, mask='auto')
+
 # Generar PDF
 
 def pdfget(request, certfolio):
@@ -73,13 +78,13 @@ def pdfget(request, certfolio):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-    bg_path = "/code" + curso.plantilla.imagen.url
+    bg_path = "/code" + curso.plantilla.plantilla_sin_firma.url
 
     print(bg_path)
 
     add_background(c, bg_path)
 
-    add_qrcode(c, certfolio)
+    add_qrcode(request, c, certfolio)
 
     ############## Obtención de datos #################
 
@@ -116,13 +121,15 @@ def pdfget(request, certfolio):
     text_folio = "FOLIO: " + str(certfolio)
     text_firma = str(curso.firma)
 
-
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
+    nombre_len = 16
+    if len(text_nombre) > 35:
+        nombre_len = 12
+    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
 
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", nombre_len)
     c.setFillColor(HexColor('#204089'))
     c.drawString(x, y, text_nombre)
 
@@ -210,7 +217,11 @@ def pdfgen(request, curso_id, firma, type):
         if type == "AC":
             curso = CursoAlumno.objects.get(pk=curso_id)
             try:
-                calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                if curso.horario == 'Sabatino':
+                    calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                elif curso.horario == 'Semanal':
+                    calicurso = CalificacionCursoSemanal.objects.get(curso_alumno_id=curso_id)
+
                 if calicurso.calificacion_final < 8.0:
                     return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'calicurso': calicurso})
             except ObjectDoesNotExist:
@@ -242,7 +253,11 @@ def pdfgen(request, curso_id, firma, type):
         else:
             curso = CursoAlumno.objects.get(pk=curso_id)    
             try:
-                calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                if curso.horario == 'Sabatino':
+                    calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                elif curso.horario == 'Semanal':
+                    calicurso = CalificacionCursoSemanal.objects.get(curso_alumno_id=curso_id)
+                    
                 if calicurso.calificacion_final < 8.0:
                     return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'calicurso': calicurso})
             except ObjectDoesNotExist:
@@ -283,7 +298,7 @@ def pdfgen(request, curso_id, firma, type):
                 # Crea un nuevo registro en CertificadoAlumno con el folio generado
             certificado_alumno = CertificadoEstudiante.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
+                plantilla = Plantilla.objects.last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
@@ -308,7 +323,7 @@ def pdfgen(request, curso_id, firma, type):
 
             certificado_alumno = CertificadoAlumno.objects.create(
                 curso_alumno_id=curso_id,
-                plantilla = Plantilla.objects.filter(firma_rector=False).last(),
+                plantilla = Plantilla.objects.last(),
                 folio=folio,
                 firma=firmaDigital,
                 cadena = cadena
@@ -329,19 +344,16 @@ def pdfgen(request, curso_id, firma, type):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Agrega la imagen de fondo al PDF.
-    bg_path = "/code" + bg_path.plantilla.imagen.url
-
-    print(bg_path)
-
-    add_background(c, bg_path)
+    plantilla_path = "/code" + bg_path.plantilla.plantilla_sin_firma.url
+    firma_path = "/code" + bg_path.plantilla.plantilla_con_firma.url
 
     if firma == 'False':
+        add_background(c, plantilla_path)
         add_qrcode(request, c, folio)
 
     if str(firma) == 'cfdr':
-        firma_path = Plantilla.objects.filter(firma_rector=True).last()
-        image_path = "/code" + firma_path.imagen.url 
-        c.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
+        add_background(c, firma_path)
+        add_sello(c)
 
     ############## Obtención de datos #################
 
@@ -377,12 +389,15 @@ def pdfgen(request, curso_id, firma, type):
     text_folio = "FOLIO: " + str(folio)
 
     # Recordar de escalar la fuente del nombre acorde al tamaño del string
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", 16)
+    nombre_len = 16
+    if len(text_nombre) > 35:
+        nombre_len = 12
+    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
     x = (letter[0] - text_width) / 2
     y = letter[1] / 2.25
 
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", nombre_len)
     c.setFillColor(HexColor('#204089'))
     c.drawString(x, y, text_nombre)
 
@@ -490,7 +505,10 @@ def mostrar_curso(request, curso_id):
             selcurso = CursoAlumno.objects.get(pk=curso_id)
             if selcurso:
                 try:
-                    calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                    if selcurso.horario == 'Sabatino':
+                        calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
+                    elif selcurso.horario == 'Semanal':
+                        calicurso = CalificacionCursoSemanal.objects.get(curso_alumno_id=curso_id)
                 except ObjectDoesNotExist:
                     pass
             log_alumno = str(selcurso.alumno)
@@ -514,14 +532,14 @@ def mostrar_curso(request, curso_id):
     
 
 class CursosAlumnoCeleListView(ListView):
-    model = CalificacionCurso
+    model = CursoAlumno
     # template_name = 'blog/certificados/certi-cele.html'
     context_object_name = 'cursos_cele'
-    ordering = ['curso_alumno__alumno']
+    ordering = ['alumno']
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = CalificacionCurso.objects.filter(calificacion_final__gte=8.0).order_by('curso_alumno__alumno')
+        queryset = CursoAlumno.objects.filter(Q(calicurso__calificacion_final__gte=8.0) | Q(calicursosem__calificacion_final__gte=8.0)).order_by('alumno')
         return queryset
 
 def is_valid_queryparam(param):
@@ -531,20 +549,25 @@ def invalid_queryparam(param):
 
 
 class SearchCursosAlumnoCeleView(ListView):
-    model = CalificacionCurso
+    model = CursoAlumno
     # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'cursos_cele'      # default >> erf24/post_list.html
-    ordering = ['curso_alumno__alumno']
+    ordering = ['alumno']
     paginate_by = 10
 
     def get_queryset(self): # new
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CalificacionCurso.objects.annotate(nombres=Concat('curso_alumno__alumno__nombre', V(' '),  'curso_alumno__alumno__apellido_paterno', V(' '),'curso_alumno__alumno__apellido_materno')).filter(Q(nombres__icontains=search, calificacion_final__gte=8.0) | Q(curso_alumno__alumno__username__icontains=search, calificacion_final__gte=8.0)).distinct().order_by('curso_alumno__periodo')
+            obj = CursoAlumno.objects.annotate(
+                nombres=Concat('alumno__nombre', V(' '),  'alumno__apellido_paterno', V(' '),'alumno__apellido_materno'
+                )).filter(
+                Q(nombres__icontains=search, calicurso__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, calicurso__calificacion_final__gte=8.0) |
+                Q(nombres__icontains=search, calicursosem__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, calicursosem__calificacion_final__gte=8.0)
+                ).distinct().order_by('periodo')
 
         if invalid_queryparam(search):
-            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('curso_alumno'))
+            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno'))
     
         return obj
 

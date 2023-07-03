@@ -1,9 +1,9 @@
 {% extends 'fragmentos/base.html' %}
 
-{% block title %} Certificados CELE {% endblock %}
+{% block title %} Constancias CELE {% endblock %}
 
 {% block content %}
-<h1>Certificados CELE</h1>
+<h1>Constancias CELE</h1>
 
 <link rel="stylesheet" href="/static/css/certi_search.css"/>
 <script src="https://kit.fontawesome.com/3235fff4fa.js" crossorigin="anonymous"></script>
@@ -28,18 +28,18 @@
                         <th>Curso</th>
                         <th>Profesor</th>
                         <th>Periodo</th>
-                        <th>Certificado</th>
+                        <th>Constancia</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for curso in cursos_cele %}
                     <tr>
-                        <td class="ignoreBorder">{{ curso.curso_alumno.alumno.username }}</td>
-                        <td>{{ curso.curso_alumno.alumno }}</td>
-                        <td>{{ curso.curso_alumno.curso }}</td>
-                        <td>{{ curso.curso_alumno.profesor }}</td>
-                        <td>{{ curso.curso_alumno.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.curso_alumno.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
+                        <td class="ignoreBorder">{{ curso.alumno.username }}</td>
+                        <td>{{ curso.alumno }}</td>
+                        <td>{{ curso.curso }}</td>
+                        <td>{{ curso.profesor }}</td>
+                        <td>{{ curso.periodo }}</td>
+                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

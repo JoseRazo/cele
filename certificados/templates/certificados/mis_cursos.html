@@ -40,7 +40,14 @@
                         {% endif %}
                     {% else %}
                         <td class="status">Estatus</td>
-                        <td>{{ curso.estatus }}</td>
+                        {% if curso.estatus == 1 %}
+                            <td>En progreso</td>
+                        {% elif curso.estatus == 2 %}
+                            <td>Completado</td>
+                        {% elif curso.estatus == 3 %}
+                            <td>No completado</td>
+                        {% endif %}
+                        
                     {% endif %}
                 </tr>
             </table>

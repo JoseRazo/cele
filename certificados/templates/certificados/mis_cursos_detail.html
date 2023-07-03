@@ -2,8 +2,6 @@
 
 {% block title %} {{ selcurso }} {% endblock %}
 
-{% load static %}
-
 {% block content %}
 <link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
 
@@ -13,9 +11,9 @@
         <h1>{{ selcurso }}</h1>
 
         {% if selcurso.curso.descripcion == '' %}
-            <h4>No hay descripción para mostrar.</h4>
+            <h6>No hay descripción para mostrar.</h6>
         {% else %}
-            <h4>{{ selcurso.curso.descripcion }}</h4>
+            <h6>{{ selcurso.curso.descripcion }}</h6>
         {% endif %}
         <label for="">Duración</label>
         <h6>{{ selcurso.curso.duracion }}</h6>
@@ -39,15 +37,19 @@
                     <table>
                         <thead>
                             <tr>
+                                {% if selcurso.horario == 'Sabatino' %}
                                 <th>Primera Calificación</th>
                                 <th>Segunda Calificación</th>
+                                {% endif %}
                                 <th>Calificación Final</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                {% if selcurso.horario == 'Sabatino'%}
                                 <td class="ignoreBorder">{{ calicurso.primer_examen }}</td>
                                 <td>{{ calicurso.segundo_examen }}</td>
+                                {% endif %}
                                 <td class="ignoreBorder">{{ calicurso.calificacion_final }}</td>
                             </tr>
                         </tbody>
@@ -71,7 +73,7 @@
         {% if calicurso.calificacion_final >= 8.0 or selcurso.estatus == 2 %}
         <div class="pdfButton">
             <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}" style="background-color:#002052;" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-download fa-sm text-white-50"></i> Descargar Certificado
+                <i class="fas fa-download fa-sm text-white-50"></i> Descargar Constancia
             </a>
         </div>
         {% endif %}

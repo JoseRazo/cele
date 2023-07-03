@@ -6,8 +6,8 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/css/profile.css">
-<div class="titulo"> 
-    <h1 class="h3 text-black-800">Mi Informacion</h1>
+<div class="titulo">
+    <h1 class="h3 text-black-800">Mi Información</h1>
 </div>
 <div class="contenedor">
     <div class="tarjeta">
@@ -21,22 +21,22 @@
             </div>
             <div class="datos">
                 {% if usuario_log.avatar %}
-            <img class="img-profile rounded-circle" src="{{ usuario_log.avatar.url }}">
-            {% else %}
-            <img class="img-profile rounded-circle" src="/media/default.png">
-            {% endif %}
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="text-profile">
-                    <h6>Nombre de la calle : {{usuario_log.calle}}</h6>
-                    <h6> Numero Exterior: {{usuario_log.num_exterior}}</h6>
-                    <h6>Estado: {{usuario_log.estado}}</h6>
-                    <h6>Telefono: {{usuario_log.telefono}}</h6>
-                </div>
-    
-                <button class="guardar" type="submit">Guardar</button>
-            </form>
+                <img class="img-profile rounded-circle" src="{{ usuario_log.avatar.url }}">
+                {% else %}
+                <img class="img-profile rounded-circle" src="/media/default.png">
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="text-profile">
+                        <h6>Nombre de la calle : {{usuario_log.calle}}</h6>
+                        <h6> Numero Exterior: {{usuario_log.num_exterior}}</h6>
+                        <h6>Estado: {{usuario_log.estado}}</h6>
+                        <h6>Telefono: {{usuario_log.telefono}}</h6>
+                    </div>
+
+                    <button class="guardar" type="submit">Guardar</button>
+                </form>
             </div>
         </div>
     </div>
