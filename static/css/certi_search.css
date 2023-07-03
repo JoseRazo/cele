@@ -4,8 +4,10 @@
     border-radius: 10px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-}
 
+    opacity: 0;
+    animation: AparicionTabla 1s ease-out 0s forwards;
+}
 
 /* Barra de Filtros (Búsqueda y filtrado) */
 
@@ -86,6 +88,11 @@ td {
     border: none;
 }
 
+.ultima-casilla .boton-encuesta:nth-child(2) {
+    display: none
+  }
+
+
 .noCursos {
     text-align: center;
     padding-block: 50px;
@@ -102,6 +109,16 @@ td {
 
     .barraFiltros button {
         width: 50%;
+    }
+}
+
+@keyframes AparicionTabla {
+    0%{
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    100%{
+        opacity: 1;
     }
 }
 

@@ -90,13 +90,18 @@ def profile_user(request):
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             usuario_log = Alumno.objects.get(username=usuario.username)
+            status = 'alumno'
         elif grupo.name == 'Estudiantes EDCON':
             usuario_log = Estudiante.objects.get(username=usuario.username)
+            status = 'estudiante'
         elif grupo.name == 'Profesores CELE':
             usuario_log = Profesor.objects.get(username=usuario.username)
+            status = 'profe'
         elif grupo.name == 'Instructores EDCON':
             usuario_log = Instructor.objects.get(username=usuario.username)
+            status = 'instru'
         elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON':
+            status = 'admin'
             usuario_log = request.user
 
     if request.method == 'POST':
@@ -107,48 +112,7 @@ def profile_user(request):
     else:
         form = ProfileForm(instance=usuario_log)
 
-    return render(request, "certificados/profile.html", {'form': form, 'usuario_log': usuario_log, 'usuario': usuario})
-
-@login_required
-def curso_info(request):
-    usuario = request.user   
-    grupos = request.user.groups.all()
-    curso_list = []
-    calificacion_curso = None
-        
-    for grupo in grupos:
-        if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.filter(alumno=usuario)
-            usuario_log = Alumno.objects.get(username=usuario.username)
-            if curso_list:
-                try:
-                    curso_alumno = curso_list[0]
-                    calificacion_curso = CalificacionCurso.objects.get(curso_alumno=curso_alumno)
-                except ObjectDoesNotExist:
-                    pass
-        elif grupo.name == 'Estudiantes EDCON':
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario)
-            usuario_log = Estudiante.objects.get(username=usuario.username)
-
-    return render(request, "certificados/info.html", {'curso_list': curso_list, 'usuario_log': usuario_log,  'calificacion_curso': calificacion_curso})
-
-@login_required
-def Cursos_det(request, curso_id):
-    usuario = request.user
-    grupos = request.user.groups.all()
-    curso_list = []
-    today = fecha_actual.today()
-
-    for grupo in grupos:
-        if grupo.name == 'Alumnos CELE':
-            curso_list = CursoAlumno.objects.get(pk=curso_id)
-            usuario_log = Alumno.objects.get(username=usuario.username)
-        elif grupo.name == 'Estudiantes EDCON':
-            curso_list = CursoEstudiante.objects.get(pk=curso_id)
-            usuario_log = Estudiante.objects.get(username=usuario.username)
-
-    return render(request, 'certificados/cursos_detail.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today})
-
+    return render(request, "certificados/profile.html", {'form': form, 'usuario_log': usuario_log, 'usuario': usuario, 'status': status})
 
 @login_required
 def dash_view(request):
@@ -165,15 +129,17 @@ def dash_view(request):
         if grupo.name == 'Alumnos CELE':
             curso_list = CursoAlumno.objects.filter(alumno=usuario, periodo__fecha_fin__gte=today, inscrito=True)
             usuario_log = Alumno.objects.get(username=usuario.username)
+            status = 'alumno'
         elif grupo.name == 'Estudiantes EDCON':
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today, inscrito=True)
             usuario_log = Estudiante.objects.get(username=usuario.username)
+            status = 'estudiante'
         elif grupo.name == 'Profesores CELE':
             usuario_log = Profesor.objects.get(username=usuario.username)
             status = 'profe'
         elif grupo.name == 'Instructores EDCON':
             usuario_log = Instructor.objects.get(username=usuario.username)
-            status = 'profe'
+            status = 'instru'
         elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
             usuario_log = request.user
             status = 'admin'

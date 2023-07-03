@@ -1,6 +1,6 @@
 <div class="sidebar">
     <ul class="navbar-nav bg-primary sidebar" id="accordionSidebar" style="height: 100%; border-top-right-radius: 15px; background-color: #002052 !important; color: white;" >
-        <div class="contenido-sidebar" style="position: static;">
+        <div class="contenido-sidebar" style="position: fixed;">
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
             href="{% url 'certificados:dashboard' %}">
             <img src="/static/img/logo_uts.png" class="logo_uts">
@@ -11,22 +11,41 @@
         <div class="sidebar-heading">
             Interface
         </div>
-        {% if status == 'profe'%}
-        {% else %}
+        {% if status != 'profe' or status != 'instru' %}
         <li class="nav-item">
-            <a style="color: white;" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                aria-expanded="true" aria-controls="collapseTwo">
+            <a style="color: white;" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
                 <i class="fas fa-file-signature"></i>
                 <span>Constancias</span>
             </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Opciones</h6>
-                    {% if request.user.is_superuser == 1 or status == 'admin'%}
+                    {% if request.user.is_superuser == 1 or status == 'admin' %}
                     <a class="collapse-item" href="{% url 'certificados_back:certi_cele' %}">Constancias CELE</a>
                     <a class="collapse-item" href="{% url 'certificados_back:certi_edcon' %}">Constancias EDCON</a>
                     {% else %}
                     <a class="collapse-item" href="{% url 'certificados_back:mis_cursos' %}">Mis Cursos</a>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a style="color: white;" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Encuestas</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Opciones</h6>
+                    {% if status == 'alumno' %}
+                    <a class="collapse-item" href="{% url 'encuestas:encuestas_cele' %}">Lista de Encuestas</a>
+                    {% elif status == 'estudiante' %}
+                    <a class="collapse-item" href="{% url 'encuestas:encuestas_edcon' %}">Lista de Encuestas</a>
+                    {% elif request.user.is_superuser == 1 or status == 'admin' %}
+                    <a class="collapse-item" href="{% url 'encuestas:reportes_cele' %}">Reportes CELE</a>
+                    <a class="collapse-item" href="{% url 'encuestas:reportes_edcon' %}">Reportes EDCON</a>
                     {% endif %}
                 </div>
             </div>

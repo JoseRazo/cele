@@ -1,30 +1,21 @@
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 from django.db.models import Count, Q, Value as V
 from django.db.models.functions import Concat
-from .forms import LoginForm
-from edcon.models import Curso as Curso2
 from gestion_escolar.models import Alumno, CursoAlumno, CalificacionCurso, CalificacionCursoSemanal
-from edcon.models import Estudiante, CursoEstudiante, Periodo
+from edcon.models import Estudiante, CursoEstudiante
 from .models import CertificadoAlumno, CertificadoEstudiante, Plantilla
 from datetime import datetime
-from usuarios.models import Usuario
 from datetime import date as fecha_actual
 import qrcode
 import random
 import string
 
-
-
-from django.http import FileResponse
 import io
-from pathlib import Path
 import os
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -38,8 +29,57 @@ import textwrap
 import base64
 # Create your views here.
 
+# Diccionario de Meses, utilizado para traducir al español.
+meses = {
+    "January": "enero",
+    "February": "febrero",
+    "March": "marzo",
+    "April": "abril",
+    "May": "mayo",
+    "June": "junio",
+    "July": "julio",
+    "August": "agosto",
+    "September": "septiembre",
+    "October": "octubre",
+    "November": "noviembre",
+    "December": "diciembre",
+}
+
 def add_background(canvas, image_path):
     canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True, mask='auto')
+
+def addTextRow(canvas, txt_string, font, font_size, hex_color, posX, posY):
+    text_width = canvas.stringWidth(txt_string, font, font_size)
+
+    canvas.setFont(font, font_size)
+    canvas.setFillColor(HexColor(hex_color))
+
+    if posX == 'center':
+        x = (letter[0] - text_width) / 2
+    else:
+        x = posX
+    
+    canvas.drawString(x, posY, txt_string)
+
+def addMultipleTextRows(canvas, txt_string, wrap_char_limit, wrap_jump_size, font, font_size, hex_color, posX, initialPosY):
+    canvas.setFont(font, font_size)
+    canvas.setFillColor(HexColor(hex_color))
+
+    wrapped_text = textwrap.wrap(txt_string, width=wrap_char_limit)
+
+    y = initialPosY
+
+    for text in wrapped_text:
+        text_width = canvas.stringWidth(text, font, font_size)
+
+        if posX == 'center':
+            x = (letter[0] - text_width) / 2
+        else:
+            x = posX
+
+        canvas.drawString(x, y, text)
+        y -= wrap_jump_size
+
 
 def add_qrcode(request, canvas, folio):
     data = request.build_absolute_uri('/validar-certificado-search/?q=' + folio)
@@ -57,17 +97,14 @@ def add_sello(canvas):
 
     canvas.drawImage(sello_path, (letter[0] / 2) + 125, letter[1] / 6, width=100, height=100, preserveAspectRatio=True, mask='auto')
 
-# Generar PDF
-
+# Obtener PDF
 def pdfget(request, certfolio):
     if certfolio.startswith("E"):
         curso = CertificadoEstudiante.objects.get(folio=certfolio)
-        print("usuario edcon")
         
         c_alumno = curso.curso_alumno.estudiante
     elif certfolio.startswith("C"):
         curso = CertificadoAlumno.objects.get(folio=certfolio)    
-        print("usuario cele")
 
         c_alumno = curso.curso_alumno.alumno
     
@@ -80,10 +117,7 @@ def pdfget(request, certfolio):
     # Agrega la imagen de fondo al PDF.
     bg_path = "/code" + curso.plantilla.plantilla_sin_firma.url
 
-    print(bg_path)
-
     add_background(c, bg_path)
-
     add_qrcode(request, c, certfolio)
 
     ############## Obtención de datos #################
@@ -91,103 +125,47 @@ def pdfget(request, certfolio):
 # Nombre del Curso
 
 # Fecha de Inicio y de Término
-    meses = {
-        "January": "enero",
-        "February": "febrero",
-        "March": "marzo",
-        "April": "abril",
-        "May": "mayo",
-        "June": "junio",
-        "July": "julio",
-        "August": "agosto",
-        "September": "septiembre",
-        "October": "octubre",
-        "November": "noviembre",
-        "December": "diciembre",
-    }
+    obt_fecha = curso.curso_alumno.periodo.fecha_inicio
+    fecha = ''
 
-    fecha = curso.curso_alumno.periodo.fecha_inicio.strftime("%d")
-    fecha += " de " + meses[curso.curso_alumno.periodo.fecha_inicio.strftime("%B")]
-    fecha += " del " + curso.curso_alumno.periodo.fecha_inicio.strftime("%Y")
-    fecha += " al " + curso.curso_alumno.periodo.fecha_fin.strftime("%d")
-    fecha += " de " + meses[curso.curso_alumno.periodo.fecha_fin.strftime("%B")]
-    fecha += " del " + curso.curso_alumno.periodo.fecha_fin.strftime("%Y")
+    for x in range(2):
+        if x == 1:
+            obt_fecha = curso.curso_alumno.periodo.fecha_fin
+            fecha += " al "
+        fecha += obt_fecha.strftime("%d")
+        fecha += " de " + meses[obt_fecha.strftime("%B")]
+        fecha += " del " + obt_fecha.strftime("%Y")
 
 
     ############ Agrega contenido al PDF. ##############
     text_nombre = str(c_alumno)
-    text_subtitulo =  str(curso.curso_alumno.curso)
+    text_curso =  str(curso.curso_alumno)
+    text_subtitulo = (
+        "Por haber concluido satisfactoriamente el curso \"" + text_curso 
+        +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
+        )
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(certfolio)
     text_firma = str(curso.firma)
 
-    nombre_len = 16
-    if len(text_nombre) > 35:
-        nombre_len = 12
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
-    x = (letter[0] - text_width) / 2
-    y = letter[1] / 2.25
-
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", nombre_len)
-    c.setFillColor(HexColor('#204089'))
-    c.drawString(x, y, text_nombre)
+    font_size = 16
+    if len(text_nombre) > 35:
+        font_size = 12
+
+    addTextRow(c, text_nombre, "Helvetica-Bold", font_size, '#204089', 'center', letter[1] / 2.25)
 
     # Pasada 2: Motivo de la constancia
-    lines = [
-        "Por haber concluido satisfactoriamente el curso \"" + text_subtitulo +"\"",
-        "impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
-    ]
-    
-    textob = c.beginText()
-
-    text_width = c.stringWidth(lines[0], "Helvetica", 14)
-    x = (letter[0] - text_width) / 2
-
-    textob.setTextOrigin(x, (letter[1] / 2.5))
-    textob.setFont("Helvetica", 14)
-    textob.setFillColor(HexColor('#8d8989'))
-    for line in lines:
-        textob.textLine(line)
-        c.drawText(textob)
-        text_width = c.stringWidth(lines[1], "Helvetica", 14)
-        x = (letter[0] - text_width) / 2
-        textob.setTextOrigin(x, (letter[1] / 2.65))
+    addMultipleTextRows(c, text_subtitulo, 80, 20, "Helvetica", 14, '#8d8989', "center", 320)
 
     # Pasada 3: Fecha de Término 
-    text_width = c.stringWidth(text_fecha, "Helvetica", 10)
-    x = (letter[0] - text_width) / 2
-    c.setFont("Helvetica", 10)
-    c.setFillColor(HexColor('#9f9b9b'))
-    c.drawString(x, (letter[1] / 3.04), text_fecha)
+    addTextRow(c, text_fecha, "Helvetica", 10, '#9f9b9b', 'center', letter[1] / 3.04)
 
     # Pasada 4: Folio
-    text_width = c.stringWidth(text_fecha, "Helvetica", 11)
-    x = 14
-    c.setFont("Helvetica", 11)
-    c.setFillColor(HexColor('#e40e1a'))
-    c.drawString(x, (letter[1] / 14.05), text_folio)
+    addTextRow(c, text_folio, "Helvetica", 11, '#e40e1a', 14, letter[1] / 14.05)
 
     # Pasada 5: Firma
-    c.setFont("Helvetica", 8)
-    c.setFillColor(HexColor('#9f9b9b'))
-
-    if len(text_firma) > 45:
-        wrap_text = textwrap.wrap(str(text_firma), width=45)
-        y = 120
-        pos = 0
-        for i in wrap_text:
-            text_width = c.stringWidth(wrap_text[pos], "Helvetica", 8)
-            x = (letter[0] - text_width) / 2
-            c.drawString(x, y, wrap_text[pos])
-            y -= 10
-            print(y)
-            pos = pos + 1
-    else:
-        text_width = c.stringWidth(text_firma, "Helvetica", 8)
-        x = (letter[0] - text_width) / 2
-        c.drawString(x, (letter[1] / 12.05), text_firma)
-        
+    addMultipleTextRows(c, text_firma, 45, 10, "Helvetica", 8, '#9f9b9b', "center", 120)
 
     # Finaliza el PDF.
     c.showPage()
@@ -199,7 +177,7 @@ def pdfget(request, certfolio):
     response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
     return response
 
-
+# Generar PDF
 @login_required
 def pdfgen(request, curso_id, firma, type):
     usuario = request.user    
@@ -211,7 +189,6 @@ def pdfgen(request, curso_id, firma, type):
     for grupo in grupos:
         if grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
             status = 'admin'
-
 
     if usuario.is_superuser == 1 or status == 'admin':
         if type == "AC":
@@ -243,7 +220,6 @@ def pdfgen(request, curso_id, firma, type):
             curso = CursoEstudiante.objects.get(pk=curso_id)
             if curso.estatus != 2:
                 return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'selcurso': curso})
-            print("usuario edcon")
 
             if not str(request.user) == str(curso.estudiante):
                 return render(request, 'certificados/curso_no_autorizado.html')
@@ -262,7 +238,6 @@ def pdfgen(request, curso_id, firma, type):
                     return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario, 'calicurso': calicurso})
             except ObjectDoesNotExist:
                     return render(request, 'certificados/requisito_no_cumplido.html',{'usuario_log': usuario})
-            print("usuario cele")
 
             if not str(request.user) == str(curso.alumno):
                 return render(request, 'certificados/curso_no_autorizado.html')
@@ -283,7 +258,6 @@ def pdfgen(request, curso_id, firma, type):
 
         if certificado_alumno:
             folio = certificado_alumno.folio
-            print(folio)
         else:
             ultimo_folio = CertificadoEstudiante.objects.last()
             if not ultimo_folio:
@@ -309,7 +283,6 @@ def pdfgen(request, curso_id, firma, type):
 
         if certificado_alumno:
             folio = certificado_alumno.folio
-            print(folio)
         else:
             ultimo_folio = CertificadoAlumno.objects.last()
             if not ultimo_folio:
@@ -331,12 +304,6 @@ def pdfgen(request, curso_id, firma, type):
 
         bg_path = CertificadoAlumno.objects.last()
     
-
-
-    print(folio)
-
-    print(certificado_alumno)
-    
     # Crea un objeto BytesIO para almacenar el PDF generado.
     buffer = BytesIO()
 
@@ -357,109 +324,48 @@ def pdfgen(request, curso_id, firma, type):
 
     ############## Obtención de datos #################
 
-    # Nombre del Curso
+    # Obtenemos la fecha de inicio y fin del curso
+    obt_fecha = certificado_alumno.curso_alumno.periodo.fecha_inicio
+    fecha = ''
 
-    # Fecha de Inicio y de Término
-    meses = {
-        "January": "enero",
-        "February": "febrero",
-        "March": "marzo",
-        "April": "abril",
-        "May": "mayo",
-        "June": "junio",
-        "July": "julio",
-        "August": "agosto",
-        "September": "septiembre",
-        "October": "octubre",
-        "November": "noviembre",
-        "December": "diciembre",
-    }
-
-    fecha = certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%d")
-    fecha += " de " + meses[certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%B")]
-    fecha += " del " + certificado_alumno.curso_alumno.periodo.fecha_inicio.strftime("%Y")
-    fecha += " al " + certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%d")
-    fecha += " de " + meses[certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%B")]
-    fecha += " del " + certificado_alumno.curso_alumno.periodo.fecha_fin.strftime("%Y")
+    for x in range(2):
+        if x == 1:
+            obt_fecha = certificado_alumno.curso_alumno.periodo.fecha_fin
+            fecha += " al "
+        fecha += obt_fecha.strftime("%d")
+        fecha += " de " + meses[obt_fecha.strftime("%B")]
+        fecha += " del " + obt_fecha.strftime("%Y")
 
     ############ Agrega contenido al PDF. ##############
     text_nombre = str(c_alumno)
-    text_subtitulo =  str(certificado_alumno.curso_alumno)
+    text_curso =  str(certificado_alumno.curso_alumno)
+    text_subtitulo = (
+        "Por haber concluido satisfactoriamente el curso \"" + text_curso 
+        +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
+        )
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(folio)
 
-    # Recordar de escalar la fuente del nombre acorde al tamaño del string
-    nombre_len = 16
-    if len(text_nombre) > 35:
-        nombre_len = 12
-    text_width = c.stringWidth(text_nombre, "Helvetica-Bold", nombre_len)
-    x = (letter[0] - text_width) / 2
-    y = letter[1] / 2.25
-
     # Pasada 1: Nombre del Alumno
-    c.setFont("Helvetica-Bold", nombre_len)
-    c.setFillColor(HexColor('#204089'))
-    c.drawString(x, y, text_nombre)
+    font_size = 16
+    if len(text_nombre) > 35:
+        font_size = 12
+
+    addTextRow(c, text_nombre, "Helvetica-Bold", font_size, '#204089', 'center', letter[1] / 2.25)
 
     # Pasada 2: Motivo de la constancia
-    lines = [
-        "Por haber concluido satisfactoriamente el curso \"" + text_subtitulo +"\"",
-        "impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
-    ]
-    
-    textob = c.beginText()
-
-    text_width = c.stringWidth(lines[0], "Helvetica", 14)
-    x = (letter[0] - text_width) / 2
-
-    textob.setTextOrigin(x, (letter[1] / 2.5))
-    textob.setFont("Helvetica", 14)
-    textob.setFillColor(HexColor('#8d8989'))
-    for line in lines:
-        textob.textLine(line)
-        c.drawText(textob)
-        text_width = c.stringWidth(lines[1], "Helvetica", 14)
-        x = (letter[0] - text_width) / 2
-        textob.setTextOrigin(x, (letter[1] / 2.65))
+    addMultipleTextRows(c, text_subtitulo, 80, 20, "Helvetica", 14, '#8d8989', "center", 320)
 
     # Pasada 3: Fecha de Término 
-    text_width = c.stringWidth(text_fecha, "Helvetica", 10)
-    x = (letter[0] - text_width) / 2
-    c.setFont("Helvetica", 10)
-    c.setFillColor(HexColor('#9f9b9b'))
-    c.drawString(x, (letter[1] / 3.04), text_fecha)
+    addTextRow(c, text_fecha, "Helvetica", 10, '#9f9b9b', 'center', letter[1] / 3.04)
 
     # Pasada 4: Folio
-    text_width = c.stringWidth(text_fecha, "Helvetica", 11)
-    x = 14
-    c.setFont("Helvetica", 11)
-    c.setFillColor(HexColor('#e40e1a'))
-    c.drawString(x, (letter[1] / 14.05), text_folio)
+    addTextRow(c, text_folio, "Helvetica", 11, '#e40e1a', 14, letter[1] / 14.05)
 
     # Pasada 5: Firma
-
     if firma == 'False':
-        c.setFont("Helvetica", 8)
-        c.setFillColor(HexColor('#9f9b9b'))
-
-        if len(firmaDigital) > 45:
-            wrap_text = textwrap.wrap(str(firmaDigital), width=45)
-            y = 120
-            pos = 0
-            for i in wrap_text:
-                text_width = c.stringWidth(wrap_text[pos], "Helvetica", 8)
-                x = (letter[0] - text_width) / 2
-                c.drawString(x, y, wrap_text[pos])
-                y -= 10
-                print(y)
-                pos = pos + 1
-        else:
-            text_width = c.stringWidth(firmaDigital, "Helvetica", 8)
-            x = (letter[0] - text_width) / 2
-            c.drawString(x, (letter[1] / 12.05), firmaDigital)
+        addMultipleTextRows(c, str(firmaDigital), 45, 10, "Helvetica", 8, '#9f9b9b', "center", 120)
     
-        
-
     # Finaliza el PDF.
     c.showPage()
     c.save()
@@ -469,7 +375,6 @@ def pdfgen(request, curso_id, firma, type):
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
     return response
-
 
 @login_required
 def listar_cursos(request):
@@ -484,14 +389,15 @@ def listar_cursos(request):
         if grupo.name == 'Alumnos CELE':
             usuario_log = Alumno.objects.get(username=usuario.username)
             curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            status = 'alumno'
         elif grupo.name == 'Estudiantes EDCON':
             usuario_log = Estudiante.objects.get(username=usuario.username)
             curso_list = CursoEstudiante.objects.filter(estudiante=usuario) 
+            status = 'estudiante'
         else:
             usuario_log = request.user
 
-    return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today}) 
-
+    return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today, 'status': status}) 
 
 @login_required
 def mostrar_curso(request, curso_id):
@@ -503,6 +409,7 @@ def mostrar_curso(request, curso_id):
         if grupo.name == 'Alumnos CELE':
             usuario_log = Alumno.objects.get(username=usuario.username)
             selcurso = CursoAlumno.objects.get(pk=curso_id)
+            status = 'alumno'
             if selcurso:
                 try:
                     if selcurso.horario == 'Sabatino':
@@ -516,6 +423,7 @@ def mostrar_curso(request, curso_id):
             usuario_log = Estudiante.objects.get(username=usuario.username)
             selcurso = CursoEstudiante.objects.get(pk=curso_id)
             log_alumno = str(selcurso.estudiante)
+            status = 'estudiante'
         else:
             usuario_log = request.user
             return render(request, 'certificados/404.html')
@@ -525,11 +433,10 @@ def mostrar_curso(request, curso_id):
     if log_alumno == usuario:
         # El curso de alumno no pertenece al usuario logueado, mostrar un mensaje de error o redirigir a otra página
         return render(request, 'certificados/mis_cursos_detail.html', 
-                  {'selcurso': selcurso, 'usuario_log': usuario_log, 'calicurso': calicurso})
+                  {'selcurso': selcurso, 'usuario_log': usuario_log, 'calicurso': calicurso, 'status': status})
     else:
         return render(request, 'certificados/curso_no_autorizado.html',
                       {'usuario_log': usuario_log})
-    
 
 class CursosAlumnoCeleListView(ListView):
     model = CursoAlumno

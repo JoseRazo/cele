@@ -1,0 +1,182 @@
+{% extends 'fragmentos/base.html' %}
+
+{% block title %} Realizar Encuesta {% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/realizar_encuesta.css">
+
+<section>
+    <div class="contenedor-seccion">
+        <div class="contenido-seccion">
+            <h1 class="h3 mb-0 text-gray-800">Encuesta de Evaluación del Servicio - {{ encuesta }}</h1>
+            <br>
+            <h5><label for="">Nombre del Servicio:</label> {{ selcurso }}</h5>
+            <h5><label for="">Instructor:</label> {{ selcurso.profesor }}{{ selcurso.instructor }}</h5>
+            <h5><label for="">Fecha de Inicio:</label> {{ selcurso.periodo.fecha_inicio }}</h5>
+        </div>
+    </div>
+    {% if encuesta_res %}
+    <div class="alert alert-success alert-anim" role="alert">
+        <h4 class="alert-heading">¡Encuesta Enviada!</h4>
+        <p>¡Gracias por tus comentarios!</p>
+        <hr>
+        {% for static in encuesta_static %}
+        <p class="mb-0">Realizada el {{ static.fecha_creacion }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+
+
+<div class="contenedor">
+    <div class="tarjeta">
+        <form method="post">
+            {% csrf_token %}
+            {% for seccion in secciones %}
+            <div class="titulo-seccion">
+                {{ forloop.counter }}. {{ seccion }}
+            </div>
+            <div class="contenedor-pregunta">
+
+                {% for pregunta in preguntas %}
+                {% if pregunta.seccion_id == seccion.id %}
+                <div class="pregunta">
+                    {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ pregunta }}...
+                </div>
+                <div class="contenedor-respuesta">
+                    {% if pregunta.tipo_pregunta.nombre == "multiple_radio" %}
+                    <div class="radio-toolbar">
+                        {% if not encuesta_res %}
+                        <div class="celda-respuesta ignoreLeftBorder">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}1"
+                                value="Excelente" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}1">Excelente</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}2"
+                                value="Muy Bueno" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}2">Muy Bueno</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}3"
+                                value="Bueno" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}3">Bueno</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}4"
+                                value="Regular" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}4">Regular</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}5"
+                                value="Malo" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}5">Malo</label>
+                        </div>
+                        <div class="celda-respuesta ignoreRightBorder">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}6"
+                                value="Muy Malo" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}6">Muy Malo</label>
+                        </div>
+                        {% else %}
+                        {% for respuesta in encuesta_res %}
+                        {% if respuesta.pregunta_id == pregunta.id %}
+                        <div class="celda-respuesta ignoreLeftBorder">
+                            <label
+                                class="{% if respuesta.texto_respuesta == 'Excelente' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}1">Excelente</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <label
+                                class="{% if respuesta.texto_respuesta == 'Muy Bueno' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}2">Muy Bueno</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <label class="{% if respuesta.texto_respuesta == 'Bueno' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}3">Bueno</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <label
+                                class="{% if respuesta.texto_respuesta == 'Regular' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}4">Regular</label>
+                        </div>
+                        <div class="celda-respuesta">
+                            <label class="{% if respuesta.texto_respuesta == 'Malo' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}5">Malo</label>
+                        </div>
+                        <div class="celda-respuesta ignoreRightBorder">
+                            <label
+                                class="{% if respuesta.texto_respuesta == 'Muy Malo' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}6">Muy Malo</label>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% elif pregunta.tipo_pregunta.nombre == "boolean_radio" %}
+                    <div class="radio-toolbar">
+                        {% if not encuesta_res %}
+                        <div class="celda-respuesta ignoreLeftBorder">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}1"
+                                value="Si" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}1">Si</label>
+                        </div>
+                        <div class="celda-respuesta ignoreRightBorder">
+                            <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}0"
+                                value="No" required>
+                            <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}0">No</label>
+                        </div>
+                        {% else %}
+                        {% for respuesta in encuesta_res %}
+                        {% if respuesta.pregunta_id == pregunta.id %}
+                        <div class="celda-respuesta ignoreLeftBorder">
+                            <label class="{% if respuesta.texto_respuesta == 'Si' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}1">Si</label>
+                        </div>
+                        <div class="celda-respuesta ignoreRightBorder">
+                            <label class="{% if respuesta.texto_respuesta == 'No' %} casilla-contestada {% endif %}"
+                                for="pregunta_{{ pregunta.id }}0">No</label>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif%}
+                    </div>
+                    {% elif pregunta.tipo_pregunta.nombre == "text" %}
+                    {% if not encuesta_res %}
+                    <div class="form-group">
+                        <textarea rows="3" name="pregunta_{{ pregunta.id }}" id="pregunta_{{ pregunta.id }}"
+                            class="form-control" required></textarea>
+                        <small id="pregunta_{{ pregunta.id }}" class="form-text text-muted">
+                            {{pregunta.texto_ayuda }}
+                        </small>
+                    </div>
+                    {% else %}
+                    {% for respuesta in encuesta_res %}
+                    {% if respuesta.pregunta_id == pregunta.id %}
+                    <div class="form-group">
+                        <textarea rows="3" name="pregunta_{{ pregunta.id }}" id="pregunta_{{ pregunta.id }}"
+                            class="form-control" required disabled>{{ respuesta.texto_respuesta }}</textarea>
+                        <small id="pregunta_{{ pregunta.id }}" class="form-text text-muted">
+                            {{pregunta.texto_ayuda }}
+                        </small>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+            {% if not encuesta_res %}
+            <div class="boton-enviar">
+                <input type="submit" value="Enviar" class="">
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}

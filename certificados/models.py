@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from gestion_escolar.models import CursoAlumno
 from edcon.models import CursoEstudiante
+from encuestas.models import Encuesta, Pregunta
 
 # Create your models here.
 
@@ -54,7 +55,18 @@ class DocumentoLogo(models.Model):
         return self.nombre
 
 class Plantilla(models.Model):
+    CONSTANCIA = 'Constancia UTS'
+    RED_CONOCER = 'Constancia Red Conocer'
+    CEDULA = 'Cédula de Acreditación'
+    RECONOCIMIENTO = 'Reconocimiento UTS'
+    PLANTILLA_CHOICES = (
+        (CONSTANCIA, 'Constancia UTS'),
+        (RED_CONOCER, 'Constancia Red Conocer'),
+        (CEDULA, 'Cédula de Acreditación'),
+        (RECONOCIMIENTO, 'Reconocimiento UTS'),
+    )
     nombre = models.CharField(max_length=30, null=True, blank=True)
+    tipo_plantilla = models.CharField(_('Tipo de Plantilla'), max_length=30, choices=PLANTILLA_CHOICES, default='Constancia UTS')
     plantilla_con_firma = models.ImageField(_('Plantilla con Firma'),
         default='default-image-certi-850x1100.png', upload_to='certificados', help_text="El tamaño de la imagen debe estar en múltiplos de 850 x 1100 pixeles")
     plantilla_sin_firma = models.ImageField(_('Plantilla sin Firma'),

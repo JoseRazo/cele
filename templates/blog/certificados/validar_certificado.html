@@ -57,7 +57,7 @@
                                             <th>Curso</th>
                                             <th>Alumno</th>
                                             <th>Periodo</th>
-                                            <th style="text-align: center;">Certificado</th>
+                                            <th style="text-align: center;">Constancias</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -65,8 +65,8 @@
                                             <td>{{ curso.folio }}</td>
                                             <td>{{ curso.curso_alumno.curso }}</td>
                                             <td>{{ curso.curso_alumno.alumno }}{{ curso.curso_alumno.estudiante }}</td>
-                                            <td>{{ curso.curso_alumno.periodo }}</td>
-                                            <td style="text-align: center;"><a href="{% url 'certificados_back:pdfget' curso.folio %}">Generar PDF</a></td>
+                                            <td>{{ curso.curso_alumno.periodo.fecha_inicio }} - {{ curso.curso_alumno.periodo.fecha_fin }}</td>
+                                            <td style="text-align: center;"><a href="{% url 'certificados_back:pdfget' curso.folio %}">Descargar PDF</a></td>
                                         </tr>
                                     </tbody>
                                 </table>

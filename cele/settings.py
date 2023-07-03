@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'pagos',
     'blog',
     'certificados',
+    'encuestas',
+    'ckeditor',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
