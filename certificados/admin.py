@@ -6,7 +6,7 @@ from .models import (
     DocumentoLogo,
     CertificadoAlumno,
     CertificadoEstudiante,
-    Plantilla
+    Plantilla,
 )
 
 # Register your models here.
@@ -41,7 +41,8 @@ class CertificadoEstudianteAdmin(admin.ModelAdmin):
     get_nombre_alumno.short_description = 'Estudiante'
 
 class PlantillaAlumnoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'plantilla_con_firma', 'plantilla_sin_firma', 'fecha_creacion', 'fecha_actualizacion')
+    list_display = ('nombre', 'tipo_plantilla', 'plantilla_con_firma', 'plantilla_sin_firma', 'fecha_creacion', 'fecha_actualizacion')
+
 
 admin.site.register(Empresa, EmpresaAdmin)
 admin.site.register(Documento, DocumentoAdmin)

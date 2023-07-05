@@ -8,6 +8,8 @@ body {
 
 .contenido {
     width: 100%;
+    overflow-x: visible;
+    z-index: 10;
 }
 
 h6 {
@@ -59,6 +61,7 @@ label {
 
 .tarjeta {
     padding: 10px;
+    z-index: 10;
 }
 
 .tarjeta-contenido {

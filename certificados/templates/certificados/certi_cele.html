@@ -39,7 +39,7 @@
                         <td>{{ curso.curso }}</td>
                         <td>{{ curso.profesor }}</td>
                         <td>{{ curso.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Generar PDF</a></td>
+                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

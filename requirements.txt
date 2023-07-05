@@ -8,5 +8,6 @@ djangorestframework == 3.13.1
 django-smart-selects == 1.5.9
 django-jazzmin == 2.5.0
 django-import-export == 2.8.0
+django-ckeditor == 6.5.1
 reportlab == 3.6.13
 qrcode==7.4.2

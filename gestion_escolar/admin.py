@@ -108,9 +108,9 @@ class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
         form = super(CursoAlumnoAdmin, self).get_form(request, obj=None, **kwargs)
         if obj:
             if obj.horario == 'Semanal':
-                self.inlines = [CalificacionCursoSemanalInline]
+                self.inlines = [CalificacionCursoSemanalInline,]
             elif obj.horario == 'Sabatino':
-                self.inlines = [CalificacionCursoInline]
+                self.inlines = [CalificacionCursoInline,]
                 
             if request.user.groups.filter(name='Profesores CELE'):
                 form.base_fields["alumno"].disabled = True
