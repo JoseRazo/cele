@@ -18,7 +18,7 @@ import environ
 
 # environ settings
 env = environ.Env()
-# environ.Env.read_env()
+environ.Env.read_env()
 
 # modificar el path para que se puedan crear apps en subdirectorios
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
