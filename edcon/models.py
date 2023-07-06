@@ -68,8 +68,16 @@ class Instructor(Usuario):
 
 
 class Curso(models.Model):
+    EDCON = 1
+    REDCONOCER = 2
+    CURSO_CHOICES = (
+        (EDCON, 'EdCon'),
+        (REDCONOCER, 'Red Conocer'),
+    )
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(null=True, blank=True)
+    tipo_curso = models.PositiveSmallIntegerField(choices=CURSO_CHOICES, default=1)
+    duracion = models.CharField(max_length=50, null=True, blank=True, verbose_name="Duración del Curso", help_text="Ejemplo 2 meses o 8 semanas")
     precio_estudiante_uts = models.DecimalField(_('Precio Estudiante UTS'), max_digits=6, decimal_places=2)
     precio_persona_externa = models.DecimalField(_('Precio Persona Externa'), max_digits=6, decimal_places=2)
     activo = models.BooleanField(default=True)
