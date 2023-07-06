@@ -3821,7 +3821,6 @@ from django.db import models
 #         managed = False
 #         db_table = 'grupo'
 
-
 # class GrupoAtendido(models.Model):
 #     cve_grupo_atendido = models.IntegerField()
 #     cve_bachillerato = models.IntegerField()

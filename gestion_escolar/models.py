@@ -19,6 +19,7 @@ class Alumno(Usuario):
         (EXTERNO, 'Persona Externa'),
         (ADMINISTRATIVO, 'Personal Administrativo'),
     )
+    edad = models.CharField(max_length=15, null=True, blank=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE,
                                null=True, blank=True, related_name='estado_alumno')

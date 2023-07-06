@@ -168,7 +168,7 @@ def formContacto(request):
 
             email=EmailMessage("FORMULARIO DE CONTACTO EDCON.",
             "El usuario {} con correo electronico {} escribe lo siguiente:\n\n Mensaje: {}".format(nombre, email, mensaje),
-            "", ["celeuts@utsalamanca.edu.mx"], reply_to=[email])
+            "", ["jrazo@utsalamanca.edu.mx"], reply_to=[email])
 
             try:
                 email.send()
