@@ -140,8 +140,8 @@ class AlumnoResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         exclude = ('id', 'usuario_ptr', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_active', 'date_joined', 'avatar', 'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior',)
-        export_order = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad',)
-        import_id_fields = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad',)
+        export_order = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
+        import_id_fields = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
 
 
 @admin.register(Alumno)
@@ -152,7 +152,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_form = AlumnoCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password', 'contraseña',)}),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -170,7 +170,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
