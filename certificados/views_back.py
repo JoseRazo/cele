@@ -175,19 +175,21 @@ def pdfget(request, certfolio):
     text_curso =  str(curso.curso_alumno)
     text_duracion = curso.curso_alumno.curso.duracion
 
-    if curso.curso_alumno.curso.tipo_curso == 2:
-        text_subtitulo = (
-            "Por haber culminado exitosamente el curso \"" + text_curso 
-            +"\", "
-            )
-        if text_duracion:
-            text_subtitulo += ("con una duración total de " + text_duracion + ", ")
-        text_subtitulo += ("en las instalaciones de la Universidad Tecnológica de Salamanca.")
-    else:
-        text_subtitulo = (
-            "Por haber concluido satisfactoriamente el curso \"" + text_curso 
-            +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
-            )
+    text_subtitulo = (
+                "Por haber concluido satisfactoriamente el curso \"" + text_curso 
+                +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
+                )
+
+    if certfolio.startswith("E"):
+        if curso.curso_alumno.curso.tipo_curso == 2:
+            text_subtitulo = (
+                "Por haber culminado exitosamente el curso \"" + text_curso 
+                +"\", "
+                )
+            if text_duracion:
+                text_subtitulo += ("con una duración total de " + text_duracion + ", ")
+            text_subtitulo += ("en las instalaciones de la Universidad Tecnológica de Salamanca.")
+            
 
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(certfolio)
@@ -403,19 +405,20 @@ def pdfgen(request, curso_id, firma, type):
     text_curso =  str(certificado_alumno.curso_alumno)
     text_duracion =certificado_alumno.curso_alumno.curso.duracion
 
-    if certificado_alumno.curso_alumno.curso.tipo_curso == 2:
-        text_subtitulo = (
-            "Por haber culminado exitosamente el curso \"" + text_curso 
-            +"\", "
-            )
-        if text_duracion:
-            text_subtitulo += ("con una duración total de " + text_duracion + ", ")
-        text_subtitulo += ("en las instalaciones de la Universidad Tecnológica de Salamanca.")
-    else:
-        text_subtitulo = (
-            "Por haber concluido satisfactoriamente el curso \"" + text_curso 
-            +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
-            )
+    text_subtitulo = (
+                "Por haber concluido satisfactoriamente el curso \"" + text_curso 
+                +"\" impartido en las instalaciones de la Universidad Tecnológica de Salamanca."
+                )
+
+    if status == 'estudiante' or type == 'AE' and autorizado:
+        if certificado_alumno.curso_alumno.curso.tipo_curso == 2:
+            text_subtitulo = (
+                "Por haber culminado exitosamente el curso \"" + text_curso 
+                +"\", "
+                )
+            if text_duracion:
+                text_subtitulo += ("con una duración total de " + text_duracion + ", ")
+            text_subtitulo += ("en las instalaciones de la Universidad Tecnológica de Salamanca.")
 
     text_fecha = "Salamanca, Gto., del " + str(fecha)
     text_folio = "FOLIO: " + str(folio)
