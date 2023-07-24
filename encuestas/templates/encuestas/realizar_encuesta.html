@@ -39,9 +39,7 @@
                 {{ forloop.counter }}. {{ seccion }}
             </div>
             <div class="contenedor-pregunta">
-
-                {% for pregunta in preguntas %}
-                {% if pregunta.seccion_id == seccion.id %}
+                {% for pregunta in seccion.pregunta_set.all %}
                 <div class="pregunta">
                     {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ pregunta }}...
                 </div>
@@ -166,7 +164,6 @@
                     {% endif %}
                     {% endif %}
                 </div>
-                {% endif %}
                 {% endfor %}
             </div>
             {% endfor %}
