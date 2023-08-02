@@ -11,8 +11,8 @@
 <div class="contenedor">
     <div class="barraFiltros">
         <form action="{% url 'certificados_back:certi_edcon_search' %}" method="get" id="courses_search_form">
-            <input type="search" name="q" placeholder="Buscar por Alumno/Matricula" required/>
-            <button>
+            <input type="search" name="q" placeholder="Buscar por Estudiante/Matricula" required/>
+            <button class="buscarBtn">
                 Buscar Ahora
             </button>
         </form>
@@ -26,6 +26,7 @@
                         <th>Matricula</th>
                         <th>Estudiante</th>
                         <th>Curso</th>
+                        <th>Tipo de Curso</th>
                         <th>Instructor</th>
                         <th>Periodo</th>
                         <th>Constancia</th>
@@ -37,6 +38,11 @@
                         <td class="ignoreBorder">{{ curso.estudiante.username }}</td>
                         <td>{{ curso.estudiante }}</td>
                         <td>{{ curso.curso }}</td>
+                        {% if curso.curso.tipo_curso == 1 %}
+                        <td>EdCon</td>
+                        {% elif curso.curso.tipo_curso == 2 %}
+                        <td>Red Conocer</td>
+                        {% endif %}
                         <td>{{ curso.instructor }}</td>
                         <td>{{ curso.periodo }}</td>
                         <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AE' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF</a></td>

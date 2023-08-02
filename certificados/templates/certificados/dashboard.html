@@ -3,16 +3,80 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="/static/css/mis_cursos.css">
 {% if request.user.is_superuser == 1 or status == 'profe' or status == 'admin' %}
 <div class="isStaff">
     <center>
-        <h2>Bienvenido al Dashboard</h2>
+        <h2>Bienvenido</h2>
+        <h4>{{ request.user }}</h4>
         {% if request.user.is_superuser == 1 or status == 'admin' %}
         <h4>Sesión de Admin</h4>
         {% else %}
         <h4>Sesión de Profesor</h4>
         {% endif %}
         <a href="/admin">Ir al Panel de Administración</a>
+
+        {% if not perms.certificados.view_certificadoalumno and not perms.certificados.view_certificadoestudiante %}
+        
+        {% else %}      
+        <div class="contenedor-tarjeta" style="justify-content: center;">
+          {% if perms.certificados.view_certificadoalumno %}
+          <div class="tarjeta-admin">
+            <a class="link" href="{% url 'certificados_back:certi_cele' %}"></a>
+            <div class="tarjeta-imagen-admin">
+            </div>
+            <div class="tarjeta-content-admin">
+              <div class="content">
+                <h3 class="single-line">Constancias CELE</h3>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% if perms.certificados.view_certificadoestudiante %}
+          <div class="tarjeta-admin">
+            <a class="link" href="{% url 'certificados_back:certi_edcon' %}"></a>
+            <div class="tarjeta-imagen-admin">
+            </div>
+            <div class="tarjeta-content-admin">
+              <div class="content">
+                <h3 class="single-line">Constancias EDCON</h3>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% if not perms.encuestas.view_registroscele and not perms.encuestas.view_registrosedcon %}
+
+        {% else %}
+        <div class="contenedor-tarjeta" style="justify-content: center;">
+          {% if perms.encuestas.view_registroscele %}
+          <div class="tarjeta-admin">
+            <a class="link" href="{% url 'encuestas:reportes_cele' %}"></a>
+            <div class="tarjeta-imagen-admin">
+            </div>
+            <div class="tarjeta-content-admin">
+              <div class="content">
+                <h3 class="single-line">Reportes CELE</h3>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% if perms.encuestas.view_registrosedcon %}
+          <div class="tarjeta-admin">
+            <a class="link" href="{% url 'encuestas:reportes_edcon' %}"></a>
+            <div class="tarjeta-imagen-admin">
+            </div>
+            <div class="tarjeta-content-admin">
+              <div class="content">
+                <h3 class="single-line">Reportes EDCON</h3>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
     </center>
 </div>
 {% else %}
@@ -20,7 +84,6 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
   <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
 </div>
-<link rel="stylesheet" href="/static/css/mis_cursos.css">
 <div class="contenedor-tarjeta">
   {% for curso in curso_list %}
   {% if curso.periodo.fecha_fin %}
@@ -33,7 +96,7 @@
     </div>
     <div class="tarjeta-content">
       <div class="content">
-        <h3>{{ curso.curso }}</h3>
+        <h3 class="single-line">{{ curso.curso|truncatewords:"5" }}</h3>
         <table>
           <tbody>
             <tr>
@@ -64,4 +127,4 @@
 
 </div>
 {% endif %}
-{% endblock %}
+{% endblock %}  

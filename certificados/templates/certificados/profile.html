@@ -41,4 +41,19 @@
         </div>
     </div>
 </div>
+
+{% if status == "admin" %}
+<script>
+    window.onload = function(){
+        var labels = document.getElementsByTagName('label');
+        document.getElementById('id_avatar').style.display = "none";
+        var buttons = document.getElementsByTagName('button');
+        buttons[3].style.display = "none";
+
+        for (var i = 0; i < labels.length; i++) {
+            labels[i].style.display = "none";
+        }
+    }
+</script>
+{% endif %}
 {% endblock %}

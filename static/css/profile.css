@@ -1,6 +1,9 @@
 .contenedor {
     display: flex;
     justify-content: center;
+    opacity: 0;
+
+    animation: animAppear 1s ease-out 0.5s forwards;
 }
 
 .tarjeta {
@@ -53,6 +56,15 @@ img {
     color: white; 
     padding: 10px 20px; 
     border: none;
+}
+
+@keyframes animAppear {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
 }
 
 @media (max-width: 1400px) {

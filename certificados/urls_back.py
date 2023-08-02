@@ -10,6 +10,7 @@ from .views_back import (
     SearchCursosAlumnoCeleView, 
     CursosEstudianteEdconListView, 
     SearchCursosEstudianteEdconView, 
+    no_autorizado
     )
 from django.conf.urls import url
 from django.conf import settings
@@ -26,5 +27,6 @@ urlpatterns = [
     path('certi-cele-search/', SearchCursosAlumnoCeleView.as_view(template_name="certificados/certi_cele.html"), name='certi_cele_search'),
     path('certi-edcon/', CursosEstudianteEdconListView.as_view(template_name="certificados/certi_edcon.html"), name="certi_edcon"),
     path('certi-edcon-search/', SearchCursosEstudianteEdconView.as_view(template_name="certificados/certi_edcon.html"), name='certi_edcon_search'),
+    path('no_autorizado/', no_autorizado, name="no_autorizado"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  

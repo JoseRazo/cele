@@ -3,17 +3,82 @@
 {% block title %} Reportes {% endblock %}
 
 {% block content %}
-<h1>Reportes</h1>
+<h1>Reportes CELE</h1>
 
-<link rel="stylesheet" href="/static/css/certi_search.css"/>
+<link rel="stylesheet" href="/static/css/certi_search.css" />
 <script src="https://kit.fontawesome.com/3235fff4fa.js" crossorigin="anonymous"></script>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Generar reporte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'encuestas:reportgen' 'AC' %}" method="get" id="courses_search_form">
+                <div class="modal-body formulario">
+                    {% if messages %}
+                    <div class="alert alert-danger" id="alert">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    Filtrar por...
+                    <!-- <input id="busquedaFiltro" type="search" name="q" placeholder="Buscar..." required/> -->
+                    <label for="curso">Curso</label>
+                    <select name="curso">
+                        <option value="" disabled selected hidden>
+                            --Escoge un curso--
+                        </option>
+                        {% for curso in cursos %}
+                        <option value="{{curso}}">{{ curso }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="profe">Profesor</label>
+                    <select name="profe">
+                        <option value="" disabled selected hidden>
+                            --Escoge un profesor--
+                        </option>
+                        {% for profesor in profesores %}
+                        <option value="{{ profesor }}">{{ profesor }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="periodo">Periodo</label>
+                    <select name="periodo">
+                        <option value="" disabled selected hidden>
+                            --Escoge un periodo--
+                        </option>
+                        {% for periodo in periodos %}
+                        <option value="{{ periodo.id }}">{{ periodo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-success">
+                        Generar Reporte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="contenedor">
     <div class="barraFiltros">
         <form action="{% url 'encuestas:reportes_cele_search' %}" method="get" id="courses_search_form">
-            <input type="search" name="q" placeholder="Buscar por Curso o Alumno" required/>
-            <button>
+            <input type="search" name="q" placeholder="Buscar por Curso o Alumno" required />
+            <button class="buscarBtn">
                 Buscar Ahora
+            </button>
+            <button type="button" class="reporteBtn" id="reporteBtn" data-toggle="modal" data-target="#exampleModal">
+                Generar Reporte
             </button>
         </form>
     </div>
@@ -38,7 +103,10 @@
                         <td>{{ registro.curso_alumno.profesor }}</td>
                         <td>{{ registro.curso_alumno.periodo.fecha_fin }}</td>
                         <td class="ignoreBorder ultima-casilla">
-                            <a class="boton-encuesta" href="{% url 'encuestas:realizar_encuesta' registro.curso_alumno.id 'AC' %}" style="color: #00cd6d;"><i class="fas fa-clipboard-check" style="color: #00cd6d;"></i> Ver Encuesta</a>                            
+                            <a class="boton-encuesta"
+                                href="{% url 'encuestas:realizar_encuesta' registro.curso_alumno.id 'AC' %}"
+                                style="color: #00cd6d;"><i class="fas fa-clipboard-check" style="color: #00cd6d;"></i>
+                                Ver Encuesta</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -57,7 +125,8 @@
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Anterior</a>
+                <a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Anterior</a>
             </li>
             {% else %}
             <li class="page-item disabled">
@@ -65,20 +134,23 @@
             </li>
             {% endif %}
             {% for i in page_obj.paginator.page_range %}
-                {% if page_obj.number == i %}
-                <li class="page-item active" aria-current="page">
-                    <span class="page-link">
-                        {{ i }}
-                        <span class="sr-only">(current)</span>
-                    </span>
-                </li>
-                {% else %}
-                <li class="page-item"><a class="page-link" href="{% if request.GET.q is not None %}?page={{ i }}&q={{ request.GET.q }}{% else %}?page={{ i }}{% endif %}">{{ i }}</a></li>
-                {% endif %}
+            {% if page_obj.number == i %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">
+                    {{ i }}
+                    <span class="sr-only">(current)</span>
+                </span>
+            </li>
+            {% else %}
+            <li class="page-item"><a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ i }}&q={{ request.GET.q }}{% else %}?page={{ i }}{% endif %}">{{
+                    i }}</a></li>
+            {% endif %}
             {% endfor %}
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Siguiente</a>
+                <a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Siguiente</a>
             </li>
             {% else %}
             <li class="page-item disabled">
@@ -88,9 +160,9 @@
         </ul>
     </nav>
     {% endif %}
-    {% endif %} 
-    
-    
+    {% endif %}
+
+
     {% if not registros %}
     <div class="noCursos">
         <i class="fa fa-search fa-5x"></i>
@@ -102,5 +174,17 @@
     </div>
     {% endif %}
 </div>
+{% if messages %}
+<script>
+    window.onload = function(){
+        document.getElementById('reporteBtn').click();
+        var alert = document.getElementById('alert');
+
+        setTimeout(function() {
+            alert.style.display = "none";
+        }, 3000);
+    }
+</script>
+{% endif %}
 
 {% endblock content %}

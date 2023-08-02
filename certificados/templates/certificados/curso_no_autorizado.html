@@ -8,7 +8,11 @@
         <div class="error mx-auto" data-text="401">401</div>
             <p class="lead text-gray-800 mb-5">No autorizado</p>
             <p class="text-gray-500 mb-0">Parece que no tienes permiso para acceder a esta página...</p>
+            {% if status == "null" %}
+            <a href="{% url 'certificados:dashboard' %}">&larr; Volver al Dashboard</a>
+            {% else %}
             <a href="{% url 'certificados_back:mis_cursos' %}">&larr; Volver a Mis Cursos</a>
+            {% endif %}
     </div>
 
 </div>
