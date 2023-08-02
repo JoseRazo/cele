@@ -85,6 +85,7 @@ def profile_user(request):
     grupos = request.user.groups.all()
 
     if usuario.is_superuser == 1:
+        status = 'admin'
         usuario_log = Usuario.objects.get(username=usuario.username)
 
     for grupo in grupos:

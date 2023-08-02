@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -221,7 +221,7 @@ def pdfget(request, certfolio):
     # Lee los contenidos del BytesIO y devuelve una respuesta HTTP con el PDF generado.
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="' + str(certfolio) + '.pdf"'
     return response
 
 # Generar PDF
@@ -250,7 +250,7 @@ def pdfgen(request, curso_id, firma, type):
         autorizado = True
 
     if status == "alumno" or type == "AC" and autorizado:
-        curso = CursoAlumno.objects.get(pk=curso_id)    
+        curso = CursoAlumno.objects.get(pk=curso_id)
         try:
             if curso.horario == 'Sabatino':
                 calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
@@ -450,8 +450,14 @@ def pdfgen(request, curso_id, firma, type):
     # Lee los contenidos del BytesIO y devuelve una respuesta HTTP con el PDF generado.
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="prueba.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="' + str(folio) + '.pdf"'
     return response
+
+@login_required
+def no_autorizado(request):
+    usuario_log = request.user
+    status = "null"
+    return render(request, 'certificados/curso_no_autorizado.html', {'usuario_log': usuario_log, 'status': status})
 
 @login_required
 def listar_cursos(request):
@@ -473,6 +479,7 @@ def listar_cursos(request):
             status = 'estudiante'
         else:
             usuario_log = request.user
+            return render(request, 'certificados/404.html', {'usuario_log': usuario_log})
 
     return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today, 'status': status}) 
 
@@ -525,6 +532,15 @@ class CursosAlumnoCeleListView(ListView):
     def get_queryset(self):
         queryset = CursoAlumno.objects.filter(Q(horario='Sabatino', calicurso__calificacion_final__gte=8.0) | Q(horario='Semanal', calicursosem__calificacion_final__gte=8.0)).order_by('alumno')
         return queryset
+    
+    def get(self, *args, **kwargs):
+        grupos = self.request.user.groups.all()
+        for grupo in grupos:
+            if grupo.name != "Administradores CELE":
+                return redirect('/no_autorizado')
+        if not self.request.user.is_authenticated:
+            return redirect('/login')
+        return super(CursosAlumnoCeleListView, self).get(*args, **kwargs)
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
@@ -554,6 +570,15 @@ class SearchCursosAlumnoCeleView(ListView):
             obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno'))
     
         return obj
+    
+    def get(self, *args, **kwargs):
+        grupos = self.request.user.groups.all()
+        for grupo in grupos:
+            if grupo.name != "Administradores CELE":
+                return redirect('/no_autorizado')
+        if not self.request.user.is_authenticated:
+            return redirect('/login')
+        return super(SearchCursosAlumnoCeleView, self).get(*args, **kwargs)
 
 
 class CursosEstudianteEdconListView(ListView):
@@ -566,6 +591,15 @@ class CursosEstudianteEdconListView(ListView):
     def get_queryset(self):
         queryset = CursoEstudiante.objects.filter(estatus=2).order_by('estudiante')
         return queryset
+    
+    def get(self, *args, **kwargs):
+        grupos = self.request.user.groups.all()
+        for grupo in grupos:
+            if grupo.name != "Administradores EDCON":
+                return redirect('/no_autorizado')
+        if not self.request.user.is_authenticated:
+            return redirect('/login')
+        return super(CursosEstudianteEdconListView, self).get(*args, **kwargs)
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
@@ -590,3 +624,12 @@ class SearchCursosEstudianteEdconView(ListView):
             obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante'))
     
         return obj
+    
+    def get(self, *args, **kwargs):
+        grupos = self.request.user.groups.all()
+        for grupo in grupos:
+            if grupo.name != "Administradores EDCON":
+                return redirect('/no_autorizado')
+        if not self.request.user.is_authenticated:
+            return redirect('/login')
+        return super(SearchCursosEstudianteEdconView, self).get(*args, **kwargs)

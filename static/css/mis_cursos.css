@@ -31,6 +31,35 @@
     animation: aparicionTarjeta 1s ease-in-out 0.3s forwards;
 }
 
+.tarjeta-admin {
+    display: flex; 
+    flex-direction: row;
+    height: 100px;
+    width: 375px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin-inline: 10px;
+    margin-block: 15px;
+    overflow: hidden;
+    transition: 0.3s;
+
+    opacity: 0;
+    animation: aparicionTarjeta 1s ease-in-out 0.3s forwards;
+}
+
+.tarjeta-imagen-admin {
+    background-color: #002052;
+    width: 10px;
+}
+
+.tarjeta-content-admin {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
 .link {
     position: absolute;
     z-index: 10;
@@ -65,7 +94,8 @@
     color: #eeeeee;
 }
 
-.tarjeta:hover{
+.tarjeta:hover,
+.tarjeta-admin:hover{
     background-color: #002052;
     color: white;
     cursor: pointer;
@@ -78,6 +108,10 @@
 
 .tarjeta:hover img {
     transform: translateX(-25px);
+}
+
+.tarjeta-admin:hover .tarjeta-imagen-admin {
+    background-color: #ffffff;
 }
 
 td {
