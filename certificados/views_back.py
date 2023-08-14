@@ -209,7 +209,7 @@ def pdfget(request, certfolio):
     addTextRow(c, text_fecha, "Helvetica", 10, dynamic_hexclr[3], param_X[3], param_Y[3])
 
     # Pasada 4: Firma
-    addMultipleTextRows(c, text_firma, 45, 10, "Helvetica", 8, dynamic_hexclr[4], param_X[4], param_Y[4])
+    addMultipleTextRows(c, text_firma, 55, 8, "Helvetica", 6, dynamic_hexclr[4], param_X[4], param_Y[4])
 
     # Pasada 5: Folio
     addTextRow(c, text_folio, "Helvetica", 11, dynamic_hexclr[5], param_X[5], param_Y[5])
@@ -438,7 +438,7 @@ def pdfgen(request, curso_id, firma, type):
 
     # Pasada 4: Firma
     if firma == 'False':
-        addMultipleTextRows(c, str(firmaDigital), 45, 10, "Helvetica", 8, dynamic_hexclr[4], param_X[4], param_Y[4])
+        addMultipleTextRows(c, str(firmaDigital), 55, 8, "Helvetica", 6, dynamic_hexclr[4], param_X[4], param_Y[4])
 
     # Pasada 5: Folio
     addTextRow(c, text_folio, "Helvetica", 11, dynamic_hexclr[5], param_X[5], param_Y[5])

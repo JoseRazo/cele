@@ -107,6 +107,11 @@ def profile_user(request):
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=usuario_log)
+        try:
+            current_pfp = "/code" + str(usuario_log.avatar.url)
+            os.remove(current_pfp)
+        except:
+            pass
         if form.is_valid():
             form.save()
             return redirect('certificados:profile')  # Redirige a la página de perfil actualizada
