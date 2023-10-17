@@ -49,32 +49,32 @@
                         {% if not encuesta_res %}
                         <div class="celda-respuesta ignoreLeftBorder">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}1"
-                                value="Excelente" required>
+                                value="10" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}1">Excelente</label>
                         </div>
                         <div class="celda-respuesta">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}2"
-                                value="Muy Bueno" required>
+                                value="9" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}2">Muy Bueno</label>
                         </div>
                         <div class="celda-respuesta">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}3"
-                                value="Bueno" required>
+                                value="8" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}3">Bueno</label>
                         </div>
                         <div class="celda-respuesta">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}4"
-                                value="Regular" required>
+                                value="7" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}4">Regular</label>
                         </div>
                         <div class="celda-respuesta">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}5"
-                                value="Malo" required>
+                                value="6" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}5">Malo</label>
                         </div>
                         <div class="celda-respuesta ignoreRightBorder">
                             <input type="radio" name="pregunta_{{pregunta.id}}" id="pregunta_{{ pregunta.id }}6"
-                                value="Muy Malo" required>
+                                value="5" required>
                             <label class="etiqueta-radio" for="pregunta_{{ pregunta.id }}6">Muy Malo</label>
                         </div>
                         {% else %}
@@ -82,30 +82,30 @@
                         {% if respuesta.pregunta_id == pregunta.id %}
                         <div class="celda-respuesta ignoreLeftBorder">
                             <label
-                                class="{% if respuesta.texto_respuesta == 'Excelente' %} casilla-contestada {% endif %}"
+                                class="{% if respuesta.texto_respuesta == '10' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}1">Excelente</label>
                         </div>
                         <div class="celda-respuesta">
                             <label
-                                class="{% if respuesta.texto_respuesta == 'Muy Bueno' %} casilla-contestada {% endif %}"
+                                class="{% if respuesta.texto_respuesta == '9' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}2">Muy Bueno</label>
                         </div>
                         <div class="celda-respuesta">
-                            <label class="{% if respuesta.texto_respuesta == 'Bueno' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '8' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}3">Bueno</label>
                         </div>
                         <div class="celda-respuesta">
                             <label
-                                class="{% if respuesta.texto_respuesta == 'Regular' %} casilla-contestada {% endif %}"
+                                class="{% if respuesta.texto_respuesta == '7' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}4">Regular</label>
                         </div>
                         <div class="celda-respuesta">
-                            <label class="{% if respuesta.texto_respuesta == 'Malo' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '6' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}5">Malo</label>
                         </div>
                         <div class="celda-respuesta ignoreRightBorder">
                             <label
-                                class="{% if respuesta.texto_respuesta == 'Muy Malo' %} casilla-contestada {% endif %}"
+                                class="{% if respuesta.texto_respuesta == '5' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}6">Muy Malo</label>
                         </div>
                         {% endif %}
