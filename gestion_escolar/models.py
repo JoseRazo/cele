@@ -109,7 +109,7 @@ class Curso(models.Model):
 
 
 class Periodo(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
+    nombre = models.CharField(max_length=100, unique=True, blank=True)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     activo = models.BooleanField(default=True)
@@ -121,13 +121,13 @@ class Periodo(models.Model):
     def __str__(self):
         return self.nombre
 
+    class Meta:
+        ordering = ['-fecha_inicio']
 
 class CursoAlumno(models.Model):
-    SABATINO = 'Sabatino'
-    SEMANAL = 'Semanal'
     HORARIO_CHOICES = (
-        (SABATINO, 'Sabatino'),
-        (SEMANAL, 'Semanal'),
+        ('SA', 'Sabatino'),
+        ('SE', 'Semanal'),
     )
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
@@ -172,8 +172,8 @@ class CalificacionCurso(models.Model):
         return super(CalificacionCurso, self).save()
 
     class Meta:
-        verbose_name = 'Calificacion'
-        verbose_name_plural = 'Calificaciones'
+        verbose_name = 'Calificacion Curso Sabatino'
+        verbose_name_plural = 'Calificaciones Curso Sabatino'
 
 class CalificacionCursoSemanal(models.Model):
     curso_alumno = models.OneToOneField(CursoAlumno, on_delete=models.CASCADE, related_name='calicursosem')

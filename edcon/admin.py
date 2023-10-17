@@ -10,6 +10,7 @@ from .forms import (
     EstudianteChangeForm,
     EstudianteCreationForm,
     InstructorCreationForm,
+    PeriodoCreationForm,
 )
 from gestion_escolar.forms import (
     # ProfesorChangeForm,
@@ -24,11 +25,11 @@ class CursoAdmin(admin.ModelAdmin):
 
 
 class PeriodoAdmin(admin.ModelAdmin):
+    form = PeriodoCreationForm
     list_display = ('nombre', 'fecha_inicio', 'fecha_fin', 'activo')
     list_filter = ('activo',)
     search_fields = ('nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
-
 
 class CursoEstudianteResource(resources.ModelResource):
     class Meta:

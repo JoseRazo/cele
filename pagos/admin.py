@@ -1,15 +1,34 @@
 from django.contrib import admin
 from django.db.models import Q
-
-# Register your models here.
-
 from .models import ReferenciasBanco, ReferenciasConceptosBanco
+from rangefilter.filters import DateRangeFilter
+from import_export import resources
+from import_export.admin import ExportMixin
 
-class ReferenciasBancoAdmin(admin.ModelAdmin):
-    list_display = ('referencia', 'concepto','nombre', 'matricula', 'mensaje',)
-    list_filter = ('mensaje',)
+class ReferenciasBancoResource(resources.ModelResource):
+    class Meta:
+        model = ReferenciasBanco
+        fields = (
+            'cve_referencia', 'concepto', 'matricula', 'accion', 'referencia', 'banco_emisor',
+            'servicio_bb', 'monto', 'forma_pago', 'monto_parcial_minimo', 'firma', 'estatus',
+            'mensaje', 'monto_original', 'recargo_aplicado', 'descuento_aplicado',
+            'monto_a_pagar', 'nombre', 'no_recibo', 'folio_pago', 'fecha_limite_pago',
+            'fecha_pago', 'hora_pago', 'folio_reverso', 'fecha_reverso', 'hora_reverso',
+            'cve_periodo', 'fecha_creacion', 'fecha_actualizacion',
+        )
+
+class ReferenciasBancoAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = ReferenciasBancoResource
+    list_display = ('referencia', 'concepto','nombre', 'matricula', 'mensaje', 'forma_pago', 'fecha_pago')
     search_fields = ('referencia', 'matricula', 'concepto', 'nombre',)
-    # fields = ('nombre', 'matricula', 'concepto', 'referencia', 'banco_emisor', 'servicio_bb')
+    list_filter = (
+        'mensaje', 
+        'concepto', 
+        'monto',
+        'cve_periodo',
+        ('fecha_pago', DateRangeFilter),
+    )
+    
     list_per_page = 20
 
     # def has_add_permission(self, request, obj=None):
@@ -27,7 +46,7 @@ class ReferenciasBancoAdmin(admin.ModelAdmin):
             return qs.filter(Q(servicio_bb='2354'))
         elif request.user.groups.filter(name='Administradores EDCON'):
             return qs.filter(Q(servicio_bb='2355'))
-        return qs.filter(Q(servicio_bb='2354') | Q(servicio_bb='2355'))
+        return qs.filter(Q(servicio_bb='2354') | Q(servicio_bb='2355') | Q(servicio_bb='2123'))
     
 class ReferenciasConceptosBancoAdmin(admin.ModelAdmin):
     list_display = ('concepto', 'monto', 'monto_externo', 'fecha_limite', 'fecha_limite_pago', 'activo',)

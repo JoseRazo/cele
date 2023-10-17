@@ -23,6 +23,7 @@ from .forms import (
     ProfesorCreationForm,
     CalificacionCursoForm,
     CalificacionCursoSemanalForm,
+    PeriodoCreationForm
     # GrupoCreationForm
 )
 
@@ -38,6 +39,7 @@ class CursoAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nombre',)}
 
 class PeriodoAdmin(admin.ModelAdmin):
+    form = PeriodoCreationForm
     list_display = ('nombre', 'fecha_inicio', 'fecha_fin', 'activo')
     list_filter = ('activo',)
     search_fields = ('nombre',)
@@ -107,9 +109,9 @@ class CursoAlumnoAdmin(ExportMixin, admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(CursoAlumnoAdmin, self).get_form(request, obj=None, **kwargs)
         if obj:
-            if obj.horario == 'Semanal':
+            if obj.horario == 'SE':
                 self.inlines = [CalificacionCursoSemanalInline,]
-            elif obj.horario == 'Sabatino':
+            elif obj.horario == 'SA':
                 self.inlines = [CalificacionCursoInline,]
                 
             if request.user.groups.filter(name='Profesores CELE'):

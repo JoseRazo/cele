@@ -1,14 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.contrib.auth.models import Group
 from django.contrib.admin.widgets import FilteredSelectMultiple
-# from .models import Grupo
-
+from utils.meses import MONTHS_SPANISH
 from usuarios.models import Usuario
-from .models import Alumno, Profesor, CursoAlumno
-import uuid
+from .models import Alumno, Profesor, Periodo
 
 class AlumnoCreationForm(forms.ModelForm):
     groups = forms.ModelMultipleChoiceField(label='Roles', queryset=Group.objects.filter(name='Alumnos CELE'), required=False, widget=FilteredSelectMultiple('Roles', False))
@@ -163,3 +162,30 @@ class CalificacionCursoSemanalForm(forms.ModelForm):
 #         model = Grupo
 #         fields = '__all__'
 #         extra_fields = ['codigo']
+
+class PeriodoCreationForm(forms.ModelForm):
+    class Meta:
+        model = Periodo
+        fields = '__all__'
+
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'vTextField', 
+                'readonly': 'readonly', 
+                'placeholder': 'El nombre se autogenera con las fechas seleccionadas.'
+            }),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        nombre = cleaned_data.get('nombre')
+        
+        inicio_mes = MONTHS_SPANISH.get(self.cleaned_data.get('fecha_inicio').strftime('%B'))
+        fin_mes = MONTHS_SPANISH.get(self.cleaned_data.get('fecha_fin').strftime('%B'))
+        nombre = f'{self.cleaned_data.get("fecha_inicio").day} {inicio_mes} al {self.cleaned_data.get("fecha_fin").day} {fin_mes} del {self.cleaned_data.get("fecha_fin").year}'
+        
+        if Periodo.objects.filter(nombre=nombre).exclude(pk=self.instance.pk).exists():
+            raise ValidationError({'nombre': ['Ya existe un/a Periodo con este/a Nombre.']})
+
+        cleaned_data['nombre'] = nombre  # Asignar el nombre generado
+        return cleaned_data

@@ -6570,7 +6570,7 @@ class ReferenciasBanco(models.Model):
     no_recibo = models.CharField(max_length=255, blank=True, null=True)
     folio_pago = models.CharField(max_length=255, blank=True, null=True)
     fecha_limite_pago = models.CharField(max_length=10, blank=True, null=True)
-    fecha_pago = models.CharField(max_length=10, blank=True, null=True)
+    fecha_pago = models.DateField(max_length=10, blank=True, null=True)
     hora_pago = models.CharField(max_length=16, blank=True, null=True)
     folio_reverso = models.CharField(max_length=255, blank=True, null=True)
     fecha_reverso = models.CharField(max_length=10, blank=True, null=True)

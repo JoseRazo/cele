@@ -5,9 +5,6 @@ from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from sistema.models import Estado, Ciudad, Colonia, Carrera
 
-
-# Create your models here.
-
 class Estudiante(Usuario):
     ESTUDIANTE = 1
     EGRESADO = 2
@@ -94,7 +91,7 @@ class Curso(models.Model):
         return self.nombre
 
 class Periodo(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
+    nombre = models.CharField(max_length=100, unique=True, blank=True)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     activo = models.BooleanField(default=True)
@@ -103,6 +100,9 @@ class Periodo(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        ordering = ['-fecha_inicio']
 
 class CursoEstudiante(models.Model):
     EN_PROGRESO = 1
