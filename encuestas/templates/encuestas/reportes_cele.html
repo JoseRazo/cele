@@ -73,18 +73,18 @@
 <div class="contenedor">
     <div class="barraFiltros">
         <form action="{% url 'encuestas:reportes_cele_search' %}" method="get" id="courses_search_form">
-            <input type="search" name="q" placeholder="Buscar por Curso o Alumno" required />
-            <button class="buscarBtn">
+            <input class="mb-2 mb-sm-0" type="search" name="q" placeholder="Buscar por Curso o Alumno" required />
+            <button class="buscarBtn mb-2 mb-sm-0">
                 Buscar Ahora
             </button>
-            <button type="button" class="reporteBtn" id="reporteBtn" data-toggle="modal" data-target="#exampleModal">
+            <button type="button" class="reporteBtn mb-2 mb-sm-0" id="reporteBtn" data-toggle="modal" data-target="#exampleModal">
                 Generar Reporte
             </button>
         </form>
     </div>
     {% if registros %}
     <div class="tarjeta">
-        <div class="tarjeta-contenido">
+        <div class="tarjeta-contenido table-responsive">
             <table>
                 <thead>
                     <tr>
@@ -114,10 +114,10 @@
             </table>
         </div>
     </div>
-    <div class="courses_show_text d-flex justify-content-center mb-3">
+    <div class="courses_show_text text-center mb-3">
         Mostrando {{ page_obj.object_list|length }} de {{ page_obj.paginator.count }} Resultados en la Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
         {% if request.GET.q is not None %}
-        &nbsp; <a href="{% url 'encuestas:reportes_cele' %}">(Mostrar Todo)</a>
+        <br> <a href="{% url 'encuestas:reportes_cele' %}" class="btn btn-link">(Mostrar Todo)</a>
         {% endif %}
     </div>
     {% if is_paginated %}
@@ -169,7 +169,7 @@
         <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
         <div class="section_subtitle">
             <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
-            &nbsp; <a href="{% url 'encuestas:reportes_cele' %}">(Mostrar Todo)</a>
+            &nbsp; <a href="{% url 'encuestas:reportes_cele' %}" class="btn btn-link">(Mostrar Todo)</a>
         </div>
     </div>
     {% endif %}

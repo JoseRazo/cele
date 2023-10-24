@@ -137,7 +137,7 @@ def dash_view(request):
             usuario_log = Alumno.objects.get(username=usuario.username)
             status = 'alumno'
         elif grupo.name == 'Estudiantes EDCON':
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario, periodo__fecha_fin__gte=today, inscrito=True)
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario, estatus=1, inscrito=True)
             usuario_log = Estudiante.objects.get(username=usuario.username)
             status = 'estudiante'
         elif grupo.name == 'Profesores CELE':

@@ -4,105 +4,96 @@
 
 {% block content %}
 
-<h1>Mis Cursos</h1>
-<div class="d-flex flex-wrap contenedor-tarjeta">
-    {% for curso in curso_list %}
-    <div class="mdl-cell mdl-card mdl-shadow--4dp card">
-        <div class="mdl-card__media">
-            {% if curso.curso.imagen %}
-            <img class="article-image" src="{{ curso.curso.imagen.url }}">
-            {% endif %}
-        </div>
-        <div class="mdl-card__title" style="background-color: #002052;">
-            <h2 class="mdl-card__title-text" style="background-color: #002052;">{{ curso.curso.nombre|truncatewords:"5" }}</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            <table>
-                <tr>
-                    <td class="status">Fecha de inicio</td>
-                    <td>
-                        {{ curso.periodo.fecha_creacion}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="status">Fecha de finalizacion</td>
-                    <td>
-                        {{ curso.periodo.fecha_fin }}
-                    </td>
-                </tr>
-                <tr>
-                    {% if not curso.estatus %}
-                    <td class="status">Duracion</td>
-                    {% if curso.curso.duracion %}
-                    <td>{{ curso.curso.duracion }}</td>
-                    {% else %}
-                    <td>No definida</td>
+<h1 class="h3 mb-0 text-gray-800 mb-4">Mis Cursos</h1>
+<div class="">
+    <div class="row">
+        {% for curso in curso_list %}
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card mb-4">
+                <div class="image-container">
+                    {% if curso.curso.imagen %}
+                    <img src="{{ curso.curso.imagen.url }}" alt="">
                     {% endif %}
-                    {% else %}
-                    <td class="status">Estatus</td>
-                    {% if curso.estatus == 1 %}
-                    <td>En progreso</td>
-                    {% elif curso.estatus == 2 %}
-                    <td>Completado</td>
-                    {% elif curso.estatus == 3 %}
-                    <td>No completado</td>
-                    {% endif %}
+                </div>
+                <label class="favorite">
+                    <input checked="" type="checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                        <path
+                            d="M12 20a1 1 0 0 1-.437-.1C11.214 19.73 3 15.671 3 9a5 5 0 0 1 8.535-3.536l.465.465.465-.465A5 5 0 0 1 21 9c0 6.646-8.212 10.728-8.562 10.9A1 1 0 0 1 12 20z">
+                        </path>
+                    </svg>
+                </label>
 
+                <div class="content">
+                    <div class="brand mb-3">
+                        <h4>{{ curso.curso }}</h4>
+                    </div>
+                    <div class="course-name">
+                        <h5><span>Profesor: </span>{{ curso.profesor }}{{ curso.instructor }}</h5>
+                    </div>
+                    <div class="course-name">
+                        <h5><span>Periodo: </span>{{ curso.periodo }}</h5>
+                    </div>
+
+                    {% if not curso.estatus %}
+                    <h5>Duración:
+                    {% if curso.curso.duracion %}
+                    <span> {{ curso.curso.duracion }}</span>
+                    {% else %}
+                    <span> No definida</span>
                     {% endif %}
-                </tr>
-            </table>
+                    </h5>
+                    {% else %}
+                    <h5>Estatus:
+                        {% if curso.estatus == 1 %}
+                        <span class="badge badge-warning">En progreso</span>
+                        {% elif curso.estatus == 2 %}
+                        <span class="badge badge-success">Completado</span>
+                        {% elif curso.estatus == 3 %}
+                        <span class="badge badge-danger">No Completado</span>
+                        {% endif %}
+                    </h5>
+                    {% endif %}
+                </div>
+
+                <div class="button-container">
+                    <a class="detail-button button" href="{% url 'certificados_back:mis_cursos_detail' curso.id %}">Más
+                        detalles</a>
+                </div>
+            </div>
         </div>
-        <div class="botonn">
-            <a href="{% url 'certificados_back:mis_cursos_detail' curso.id %}" class="btn"
-                style="width: 100%; border-radius: 0; color: white; background-color: #002052;">Mas Detalles</a>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 
     {% if not curso_list %}
-    <div class="tarjeta-content"
-        style="text-align: center; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); width: 100%; height: 150px; background-color: white; margin: 30%; margin-top: 10%; border-radius: 10px;">
-        <p class="text" style="font-size: large; color: black; margin-left: 1%;">No tienes registro en ningún curso.</p>
-        <a href="{% url 'certificados:dashboard' %}" class="btn btn-primary"
-            style="margin-top: 40px; background-color: #002052;">Ver Cursos</a>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading text-center">Por el momento no estás inscrito en ningún curso.</h4>
+                <hr>
+                <div class="text-center">
+                    <a style="--clr: #007CF2" class=" btn button-show-more" href="{% url 'blog:home' %}">
+                        <span class="button__icon-wrapper">
+                            <svg width="10" class="button__icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 15">
+                                <path fill="currentColor"
+                                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z">
+                                </path>
+                            </svg>
+
+                            <svg class="button__icon-svg  button__icon-svg--copy" xmlns="http://www.w3.org/2000/svg"
+                                width="10" fill="none" viewBox="0 0 14 15">
+                                <path fill="currentColor"
+                                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z">
+                                </path>
+                            </svg>
+                        </span>
+                        Buscar Cursos
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
-
-<style>
-    .contenedor-tarjeta {
-        opacity: 0;
-        animation: AparicionTarjeta 1s ease-out 0s forwards;
-    }
-
-    .card {
-        margin-inline: 20px;
-    }
-
-    @keyframes AparicionTarjeta {
-        0% {
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    @media (max-width: 1500px) {
-        .card {
-            width: 50%;
-            margin-inline: auto;
-            transition: 0.3s;
-        }
-    }
-
-    @media (max-width: 800px) {
-        .card {
-            width: 100%;
-            transition: 0.3s;
-        }
-    }
-</style>
 {% endblock %}

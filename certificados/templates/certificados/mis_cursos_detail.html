@@ -3,87 +3,116 @@
 {% block title %} {{ selcurso }} {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="/static/css/mis_cursos_detail.css">
 
-<div class="page">
-    
-    <div class="contenido">
-        <h1>{{ selcurso }}</h1>
+<h1 class="h3 mb-0 text-gray-800 mb-4">Detalle Curso</h1>
 
-        {% if selcurso.curso.descripcion == '' %}
-            <h6>No hay descripción para mostrar.</h6>
-        {% else %}
-            <h6>{{ selcurso.curso.descripcion }}</h6>
-        {% endif %}
-        <label for="">Duración</label>
-        <h6>{{ selcurso.curso.duracion }}</h6>
-        <label for="">Periodo</label> 
-        <h6>{{ selcurso.periodo }}</h6>
-        <h6>Del {{ selcurso.periodo.fecha_inicio }} a {{ selcurso.periodo.fecha_fin }}</h6>
-        
-        <div class="contenedor">
-            <div class="barraTitulo">
-                {% if not selcurso.estatus %}
-                    Calificaciones Obtenidas
-                {% else %}
-                    Estatus del Curso
-                {% endif %}
+<section id="course-details" class="course-details">
+    <div class="container aos-init aos-animate" data-aos="fade-up">
+
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-8">
+                <h3 class="mb-3" style="color: #004BB1;">{{ selcurso }}</h3>
+                <img src="{{ selcurso.curso.imagen.url }}" class="img-fluid mb-3" alt="{{ selcurso.curso }}">
+                <p>
+                    {{ selcurso.curso.descripcion }}
+                </p>
             </div>
-            <div class="tarjeta">
-                <div class="tarjeta-contenido">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+
+                <div class="course-info d-flex justify-content-between align-items-center">
+                    <h5>Profesor</h5>
+                    <p>{{ selcurso.instructor }}{{ selcurso.profesor }}</p>
+                </div>
+
+                <div class="course-info d-flex justify-content-between align-items-center">
+                    <h5>Duración</h5>
+                    <p>{{ selcurso.curso.duracion }}</p>
+                </div>
+
+                <div class="course-info d-flex justify-content-between align-items-center">
+                    <h5>Fecha inicio</h5>
+                    <p>{{ selcurso.periodo.fecha_inicio }}</p>
+                </div>
+
+                <div class="course-info d-flex justify-content-between align-items-center">
+                    <h5>Fecha fin</h5>
+                    <p>{{ selcurso.periodo.fecha_fin }}</p>
+                </div>
+
+                <div class="text-center text-primary text-uppercase mb-3">
+                    {% if not selcurso.estatus %}
+                    <h5 class="font-weight-bold">Calificaciones Obtenidas</h5>
+                    {% else %}
+                    <h5 class="font-weight-bold">Estatus del Curso</h5>
+                    {% endif %}
+                </div>
+
+                <div>
                     {% if not selcurso.estatus %}
                     {% if calicurso %}
-                    <table>
-                        <thead>
-                            <tr>
-                                {% if selcurso.horario == 'Sabatino' %}
-                                <th>Primera Calificación</th>
-                                <th>Segunda Calificación</th>
-                                {% endif %}
-                                <th>Calificación Final</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                {% if selcurso.horario == 'Sabatino'%}
-                                <td class="ignoreBorder">{{ calicurso.primer_examen }}</td>
-                                <td>{{ calicurso.segundo_examen }}</td>
-                                {% endif %}
-                                <td class="ignoreBorder">{{ calicurso.calificacion_final }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    {% if selcurso.horario == 'SA' %}
+                                    <th>1er Examen</th>
+                                    <th>2do Examen</th>
+                                    {% endif %}
+                                    <th>Calificación Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    {% if selcurso.horario == 'SA'%}
+                                    <td>{{ calicurso.primer_examen }}</td>
+                                    <td>{{ calicurso.segundo_examen }}</td>
+                                    {% endif %}
+                                    <td>{{ calicurso.calificacion_final }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     {% else %}
-                        Aún no cuentas con calificaciones para este curso, regresa más tarde.
+                    <div class="card mb-4 py-3 border-left-danger">
+                        <div class="card-body">
+                            Aún no tienes calificaciones para este curso, ponte en contacto con tu profesor.
+                        </div>
+                    </div>
                     {% endif %}
                     {% else %}
+                    <div class="text-center mb-3">
                         {% if selcurso.estatus == 1 %}
-                            En progreso
+                        <div class="alert alert-warning" role="alert">
+                            <h5>En Progreso</h5>
+                        </div>
                         {% elif selcurso.estatus == 2 %}
-                            Completado
+                        <div class="alert alert-success" role="alert">
+                            <h5>Completado</h5>
+                        </div>
                         {% elif selcurso.estatus == 3 %}
-                            No completado
+                        <div class="alert alert-danger" role="alert">
+                            <h5>No Completado</h5>
+                        </div>
                         {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Descargar constancia si calificacion final CELE es >= 8 o si estatus curso edcon es == 2 (COMPLETADO) -->
+                    {% if calicurso.calificacion_final >= 8.0 or selcurso.estatus == 2 %}
+
+                    <div class="pdfButton">
+                        <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}"
+                            style="background-color:#004BB1;" class="btn btn-primary btn-block shadow-sm">
+                            <i class="fas fa-download fa-sm text-white-50"></i> Descargar Constancia
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        {% if calicurso.calificacion_final >= 8.0 or selcurso.estatus == 2 %}
-        <div class="pdfButton">
-            <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}" style="background-color:#002052;" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-download fa-sm text-white-50"></i> Descargar Constancia
-            </a>
-        </div>
-        {% endif %}
     </div>
-    <div class="imagen">
-        <div class="gradiante"></div>
-        {% if selcurso.curso.imagen %}
-        <img src="{{ selcurso.curso.imagen.url }}" alt="">
-        {% endif %}
-    </div>
-</div>
+</section>
 
 {% endblock %}
 

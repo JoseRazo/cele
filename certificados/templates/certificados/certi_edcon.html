@@ -11,7 +11,7 @@
 <div class="contenedor">
     <div class="barraFiltros">
         <form action="{% url 'certificados_back:certi_edcon_search' %}" method="get" id="courses_search_form">
-            <input type="search" name="q" placeholder="Buscar por Estudiante/Matricula" required/>
+            <input class="mb-2 mb-sm-0" type="search" name="q" placeholder="Buscar por Estudiante/Matricula" required/>
             <button class="buscarBtn">
                 Buscar Ahora
             </button>
@@ -19,7 +19,7 @@
     </div>
     {% if cursos_edcon %}
     <div class="tarjeta">
-        <div class="tarjeta-contenido">
+        <div class="tarjeta-contenido table-responsive">
             <table>
                 <thead>
                     <tr>
@@ -45,17 +45,21 @@
                         {% endif %}
                         <td>{{ curso.instructor }}</td>
                         <td>{{ curso.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AE' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF</a></td>
+                        <td class="ignoreBorder">
+                            <a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AE' %}" class="btn btn-link">
+                                <i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="courses_show_text d-flex justify-content-center mb-3">
+    <div class="courses_show_text text-center mb-3">
         Mostrando {{ page_obj.object_list|length }} de {{ page_obj.paginator.count }} Resultados en la Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
         {% if request.GET.q is not None %}
-        &nbsp; <a href="{% url 'certificados_back:certi_edcon' %}">(Mostrar Todo)</a>
+        <br> <a href="{% url 'certificados_back:certi_edcon' %}" class="btn btn-link">(Mostrar Todo)</a>
         {% endif %}
     </div>
     {% if is_paginated %}
@@ -103,7 +107,7 @@
         <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
         <div class="section_subtitle">
             <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
-            &nbsp; <a href="{% url 'certificados_back:certi_edcon' %}">(Mostrar Todo)</a>
+            &nbsp; <a href="{% url 'certificados_back:certi_edcon' %}" class="btn btn-link">(Mostrar Todo)</a>
         </div>
     </div>
     {% endif %}

@@ -252,9 +252,9 @@ def pdfgen(request, curso_id, firma, type):
     if status == "alumno" or type == "AC" and autorizado:
         curso = CursoAlumno.objects.get(pk=curso_id)
         try:
-            if curso.horario == 'Sabatino':
+            if curso.horario == 'SA':
                 calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
-            elif curso.horario == 'Semanal':
+            elif curso.horario == 'SE':
                 calicurso = CalificacionCursoSemanal.objects.get(curso_alumno_id=curso_id)
                 
             if calicurso.calificacion_final < 8.0:
@@ -465,17 +465,15 @@ def listar_cursos(request):
     usuario = request.user
     curso_list = []
     grupos = request.user.groups.all()
-    today = fecha_actual.today()
     
-
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
             usuario_log = Alumno.objects.get(username=usuario.username)
-            curso_list = CursoAlumno.objects.filter(alumno=usuario)
+            curso_list = CursoAlumno.objects.filter(alumno=usuario).order_by('-fecha_creacion')
             status = 'alumno'
         elif grupo.name == 'Estudiantes EDCON':
             usuario_log = Estudiante.objects.get(username=usuario.username)
-            curso_list = CursoEstudiante.objects.filter(estudiante=usuario) 
+            curso_list = CursoEstudiante.objects.filter(estudiante=usuario).order_by('-fecha_creacion')
             status = 'estudiante'
         else:
             usuario_log = request.user
@@ -496,9 +494,9 @@ def mostrar_curso(request, curso_id):
             status = 'alumno'
             if selcurso:
                 try:
-                    if selcurso.horario == 'Sabatino':
+                    if selcurso.horario == 'SA':
                         calicurso = CalificacionCurso.objects.get(curso_alumno_id=curso_id)
-                    elif selcurso.horario == 'Semanal':
+                    elif selcurso.horario == 'SE':
                         calicurso = CalificacionCursoSemanal.objects.get(curso_alumno_id=curso_id)
                 except ObjectDoesNotExist:
                     pass
@@ -530,7 +528,7 @@ class CursosAlumnoCeleListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = CursoAlumno.objects.filter(Q(horario='Sabatino', calicurso__calificacion_final__gte=8.0) | Q(horario='Semanal', calicursosem__calificacion_final__gte=8.0)).order_by('alumno')
+        queryset = CursoAlumno.objects.filter(Q(horario='SA', calicurso__calificacion_final__gte=8.0) | Q(horario='SE', calicursosem__calificacion_final__gte=8.0)).order_by('alumno')
         return queryset
     
     def get(self, *args, **kwargs):
@@ -562,8 +560,8 @@ class SearchCursosAlumnoCeleView(ListView):
             obj = CursoAlumno.objects.annotate(
                 nombres=Concat('alumno__nombre', V(' '),  'alumno__apellido_paterno', V(' '),'alumno__apellido_materno'
                 )).filter(
-                Q(nombres__icontains=search, horario='Sabatino', calicurso__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='Sabatino', calicurso__calificacion_final__gte=8.0) |
-                Q(nombres__icontains=search, horario='Semanal', calicursosem__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='Semanal', calicursosem__calificacion_final__gte=8.0)
+                Q(nombres__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0) |
+                Q(nombres__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0)
                 ).distinct().order_by('periodo')
 
         if invalid_queryparam(search):

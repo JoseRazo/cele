@@ -5,13 +5,13 @@
 {% block content %}
 <h1>Constancias CELE</h1>
 
-<link rel="stylesheet" href="/static/css/certi_search.css"/>
+<link rel="stylesheet" href="/static/css/certi_search.css" />
 <script src="https://kit.fontawesome.com/3235fff4fa.js" crossorigin="anonymous"></script>
 
 <div class="contenedor">
     <div class="barraFiltros">
         <form action="{% url 'certificados_back:certi_cele_search' %}" method="get" id="courses_search_form">
-            <input type="search" name="q" placeholder="Buscar por Alumno/Matricula" required/>
+            <input class="mb-2 mb-sm-0" type="search" name="q" placeholder="Buscar por Alumno/Matricula" required />
             <button class="buscarBtn">
                 Buscar Ahora
             </button>
@@ -19,7 +19,7 @@
     </div>
     {% if cursos_cele %}
     <div class="tarjeta">
-        <div class="tarjeta-contenido">
+        <div class="tarjeta-contenido table-responsive">
             <table>
                 <thead>
                     <tr>
@@ -39,17 +39,22 @@
                         <td>{{ curso.curso }}</td>
                         <td>{{ curso.profesor }}</td>
                         <td>{{ curso.periodo }}</td>
-                        <td class="ignoreBorder"><a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AC' %}"><i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF</a></td>
+                        <td class="ignoreBorder">
+                            <a href="{% url 'certificados_back:pdfgen' curso.id 'cfdr' 'AC' %}" class="btn btn-link">
+                                <i class="fa-solid fa-file-pdf" style="color: #4268d6;"></i>Descargar PDF
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="courses_show_text d-flex justify-content-center mb-3">
-        Mostrando {{ page_obj.object_list|length }} de {{ page_obj.paginator.count }} Resultados en la Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    <div class="courses_show_text text-center mb-3">
+        Mostrando {{ page_obj.object_list|length }} de {{ page_obj.paginator.count }} 
+        Resultados en la Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
         {% if request.GET.q is not None %}
-        &nbsp; <a href="{% url 'certificados_back:certi_cele' %}">(Mostrar Todo)</a>
+        <br> <a href="{% url 'certificados_back:certi_cele' %}" class="btn btn-link">(Mostrar Todo)</a>
         {% endif %}
     </div>
     {% if is_paginated %}
@@ -57,7 +62,8 @@
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Anterior</a>
+                <a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Anterior</a>
             </li>
             {% else %}
             <li class="page-item disabled">
@@ -65,20 +71,23 @@
             </li>
             {% endif %}
             {% for i in page_obj.paginator.page_range %}
-                {% if page_obj.number == i %}
-                <li class="page-item active" aria-current="page">
-                    <span class="page-link">
-                        {{ i }}
-                        <span class="sr-only">(current)</span>
-                    </span>
-                </li>
-                {% else %}
-                <li class="page-item"><a class="page-link" href="{% if request.GET.q is not None %}?page={{ i }}&q={{ request.GET.q }}{% else %}?page={{ i }}{% endif %}">{{ i }}</a></li>
-                {% endif %}
+            {% if page_obj.number == i %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">
+                    {{ i }}
+                    <span class="sr-only">(current)</span>
+                </span>
+            </li>
+            {% else %}
+            <li class="page-item"><a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ i }}&q={{ request.GET.q }}{% else %}?page={{ i }}{% endif %}">{{
+                    i }}</a></li>
+            {% endif %}
             {% endfor %}
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{% if request.GET.q is not None %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Siguiente</a>
+                <a class="page-link"
+                    href="{% if request.GET.q is not None %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Siguiente</a>
             </li>
             {% else %}
             <li class="page-item disabled">
@@ -88,16 +97,16 @@
         </ul>
     </nav>
     {% endif %}
-    {% endif %} 
-    
-    
+    {% endif %}
+
+
     {% if not cursos_cele %}
     <div class="noCursos">
         <i class="fa fa-search fa-5x"></i>
         <h2>Lo sentimos, no se encontraron resultados para tu búsqueda</h2>
         <div class="section_subtitle">
             <p>Inténtalo de nuevo con una ortografía o palabras clave diferentes.</p>
-            &nbsp; <a href="{% url 'certificados_back:certi_cele' %}">(Mostrar Todo)</a>
+            &nbsp; <a href="{% url 'certificados_back:certi_cele' %}" class="btn btn-link">(Mostrar Todo)</a>
         </div>
     </div>
     {% endif %}

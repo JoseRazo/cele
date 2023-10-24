@@ -41,7 +41,7 @@
             <div class="contenedor-pregunta">
                 {% for pregunta in seccion.pregunta_set.all %}
                 <div class="pregunta">
-                    {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ pregunta }}...
+                    {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ pregunta }}
                 </div>
                 <div class="contenedor-respuesta">
                     {% if pregunta.tipo_pregunta.nombre == "multiple_radio" %}
