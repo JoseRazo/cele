@@ -243,8 +243,8 @@ def pdfgen(request, curso_id, firma, type):
             status = 'estudiante'
             user_isLogged = True
 
-        elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
-            status = 'admin'
+        elif grupo.name in ['Administradores CELE', 'Administradores EDCON', 'Admin Constancias'] or usuario.is_superuser:
+            status = 'admin' 
 
     if usuario.is_superuser == 1 or status == 'admin':
         autorizado = True
@@ -465,6 +465,8 @@ def listar_cursos(request):
     usuario = request.user
     curso_list = []
     grupos = request.user.groups.all()
+    usuario_log = None
+    status= ''
     
     for grupo in grupos:
         if grupo.name == 'Alumnos CELE':
@@ -478,6 +480,7 @@ def listar_cursos(request):
         else:
             usuario_log = request.user
             return render(request, 'certificados/404.html', {'usuario_log': usuario_log})
+        
 
     return render(request, 'certificados/mis_cursos.html', {'curso_list': curso_list, 'usuario_log': usuario_log, 'today': today, 'status': status}) 
 
@@ -534,7 +537,7 @@ class CursosAlumnoCeleListView(ListView):
     def get(self, *args, **kwargs):
         grupos = self.request.user.groups.all()
         for grupo in grupos:
-            if grupo.name != "Administradores CELE":
+            if grupo.name not in ['Administradores CELE', 'Admin Constancias']:
                 return redirect('/no_autorizado')
         if not self.request.user.is_authenticated:
             return redirect('/login')
@@ -572,7 +575,7 @@ class SearchCursosAlumnoCeleView(ListView):
     def get(self, *args, **kwargs):
         grupos = self.request.user.groups.all()
         for grupo in grupos:
-            if grupo.name != "Administradores CELE":
+            if grupo.name not in ['Administradores CELE', 'Admin Constancias']:
                 return redirect('/no_autorizado')
         if not self.request.user.is_authenticated:
             return redirect('/login')
@@ -593,7 +596,7 @@ class CursosEstudianteEdconListView(ListView):
     def get(self, *args, **kwargs):
         grupos = self.request.user.groups.all()
         for grupo in grupos:
-            if grupo.name != "Administradores EDCON":
+            if grupo.name not in ['Administradores EDCON', 'Admin Constancias']:
                 return redirect('/no_autorizado')
         if not self.request.user.is_authenticated:
             return redirect('/login')
@@ -626,7 +629,7 @@ class SearchCursosEstudianteEdconView(ListView):
     def get(self, *args, **kwargs):
         grupos = self.request.user.groups.all()
         for grupo in grupos:
-            if grupo.name != "Administradores EDCON":
+            if grupo.name not in ['Administradores EDCON', 'Admin Constancias']:
                 return redirect('/no_autorizado')
         if not self.request.user.is_authenticated:
             return redirect('/login')

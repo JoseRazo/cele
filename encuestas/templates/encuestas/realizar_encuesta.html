@@ -81,13 +81,11 @@
                         {% for respuesta in encuesta_res %}
                         {% if respuesta.pregunta_id == pregunta.id %}
                         <div class="celda-respuesta ignoreLeftBorder">
-                            <label
-                                class="{% if respuesta.texto_respuesta == '10' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '10' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}1">Excelente</label>
                         </div>
                         <div class="celda-respuesta">
-                            <label
-                                class="{% if respuesta.texto_respuesta == '9' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '9' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}2">Muy Bueno</label>
                         </div>
                         <div class="celda-respuesta">
@@ -95,8 +93,7 @@
                                 for="pregunta_{{ pregunta.id }}3">Bueno</label>
                         </div>
                         <div class="celda-respuesta">
-                            <label
-                                class="{% if respuesta.texto_respuesta == '7' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '7' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}4">Regular</label>
                         </div>
                         <div class="celda-respuesta">
@@ -104,8 +101,7 @@
                                 for="pregunta_{{ pregunta.id }}5">Malo</label>
                         </div>
                         <div class="celda-respuesta ignoreRightBorder">
-                            <label
-                                class="{% if respuesta.texto_respuesta == '5' %} casilla-contestada {% endif %}"
+                            <label class="{% if respuesta.texto_respuesta == '5' %} casilla-contestada {% endif %}"
                                 for="pregunta_{{ pregunta.id }}6">Muy Malo</label>
                         </div>
                         {% endif %}
@@ -168,8 +164,12 @@
             </div>
             {% endfor %}
             {% if not encuesta_res %}
-            <div class="boton-enviar">
-                <input type="submit" value="Enviar" class="">
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-3">
+                    <div class="boton-enviar">
+                        <input type="submit" value="Enviar" class="">
+                    </div>
+                </div>
             </div>
             {% endif %}
         </form>

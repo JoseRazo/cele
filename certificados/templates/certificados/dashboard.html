@@ -3,7 +3,7 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
-{% if request.user.is_superuser == 1 or status == 'profe' or status == 'admin' %}
+{% if request.user.is_superuser == 1 or status == 'profe' or status == 'instru' or status == 'admin' %}
 <div class="isStaff">
   <center>
     <h1 class="h3 mb-0 text-gray-800">Bienvenido</h1>

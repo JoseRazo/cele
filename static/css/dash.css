@@ -224,7 +224,7 @@
 }
 
 .tarjeta-imagen-admin {
-  background-color: #002052;
+  background-color: #002078;
   width: 10px;
 }
 
@@ -270,7 +270,7 @@
 }
 
 .tarjeta-admin:hover{
-  background-color: #002052;
+  background-color: #002078;
   color: white;
   cursor: pointer;
 }
@@ -278,10 +278,6 @@
 .tarjeta:hover .botonDetalles {
   color: white;
   font-weight: bold;
-}
-
-.tarjeta:hover img {
-  transform: translateX(-25px);
 }
 
 .tarjeta-admin:hover .tarjeta-imagen-admin {

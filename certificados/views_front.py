@@ -83,6 +83,8 @@ def logout_view(request):
 def profile_user(request):
     usuario = request.user
     grupos = request.user.groups.all()
+    usuario_log = None
+    status = ''
 
     if usuario.is_superuser == 1:
         status = 'admin'
@@ -101,7 +103,7 @@ def profile_user(request):
         elif grupo.name == 'Instructores EDCON':
             usuario_log = Instructor.objects.get(username=usuario.username)
             status = 'instru'
-        elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON':
+        elif grupo.name in ['Administradores CELE', 'Administradores EDCON', 'Admin Constancias']:
             status = 'admin'
             usuario_log = request.user
 
@@ -146,7 +148,7 @@ def dash_view(request):
         elif grupo.name == 'Instructores EDCON':
             usuario_log = Instructor.objects.get(username=usuario.username)
             status = 'instru'
-        elif grupo.name == 'Administradores CELE' or grupo.name == 'Administradores EDCON' or usuario.is_superuser == 1:
+        elif grupo.name in ['Administradores CELE', 'Administradores EDCON', 'Admin Constancias'] or usuario.is_superuser:
             usuario_log = request.user
             status = 'admin'
 
