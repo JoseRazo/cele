@@ -1,17 +1,17 @@
 version: "3"
 
 services:
-    web:
+    web-edcon:
         build: .
-        image: edcon:v1.0
-        container_name: edcon
+        image: edcon:v1.1
+        container_name: edcon-app
         restart: always
         env_file:
             - .env
-        command: python manage.py runserver --insecure 0.0.0.0:8000
+        command: python manage.py runserver --insecure 0.0.0.0:8002
         volumes:
             - .:/code
         ports:
-            - 8000:8000
+            - 8002:8002
 volumes:
     .:
