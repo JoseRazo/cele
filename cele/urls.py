@@ -18,10 +18,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-# from django.urls import re_path
-# from django.views.static import serve
-#new
-
+from django.urls import re_path
+from django.views.static import serve
 
 # admin.site.site_header = "Educación Continua UTS"
 # admin.site.site_title = "Educación Continua UTS"
@@ -37,8 +35,13 @@ urlpatterns = [
     path('', include('certificados.urls_front')),
     path('', include('certificados.urls_back')),
     path('', include('encuestas.urls')),
-    
-    #re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

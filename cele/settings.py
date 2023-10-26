@@ -184,7 +184,9 @@ STATIC_URL = 'static/'
 LOGIN_URL='/login'
 LOGIN_REDIRECT_URL='/login'
 
-# STATIC_ROOT = BASE_DIR / 'static_prod/'
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'static_prod/'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
