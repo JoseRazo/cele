@@ -525,15 +525,17 @@ def mostrar_curso(request, curso_id):
 
 class CursosAlumnoCeleListView(ListView):
     model = CursoAlumno
-    # template_name = 'blog/certificados/certi-cele.html'
     context_object_name = 'cursos_cele'
     ordering = ['alumno']
-    paginate_by = 10
+    paginate_by = 10  # Set this to the desired number of items per page
 
     def get_queryset(self):
-        queryset = CursoAlumno.objects.filter(Q(horario='SA', calicurso__calificacion_final__gte=8.0) | Q(horario='SE', calicursosem__calificacion_final__gte=8.0)).order_by('alumno')
+        queryset = CursoAlumno.objects.filter(
+            Q(horario='SA', calicurso__calificacion_final__gte=8.0) |
+            Q(horario='SE', calicursosem__calificacion_final__gte=8.0)
+        ).order_by('alumno')
         return queryset
-    
+
     def get(self, *args, **kwargs):
         grupos = self.request.user.groups.all()
         for grupo in grupos:
@@ -543,6 +545,7 @@ class CursosAlumnoCeleListView(ListView):
             return redirect('/login')
         return super(CursosAlumnoCeleListView, self).get(*args, **kwargs)
 
+
 def is_valid_queryparam(param):
     return param != '' and param is not None
 def invalid_queryparam(param):
@@ -551,25 +554,23 @@ def invalid_queryparam(param):
 
 class SearchCursosAlumnoCeleView(ListView):
     model = CursoAlumno
-    # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'cursos_cele'      # default >> erf24/post_list.html
+    context_object_name = 'cursos_cele'
     ordering = ['alumno']
     paginate_by = 10
 
-    def get_queryset(self): # new
+    def get_queryset(self):
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CursoAlumno.objects.annotate(
-                nombres=Concat('alumno__nombre', V(' '),  'alumno__apellido_paterno', V(' '),'alumno__apellido_materno'
-                )).filter(
-                Q(nombres__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0) |
-                Q(nombres__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0) | Q(alumno__username__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0)
-                ).distinct().order_by('periodo')
+            obj = CursoAlumno.objects.annotate(  # Your search queryset
+                nombres=Concat('alumno__nombre', V(' '), 'alumno__apellido_paterno', V(' '), 'alumno__apellido_materno')
+            ).filter(
+                Q(nombres__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0, inscrito=True) |
+                Q(alumno__username__icontains=search, horario='SA', calicurso__calificacion_final__gte=8.0, inscrito=True) |
+                Q(nombres__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0, inscrito=True) |
+                Q(alumno__username__icontains=search, horario='SE', calicursosem__calificacion_final__gte=8.0, inscrito=True)
+            ).distinct().order_by('periodo')
 
-        if invalid_queryparam(search):
-            obj = CursoAlumno.objects.annotate(numero_de_alumnos=Count('alumno'))
-    
         return obj
     
     def get(self, *args, **kwargs):
@@ -584,13 +585,12 @@ class SearchCursosAlumnoCeleView(ListView):
 
 class CursosEstudianteEdconListView(ListView):
     model = CursoEstudiante
-    # template_name = 'blog/certificados/certi-cele.html'
     context_object_name = 'cursos_edcon'
     ordering = ['estudiante']
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = CursoEstudiante.objects.filter(estatus=2).order_by('estudiante')
+        queryset = CursoEstudiante.objects.filter(inscrito=True, estatus=2).order_by('estudiante')
         return queryset
     
     def get(self, *args, **kwargs):
@@ -610,8 +610,7 @@ def invalid_queryparam(param):
 
 class SearchCursosEstudianteEdconView(ListView):
     model = CursoEstudiante
-    # template_name = 'blog/certificados/certi-cele.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'cursos_edcon'      # default >> erf24/post_list.html
+    context_object_name = 'cursos_edcon'
     ordering = ['estudiante']
     paginate_by = 10
 
@@ -619,8 +618,9 @@ class SearchCursosEstudianteEdconView(ListView):
         search = self.request.GET.get('q')
 
         if is_valid_queryparam(search):
-            obj = CursoEstudiante.objects.annotate(nombres=Concat('estudiante__nombre', V(' '),'estudiante__apellido_paterno', V(' '), 'estudiante__apellido_materno')).filter(Q(nombres__icontains=search, estatus=2) | Q(estudiante__username__icontains=search, estatus=2)).distinct().order_by('estudiante')
-
+            obj = CursoEstudiante.objects.annotate(nombres=Concat('estudiante__nombre', V(' '), 'estudiante__apellido_paterno', V(' '), 'estudiante__apellido_materno')).filter(
+                Q(nombres__icontains=search, estatus=2, inscrito=True) | Q(estudiante__username__icontains=search, estatus=2, inscrito=True)
+            ).distinct().order_by('estudiante')
         if invalid_queryparam(search):
             obj = CursoEstudiante.objects.annotate(numero_de_alumnos=Count('estudiante'))
     

@@ -133,7 +133,7 @@ class CursoAlumno(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
-    horario = models.CharField(max_length=10, choices=HORARIO_CHOICES, default='Sabatino')
+    horario = models.CharField(max_length=10, choices=HORARIO_CHOICES, default='SA')
 
     # grupo = models.ForeignKey('Grupo', on_delete=models.CASCADE, blank=True, null=True)
     inscrito = models.BooleanField(default=False)
