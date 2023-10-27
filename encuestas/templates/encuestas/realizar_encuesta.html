@@ -8,7 +8,7 @@
 
 <section>
     <div class="contenedor-seccion">
-        <div class="contenido-seccion">
+        <div class="contenido-seccion text-dark">
             <h1 class="h3 mb-0 text-gray-800">Encuesta de Evaluación del Servicio - {{ encuesta }}</h1>
             <br>
             <h5><label for="">Nombre del Servicio:</label> {{ selcurso }}</h5>
@@ -28,8 +28,6 @@
     {% endif %}
 </section>
 
-
-
 <div class="contenedor">
     <div class="tarjeta">
         <form method="post">
@@ -40,10 +38,10 @@
             </div>
             <div class="contenedor-pregunta">
                 {% for pregunta in seccion.pregunta_set.all %}
-                <div class="pregunta">
+                <div class="pregunta font-weight-bold text-dark">
                     {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ pregunta }}
                 </div>
-                <div class="contenedor-respuesta">
+                <div class="contenedor-respuesta text-dark">
                     {% if pregunta.tipo_pregunta.nombre == "multiple_radio" %}
                     <div class="radio-toolbar">
                         {% if not encuesta_res %}
