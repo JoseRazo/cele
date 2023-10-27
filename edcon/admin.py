@@ -17,7 +17,7 @@ from gestion_escolar.forms import (
     ProfesorCreationForm,
 )
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'precio_estudiante_uts', 'precio_persona_externa', 'activo')
+    list_display = ('nombre', 'tipo_curso', 'precio_estudiante_uts', 'precio_persona_externa', 'activo')
     list_filter = ('activo',)
     search_fields = ('nombre',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
