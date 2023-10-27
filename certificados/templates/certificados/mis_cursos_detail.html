@@ -100,12 +100,12 @@
                     <!-- Descargar constancia si calificacion final CELE es >= 8 o si estatus curso edcon es == 2 (COMPLETADO) -->
                     {% if calicurso.calificacion_final >= 8.0 or selcurso.estatus == 2 %}
 
-                    <!-- <div class="pdfButton">
+                    <div class="pdfButton">
                         <a href="{% url 'certificados_back:pdfgen' selcurso.id False ' ' %}"
                             style="background-color:#004BB1;" class="btn btn-primary btn-block shadow-sm">
                             <i class="fas fa-download fa-sm text-white-50"></i> Descargar Constancia
                         </a>
-                    </div> -->
+                    </div>
                     {% endif %}
                 </div>
             </div>
