@@ -5716,20 +5716,26 @@ from django.db import models
 #         db_table = 'perfil_puesto_interes'
 
 
-# class Periodo(models.Model):
-#     cve_periodo = models.SmallIntegerField(primary_key=True)
-#     fecha_inicio = models.DateTimeField()
-#     fecha_fin = models.DateTimeField()
-#     fecha_inicio_clases = models.DateTimeField()
-#     fecha_fin_clases = models.DateTimeField()
-#     numero_periodo = models.IntegerField()
-#     no_extras = models.IntegerField(blank=True, null=True)
-#     activo = models.BooleanField()
+class Periodo(models.Model):
+    cve_periodo = models.SmallIntegerField(primary_key=True)
+    fecha_inicio = models.DateTimeField()
+    fecha_fin = models.DateTimeField()
+    fecha_inicio_clases = models.DateTimeField()
+    fecha_fin_clases = models.DateTimeField()
+    numero_periodo = models.IntegerField()
+    no_extras = models.IntegerField(blank=True, null=True)
+    activo = models.BooleanField()
 
-#     class Meta:
-#         managed = False
-#         db_table = 'periodo'
+    def get_periodo_name(self):
+        return f"{self.fecha_inicio.strftime('%B')} - {self.fecha_fin.strftime('%B')} {self.fecha_inicio.year}"
 
+    class Meta:
+        managed = False
+        db_table = 'periodo'
+
+    def __str__(self):
+        return f"{self.fecha_inicio.strftime('%B')} - {self.fecha_fin.strftime('%B')} {self.fecha_inicio.year}"
+    
 
 # class PeriodoCapturaCalificacion(models.Model):
 #     cve_periodo_captura = models.IntegerField(primary_key=True)
@@ -6575,9 +6581,13 @@ class ReferenciasBanco(models.Model):
     folio_reverso = models.CharField(max_length=255, blank=True, null=True)
     fecha_reverso = models.CharField(max_length=10, blank=True, null=True)
     hora_reverso = models.CharField(max_length=16, blank=True, null=True)
-    cve_periodo = models.IntegerField(blank=True, null=True)
+    cve_periodo = models.ForeignKey(Periodo, on_delete=models.SET_NULL, blank=True, null=True, db_column='cve_periodo')
     fecha_creacion = models.DateTimeField()
     fecha_actualizacion = models.DateTimeField()
+
+    def get_unique_periodos(self):
+        periodos = ReferenciasBanco.objects.values_list('cve_periodo', flat=True).distinct()
+        return [(periodo, periodo.get_date_range()) for periodo in Periodo.objects.filter(cve_periodo__in=periodos)]
 
     class Meta:
         managed = False
