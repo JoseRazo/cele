@@ -55,7 +55,7 @@
                                 <div class="course_body">
                                     <h3 class="course_title"><a href="{% url 'blog:curso_edcon_detalle' curso.slug %}">{{ curso.nombre }}</a></h3>
                                     <div class="course_text">
-                                        <p>{{ curso.descripcion | slice:":65" }}<a class="link-info"
+                                        <p>{{ curso.descripcion | striptags | truncatechars:85|safe }}<a class="link-info"
                                                 href="{% url 'blog:curso_edcon_detalle' curso.slug %}"> Ver Más</a></p>
                                     </div>
                                 </div>

@@ -6,6 +6,7 @@ from usuarios.models import Usuario
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from sistema.models import Estado, Ciudad, Colonia, Carrera
 from datetime import datetime
+from ckeditor.fields import RichTextField
 
 
 class Alumno(Usuario):
@@ -85,7 +86,7 @@ class Profesor(Usuario):
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(null=True, blank=True)
+    descripcion = RichTextField(_('Descripción'), null=True, blank=True)
     duracion = models.CharField(max_length=50, null=True, blank=True, verbose_name="Duración del Curso", help_text="Ejemplo 2 meses o 8 semanas")
     precio_estudiante_uts = models.DecimalField(
         _('Precio Estudiante UTS'), max_digits=6, decimal_places=2)
