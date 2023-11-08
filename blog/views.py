@@ -24,7 +24,7 @@ class CursoCeleListView(ListView):
     template_name = 'blog/cursos/cursos-cele.html'
     context_object_name = 'cursos_cele'
     ordering = ['nombre']
-    paginate_by = 3
+    paginate_by = 12
 
     def get_queryset(self):
         queryset = CursoCele.objects.annotate(numero_de_alumnos=Count('cursoalumno')).order_by('nombre')
@@ -40,7 +40,7 @@ class SearchCeleView(ListView):
     template_name = 'blog/cursos/cursos-cele.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'cursos_cele'      # default >> erf24/post_list.html
     ordering = ['nombre']
-    paginate_by = 3
+    paginate_by = 12
 
     def get_queryset(self): # new
         search = self.request.GET.get('q')
@@ -90,7 +90,7 @@ class CursoEdconListView(ListView):
     template_name = 'blog/cursos/cursos-edcon.html'
     context_object_name = 'cursos_edcon'
     ordering = ['nombre']
-    paginate_by = 3
+    paginate_by = 12
 
     def get_queryset(self):
         queryset = CursoEdcon.objects.annotate(numero_de_estudiantes=Count('cursoestudiante')).order_by('nombre')
@@ -106,7 +106,7 @@ class SearchEdconView(ListView):
     template_name = 'blog/cursos/cursos-edcon.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'cursos_edcon'      # default >> erf24/post_list.html
     ordering = ['nombre']
-    paginate_by = 3
+    paginate_by = 12
 
     def get_queryset(self): # new
         search = self.request.GET.get('q')
