@@ -11,12 +11,13 @@ class Estudiante(Usuario):
     EGRESADO = 2
     EXTERNO = 3
     ADMINISTRATIVO = 4
+    EMPRESA = 5
     ROLE_CHOICES = (
         (ESTUDIANTE, 'Estudiante UTS'),
         (EGRESADO, 'Egresado UTS'),
         (EXTERNO, 'Persona Externa'),
         (ADMINISTRATIVO, 'Personal Administrativo'),
-
+        (EMPRESA, 'Preferencial Empresa'),
     )
     telefono = models.CharField(max_length=15, null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, null=True, blank=True, related_name='estado_estudiante')

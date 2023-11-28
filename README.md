@@ -13,11 +13,11 @@ Sistema de Gestón de Cursos de Educación Continua de Universidad TEcnológica 
 - Abrir proyecto con editor de codigo y configurar archivo **`.env`**
 - Abrir terminal y entrar a la carpeta del proyecto `~/dev/django/cele$`
 - Generar imagen docker y contenedores con **`docker-compose build`** y **`docker-compose up -d`**
-- Crear APP **`docker compose run web python manage.py startapp nombre_de_la_app`**
-- Crear migraciones `docker compose run web python manage.py makemigrations`
-- Ejecutar migraciones `docker compose run web python manage.py migrate --database=default`
+- Crear APP **`docker compose run web-edcon python manage.py startapp nombre_de_la_app`**
+- Crear migraciones `docker compose run web-edcon python manage.py makemigrations`
+- Ejecutar migraciones `docker compose run web-edcon python manage.py migrate --database=default`
 - Eliminar migraciones solo en pruebas `find . -path "*/migrations/*.py" -not -name "__init__.py" -delete`
-- Crear superusuario **`docker compose run web python manage.py createsuperuser`**
+- Crear superusuario **`docker compose run web-edcon python manage.py createsuperuser`**
 
 ## Cambios en produccion
 - Editar .env
