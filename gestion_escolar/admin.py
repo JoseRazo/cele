@@ -172,7 +172,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'preferencial', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
