@@ -12,6 +12,7 @@ class Usuario(AbstractUser):
     apellido_paterno = models.CharField(_('Apellido Paterno'), max_length=60, null=True, blank=True)
     apellido_materno = models.CharField(_('Apellido Materno'), max_length=60, null=True, blank=True)
     email = models.EmailField(_('Email'),max_length=255, unique=True)
+    preferencial = models.BooleanField(_('Usuario Preferencial'), default=False, help_text="Activa esta opción solo si el usuario es Persona Externa y tiene convenio preferencial con alguna empresa.")
 
 
     def __str__(self):

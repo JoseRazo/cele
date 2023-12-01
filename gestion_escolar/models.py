@@ -14,13 +14,11 @@ class Alumno(Usuario):
     EGRESADO = 2
     EXTERNO = 3
     ADMINISTRATIVO = 4
-    EMPRESA = 5
     ROLE_CHOICES = (
         (ESTUDIANTE, 'Estudiante UTS'),
         (EGRESADO, 'Egresado UTS'),
         (EXTERNO, 'Persona Externa'),
         (ADMINISTRATIVO, 'Personal Administrativo'),
-        (EMPRESA, 'Preferencial Empresa'),
     )
     edad = models.CharField(max_length=15, null=True, blank=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)

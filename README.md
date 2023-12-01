@@ -17,6 +17,7 @@ Sistema de Gestón de Cursos de Educación Continua de Universidad TEcnológica 
 - Crear migraciones `docker compose run web-edcon python manage.py makemigrations`
 - Ejecutar migraciones `docker compose run web-edcon python manage.py migrate --database=default`
 - Eliminar migraciones solo en pruebas `find . -path "*/migrations/*.py" -not -name "__init__.py" -delete`
+- Comentar esta linea en settings.py para evitar errores de migraciones con conexion sito DATABASE_ROUTERS = ['routers.db_routers.AuthRouter',]
 - Crear superusuario **`docker compose run web-edcon python manage.py createsuperuser`**
 
 ## Cambios en produccion
