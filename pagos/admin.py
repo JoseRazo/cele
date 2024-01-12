@@ -69,7 +69,9 @@ class ReferenciasBancoAdmin(ExportMixin, admin.ModelAdmin):
         return qs.filter(Q(servicio_bb='2354') | Q(servicio_bb='2355') | Q(servicio_bb='2123'))
     
 class ReferenciasConceptosBancoAdmin(admin.ModelAdmin):
-    list_display = ('concepto', 'monto', 'monto_externo', 'fecha_limite', 'fecha_limite_pago', 'activo',)
+    # Ordena los campos en el formulario
+    fields = ['num_concepto', 'concepto', 'monto', 'monto_externo', 'preferencial', 'monto_preferencial', 'fecha_limite', 'fecha_limite_pago', 'activo', 'cve_servicio', 'fecha_creacion', 'fecha_actualizacion']
+    list_display = ('concepto', 'monto', 'monto_externo', 'preferencial', 'monto_preferencial', 'fecha_limite', 'fecha_limite_pago', 'activo',)
     readonly_fields = ['num_concepto', 'concepto', 'cve_servicio', 'fecha_creacion', 'fecha_actualizacion']
     list_filter = ('activo',)
     search_fields = ('concepto',)

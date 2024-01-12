@@ -6632,6 +6632,8 @@ class ReferenciasConceptosBanco(models.Model):
     fecha_limite_pago = models.DateField(max_length=10, blank=True, null=True)
     activo = models.BooleanField()
     cve_servicio = models.ForeignKey('ReferenciasServiciosBanco', models.DO_NOTHING, db_column='cve_servicio', blank=True, null=True)
+    preferencial = models.BooleanField(help_text="Activar solo si el concepto tiene un monto preferencial")
+    monto_preferencial = models.DecimalField(max_digits=8, decimal_places=2)
     fecha_creacion = models.DateTimeField()
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
