@@ -1,73 +1,110 @@
 {% extends 'fragmentos/base.html' %}
 
-{% block title %} Perfil {% endblock %}
+{% block title %} Perfil {% endblock %} 
 
-{% load static %}
+{% load static %} 
+
+{% block styles %}
+<link rel="stylesheet" href="/static/css/profile.css" />
+{% endblock %} 
 
 {% block content %}
-<link rel="stylesheet" href="/static/css/profile.css">
 <div class="titulo">
     <h1 class="h3 text-black-800">Mi Información</h1>
 </div>
-<div class="contenedor">
-    <div class="tarjeta">
-        <div class="profile-card">
-            <div class="card_titleprofile">
-                {% if request.user.is_superuser == 1 %}
-                {{ request.user.username }}
-                {% else %}
-                {{ request.user.nombre_completo }}
-                {% endif %}
-            </div>
-            <div class="datos">
-                {% if usuario_log.avatar %}
-                <img class="img-profile rounded-circle" src="{{ usuario_log.avatar.url }}">
-                {% else %}
-                <img class="img-profile rounded-circle" src="/media/default.png">
-                {% endif %}
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <div class="text-profile">
-                        <h6>Dirección: 
-                            {% if usuario_log.calle %}
-                                {{usuario_log.calle}} 
-                            {% if usuario_log.num_exterior %} 
-                                {{usuario_log.num_exterior}} 
-                            {% endif %}
-                            {% if usuario_log.num_interior %} 
-                                {{usuario_log.num_interior}} 
-                            {% endif %}
-                            {% if usuario_log.colonia %} 
-                                Col. {{usuario_log.colonia}} 
-                            {% endif %}
-                            {% else %}
-                                Sin registrar
-                            {% endif %}
-                        </h6>
-                        <h6>Estado: {{usuario_log.estado}}</h6>
-                        <h6>Telefono: {{usuario_log.telefono}}</h6>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-6 offset-md-3 mt-4">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h4 class="card-title">{{ user.nombre_completo }}</h4>
+                  </div>
+                <div class="card-body">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible bg-{{ message.tags }} text-white border-0 fade show"
+                        role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <strong>{{ message }}</strong>
                     </div>
+                    {% endfor %}
+                    {% endif %}
 
-                    <button class="guardar" type="submit">Guardar</button>
-                </form>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                <input type='file' name="avatar" id="id_avatar" accept="image/*"/>
+                                <label for="id_avatar"><i class="fas fa-camera"></i></label>
+                            </div>
+                            <div class="avatar-preview">
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="Avatar {{ user.nombre_completo }}"
+                                    class="profile-user-img img-responsive img-circle" id="imagePreview">
+                                {% else %}
+                                <img src="{{MEDIA_URL}}/media/default.png"
+                                    alt="Avatar {{ user.nombre_completo }}"
+                                    class="profile-user-img img-responsive img-circle" id="imagePreview">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="my-4">
+                            <h4 class="card-title">{{ user.email }}</h4>
+                            {% if user.get_telefono %}
+                            <h4 class="card-title">{{ user.get_telefono }}</h4>
+                            {% endif %}
+                        </div>
+                        <div class="error-message text-danger mb-3" style="display: none;">Necesitas seleccionar un avatar para guardar los cambios.</div>
+                        <button type="submit" class="btn btn-primary btn-user"
+                            id="save-button" disabled>Guardar
+                            Cambios</button>
+                    </form>
+                </div>
             </div>
+            <!-- Card -->
         </div>
     </div>
 </div>
+{% endblock %} 
 
-{% if status == "admin" %}
+{% block scripts %}
 <script>
-    window.onload = function(){
-        var labels = document.getElementsByTagName('label');
-        document.getElementById('id_avatar').style.display = "none";
-        var buttons = document.getElementsByTagName('button');
-        buttons[3].style.display = "none";
+    $(document).ready(function () {
+        $("#id_avatar").change(function (data) {
+            var imageFile = data.target.files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(imageFile);
 
-        for (var i = 0; i < labels.length; i++) {
-            labels[i].style.display = "none";
-        }
-    }
+            reader.onload = function (evt) {
+                $("#imagePreview").attr("src", evt.target.result);
+                $("#imagePreview").hide();
+                $("#imagePreview").fadeIn(650);
+            };
+        });
+    });
+
+    $(document).ready(function () {
+        $("#id_avatar").change(function () {
+            if ($(this).val()) {
+                $("#save-button").removeAttr("disabled");
+            } else {
+                $("#save-button").attr("disabled", true);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        var saveButton = $("#save-button");
+        var errorMessage = $(".error-message");
+
+        $("form").submit(function (event) {
+            if (!saveButton.attr("disabled") && $("#id_avatar").val() === "") {
+                event.preventDefault();
+                errorMessage.show();
+            }
+        });
+    });
 </script>
-{% endif %}
 {% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from gestion_escolar.models import Alumno
+from usuarios.models import Usuario
 
 
 class LoginForm(forms.Form):
@@ -8,8 +8,10 @@ class LoginForm(forms.Form):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = Alumno
+        model = Usuario  # Change this to use the Usuario model
         fields = ['avatar']
+
+    avatar = forms.ImageField(required=False)
 
 
 

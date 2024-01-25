@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
 import site
 import environ
 
@@ -249,3 +250,11 @@ EMAIL_TIMEOUT = os.getenv("APP_EMAIL_TIMEOUT", 60)
 # EMAIL_PORT = env('EMAIL_PORT')
 # EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 # EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary bg-secondary',
+        messages.INFO: 'alert-info bg-info',
+        messages.SUCCESS: 'alert-success bg-success',
+        messages.WARNING: 'alert-warning bg-warning',
+        messages.ERROR: 'alert-danger bg-danger',
+ }

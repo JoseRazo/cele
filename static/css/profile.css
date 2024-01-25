@@ -1,86 +1,62 @@
-.contenedor {
-    display: flex;
-    justify-content: center;
-    opacity: 0;
-
-    animation: animAppear 1s ease-out 0.5s forwards;
+.profile-user-img {
+    width: 165px;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    margin: 0 auto;
+    padding: 3px;
+    border: 3px solid #d2d6de;
+  }
+  
+  .img-circle {
+    border-radius: 50%;
+  }
+  
+  .avatar-upload {
+    position: relative;
+    max-width: 205px;
+    margin: auto;
+    margin-bottom: 20px;
+  }
+  
+  .avatar-upload .avatar-edit {
+    position: absolute;
+    right: 40px;
+    z-index: 1;
+    top: 130px;
+  }
+  
+  .avatar-upload .avatar-edit input {
+    display: none;
+  }
+  
+  .avatar-upload .avatar-edit input+label {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0;
+    border-radius: 100%;
+    background: #FFFFFF;
+    border: 1px solid #d2d6de;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .avatar-upload .avatar-edit input+label:hover {
+    background: #f1f1f1;
+    border-color: #d6d6d6;
+  }
+  
+  .avatar-upload .avatar-edit input+label i {
+   margin-top: 8px;
+  }
+  .btn-primary {
+    color: #fff;
+    background-color: #4e73df;
+    border-color: #4e73df;
 }
 
-.tarjeta {
-    width: 50%;
-    height: 100%;
-    text-align: center;
-}
-
-.profile-card {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-}
-
-.card_titleprofile {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-block: 10px;
-    width: 100%;
-    height: 100%;
-    background-color: #002078;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    color: white;
-}
-
-.datos {
-    margin: 20px;
-}
-
-.text-profile {
-    height: 100%;
-    border-radius: 5px;
-    color: #0c0c0c;
-    font-weight: bold;
-}
-
-img {
-    width: 200px;
-    height: 200px;
-}
-
-.guardar {
-    display: inline-block; 
-    border-radius: 5px; 
-    background-color: #002078; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none;
-}
-
-@keyframes animAppear {
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
-}
-
-@media (max-width: 1400px) {
-    .tarjeta {
-        width: 80%;
-    }
-}
-
-@media (max-width: 1200px) {
-    .tarjeta {
-        width: 75%;
-    }
-}
-
-@media (max-width: 900px) {
-    .tarjeta {
-        width: 100%;
-    }
+.card-header {
+  background-color: #007CF2;
+  color: #fff;
 }

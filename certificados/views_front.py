@@ -10,6 +10,8 @@ from edcon.models import Curso as Curso2
 from gestion_escolar.models import Alumno, CursoAlumno, Periodo, CalificacionCurso, Curso, Profesor
 from usuarios.models import Usuario
 from datetime import date as fecha_actual
+from django.core.exceptions import ValidationError
+from django.core.files.images import get_image_dimensions
 
 import io
 from pathlib import Path
@@ -82,45 +84,39 @@ def logout_view(request):
 @login_required
 def profile_user(request):
     usuario = request.user
-    grupos = request.user.groups.all()
-    usuario_log = None
-    status = ''
-
-    if usuario.is_superuser == 1:
-        status = 'admin'
-        usuario_log = Usuario.objects.get(username=usuario.username)
-
-    for grupo in grupos:
-        if grupo.name == 'Alumnos CELE':
-            usuario_log = Alumno.objects.get(username=usuario.username)
-            status = 'alumno'
-        elif grupo.name == 'Estudiantes EDCON':
-            usuario_log = Estudiante.objects.get(username=usuario.username)
-            status = 'estudiante'
-        elif grupo.name == 'Profesores CELE':
-            usuario_log = Profesor.objects.get(username=usuario.username)
-            status = 'profe'
-        elif grupo.name == 'Instructores EDCON':
-            usuario_log = Instructor.objects.get(username=usuario.username)
-            status = 'instru'
-        elif grupo.name in ['Administradores CELE', 'Administradores EDCON', 'Admin Constancias']:
-            status = 'admin'
-            usuario_log = request.user
+    user_perfil = Usuario.objects.get(username=usuario.username)
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=usuario_log)
-        try:
-            current_pfp = "/code" + str(usuario_log.avatar.url)
-            os.remove(current_pfp)
-        except:
-            pass
+        form = ProfileForm(request.POST, request.FILES, instance=user_perfil)
         if form.is_valid():
-            form.save()
-            return redirect('certificados:profile')  # Redirige a la página de perfil actualizada
-    else:
-        form = ProfileForm(instance=usuario_log)
+            if request.FILES.get('avatar'):
+                avatar = request.FILES['avatar']
 
-    return render(request, "certificados/profile.html", {'form': form, 'usuario_log': usuario_log, 'usuario': usuario, 'status': status})
+                # Verificar las dimensiones de la imagen
+                width, height = get_image_dimensions(avatar)
+                if width > 512 or height > 512:
+                    messages.error(request, 'Las dimensiones de la imagen no deben ser mayores de 512 píxeles.')
+                    return redirect('certificados:profile')
+                if request.user.avatar and request.user.avatar.name.endswith('default.png'):
+                    # Si el avatar es default.png, conservar la imagen predeterminada.
+                    form.save()
+                    messages.success(request, '¡Tu perfil ha sido actualizado!')
+                else:
+                    # Si el avatar es diferente a default.png, eliminar la imagen actual.
+                    request.user.avatar.delete()
+                    form.save()
+                    messages.success(request, '¡Tu perfil ha sido actualizado!')
+            else:
+                # Conservar la imagen actual en caso de no haber seleccionado otra.
+                user_perfil.avatar = user_perfil.avatar
+                user_perfil.save()
+                messages.warning(request, 'No seleccionaste una nueva imagen. Tu perfil no ha sido actualizado.')
+            return redirect("certificados:profile")
+        else:
+            messages.error(request, 'Por favor corrige los errores del formulario.')
+    else:
+        form = ProfileForm(instance=user_perfil)
+    return render(request, 'certificados/profile.html', {'form': form})
 
 @login_required
 def dash_view(request):

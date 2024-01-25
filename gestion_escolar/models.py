@@ -34,7 +34,6 @@ class Alumno(Usuario):
     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True, blank=True, 
                                 help_text="Selecciona una opción solo si es estudiante o egresado UTS")
-    avatar = models.ImageField(default='default.png', upload_to='avatar', null=True, blank=True)
 
     class Meta:
         verbose_name = "Alumno"
@@ -66,8 +65,6 @@ class Alumno(Usuario):
 
 class Profesor(Usuario):
     telefono = models.CharField(max_length=15, null=True, blank=True)
-    avatar = models.ImageField(
-        default='default.png', upload_to='avatar', null=True, blank=True)
 
     class Meta:
         verbose_name = "Profesor"
