@@ -10,17 +10,17 @@
 <link rel="stylesheet" href="/static/css/certi_search.css" />
 <script src="https://kit.fontawesome.com/3235fff4fa.js" crossorigin="anonymous"></script>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="reporteRevin026Modal" tabindex="-1" role="dialog" aria-labelledby="reporteRevin026ModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Generar reporte</h5>
+                <h5 class="modal-title" id="reporteRevin026ModalLabel">Generar Reporte REVIN026</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{% url 'encuestas:reportgen' 'AE' %}" method="get" id="courses_search_form">
+            <form action="{% url 'encuestas:reportgenrevin026' 'AE' %}" method="get" id="courses_search_form">
                 <div class="modal-body formulario">
                     {% if messages %}
                     <div class="alert alert-danger" id="alert">
@@ -31,28 +31,28 @@
                     {% endif %}
                     Filtrar por...
                     <!-- <input id="busquedaFiltro" type="search" name="q" placeholder="Buscar..." required/> -->
+                    <label for="profe">Profesor</label>
+                    <select name="profe" required>
+                        <option value="" disabled selected hidden>
+                            --Escoge un profesor--
+                        </option>
+                        {% for profesor in profesores %}
+                        <option value="{{ profesor.id }}">{{ profesor }}</option>
+                        {% endfor %}
+                    </select>
+                    
                     <label for="curso">Curso</label>
-                    <select name="curso">
+                    <select name="curso" required>
                         <option value="" disabled selected hidden>
                             --Escoge un curso--
                         </option>
                         {% for curso in cursos %}
-                        <option value="{{curso}}">{{ curso }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <label for="profe">Instructor</label>
-                    <select name="profe">
-                        <option value="" disabled selected hidden>
-                            --Escoge un instructor--
-                        </option>
-                        {% for profesor in profesores %}
-                        <option value="{{ profesor }}">{{ profesor }}</option>
+                        <option value="{{curso.id}}">{{ curso }}</option>
                         {% endfor %}
                     </select>
 
                     <label for="periodo">Periodo</label>
-                    <select name="periodo">
+                    <select name="periodo" required>
                         <option value="" disabled selected hidden>
                             --Escoge un periodo--
                         </option>
@@ -79,7 +79,7 @@
             <button class="buscarBtn mb-2 mb-sm-0">
                 Buscar Ahora
             </button>
-            <button type="button" class="reporteBtn mb-2 mb-sm-0" id="reporteBtn" data-toggle="modal" data-target="#exampleModal">
+            <button type="button" class="reporteBtn mb-2 mb-sm-0" id="reporteBtnRevin026" data-toggle="modal" data-target="#reporteRevin026Modal">
                 Generar Reporte
             </button>
         </form>
@@ -182,12 +182,12 @@
 {% if messages %}
 <script>
     window.onload = function(){
-        document.getElementById('reporteBtn').click();
+        document.getElementById('reporteBtnRevin026').click();
         var alert = document.getElementById('alert');
 
         setTimeout(function() {
             alert.style.display = "none";
-        }, 3000);
+        }, 6000);
     }
 </script>
 {% endif %}
