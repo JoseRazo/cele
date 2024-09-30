@@ -12,7 +12,8 @@ from .models import (
     Profesor, 
     Curso, 
     Periodo, 
-    CursoAlumno, 
+    CursoAlumno,
+    Idioma,
     # Grupo, 
     # Aula
 )
@@ -154,7 +155,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_form = AlumnoCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password', 'contraseña',)}),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'preferencial', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'idioma', 'preferencial', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -172,7 +173,7 @@ class AlumnoAdmin(DjangoUserAdmin, ImportExportModelAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'preferencial', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'idioma', 'preferencial', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'edad', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -260,6 +261,10 @@ class CalificacionCursoSemanalAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.groups.filter(name='Alumnos CELE'):
             return qs.filter(Q(curso_alumno__alumno=request.user))
+        
+@admin.register(Idioma)
+class IdiomaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'activo')
         
 
 admin.site.register(Curso, CursoAdmin)

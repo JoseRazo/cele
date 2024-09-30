@@ -34,6 +34,7 @@ class Alumno(Usuario):
     tipo_usuario = models.PositiveSmallIntegerField(choices=ROLE_CHOICES)
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True, blank=True, 
                                 help_text="Selecciona una opción solo si es estudiante o egresado UTS")
+    idioma = models.ForeignKey('Idioma', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "Alumno"
@@ -188,6 +189,21 @@ class CalificacionCursoSemanal(models.Model):
     class Meta:
         verbose_name = 'Calificacion Curso Semanal'
         verbose_name_plural = 'Calificaciones Curso Semanal'
+
+class Idioma(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    activo = models.BooleanField(default=True)
+    fecha_creacion = models.DateTimeField(
+        _('Fecha de creación'), auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(
+        _('Fecha de actualización'), auto_now=True)
+
+    class Meta:
+        verbose_name = 'Idioma'
+        verbose_name_plural = 'Idiomas'
+
+    def __str__(self):
+        return self.nombre
 
 # class Grupo(models.Model):
 #     nombre = models.CharField(max_length=100)
