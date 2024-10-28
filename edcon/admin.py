@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.db.models import Q
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
-from import_export import resources
+from import_export import resources,fields
 from import_export.admin import ImportExportModelAdmin, ExportMixin
 from django.contrib.auth.hashers import make_password
 from .models import Curso, Periodo, Instructor, Estudiante, CursoEstudiante
@@ -71,18 +71,39 @@ class CursoEstudianteInline(admin.TabularInline):
     extra = 0
 
 class EstudianteResource(resources.ModelResource):
-    # fields = ('id', 'username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')
+    tipo_usuario = fields.Field(column_name='tipo_usuario')
+    genero = fields.Field(column_name='genero')
+    carrera = fields.Field(column_name='carrera')
+
+    def dehydrate_tipo_usuario(self, estudiante):
+        return estudiante.get_tipo_usuario_display()
+
+    def dehydrate_genero(self, estudiante):
+        return estudiante.get_genero_display()
+    
+    def dehydrate_carrera(self, estudiante):
+        return estudiante.carrera.nombre if estudiante.carrera else ""
+    
     def before_import_row(self, row, **kwargs):
         value = str(row['password'])
         row['password'] = make_password(value)
+
+        tipo_usuario_display = {v: k for k, v in Estudiante.ROLE_CHOICES}
+        genero_display = {v: k for k, v in Estudiante.GENERO_CHOICES}
+
+        if row.get('tipo_usuario') in tipo_usuario_display:
+            row['tipo_usuario'] = tipo_usuario_display[row['tipo_usuario']]
+
+        if row.get('genero') in genero_display:
+            row['genero'] = genero_display[row['genero']]
 
     class Meta:
         model = Estudiante
         skip_unchanged = True
         report_skipped = True
         exclude = ('id', 'usuario_ptr', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_active', 'date_joined', 'avatar', 'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior',)
-        export_order = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
-        import_id_fields = ('username', 'password', 'tipo_usuario', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
+        export_order = ('username', 'password', 'tipo_usuario', 'genero', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
+        import_id_fields = ('username', 'password', 'tipo_usuario', 'genero', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono',)
 
 @admin.register(Estudiante)
 class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
@@ -92,7 +113,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     add_form = EstudianteCreationForm
     fieldsets = (
         (None, {'fields': ('username', 'password', 'contraseña',)}),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'genero', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -110,7 +131,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'contraseña',),
         }),
-        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
+        (_('Datos Generales'), {'fields': ('tipo_usuario', 'carrera', 'genero', 'nombre', 'apellido_paterno', 'apellido_materno', 'email', 'telefono', 'avatar')}),
         (_('Domicilio Actual'), {'fields': (
             'estado', 'ciudad', 'colonia', 'calle', 'num_exterior', 'num_interior')}),
         (_('Permissions'), {
@@ -119,7 +140,7 @@ class EstudianteAdmin(DjangoUserAdmin, ImportExportModelAdmin):
     )
 
     search_fields = ('username', 'email', 'nombre')
-    list_filter = ('tipo_usuario', 'is_active')
+    list_filter = ('tipo_usuario', 'is_active', 'genero')
     # autocomplete_fields = ['estado', 'ciudad', 'colonia']
     # class Media:
     #     js = ("usuarios/newajax.js",)

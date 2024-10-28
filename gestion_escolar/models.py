@@ -20,6 +20,10 @@ class Alumno(Usuario):
         (EXTERNO, 'Persona Externa'),
         (ADMINISTRATIVO, 'Personal Administrativo'),
     )
+    GENERO_CHOICES = (
+        ('H', 'Hombre'),
+        ('M', 'Mujer'),
+    )
     edad = models.CharField(max_length=15, null=True, blank=True)
     telefono = models.CharField(max_length=15, null=True, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE,
@@ -35,6 +39,7 @@ class Alumno(Usuario):
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, null=True, blank=True, 
                                 help_text="Selecciona una opción solo si es estudiante o egresado UTS")
     idioma = models.ForeignKey('Idioma', on_delete=models.CASCADE, null=True, blank=True)
+    genero = models.CharField(max_length=1, choices=GENERO_CHOICES, null=True, blank=True)
 
     class Meta:
         verbose_name = "Alumno"
